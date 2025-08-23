@@ -1,0 +1,183 @@
+﻿using PlanningProgramV3.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+
+namespace PlanningProgramV3.ViewModels.ItemViewModels
+{
+    /**
+     * Noah Gartenberg
+     * Last Updated: 8/6/2025
+     * This contains the view model for the Task Item
+     * Tasks are also the only ones able to contain subitems
+     */
+    public class TaskViewModel : PlannerItemViewModel
+    {
+
+        #region Properties
+
+        public Point Coordinates
+        {
+            get => ((TaskModelData)state).coordinates;
+            set
+            {
+                if(((TaskModelData)state).coordinates != value)
+                {
+                    ((TaskModelData)state).coordinates = value;
+                    OnPropertyChanged(nameof(Coordinates));
+                }
+            }
+        }
+
+        public string UUID
+        {
+            get => ((TaskModelData)state).uuid;
+            set
+            {
+                if (((TaskModelData)state).uuid != value)
+                {
+                    ((TaskModelData)state).uuid = value;
+                    OnPropertyChanged(nameof(UUID));
+                }
+            }
+        }
+
+        public virtual double X
+        {
+            get => ((TaskModelData)state).coordinates.X;
+            set
+            {
+                if (value != ((TaskModelData)state).coordinates.X)
+                {
+                    ((TaskModelData)state).coordinates.X = value;
+                    OnPropertyChanged(nameof(X));
+                }
+            }
+        }
+
+        public virtual double Y
+        {
+            get => ((TaskModelData)state).coordinates.Y;
+            set
+            {
+                if (value != ((TaskModelData)state).coordinates.Y)
+                {
+                    ((TaskModelData)state).coordinates.Y = value;
+                    OnPropertyChanged(nameof(Y));
+                }
+            }
+        }
+        public bool IsComplete
+        {
+            get => ((TaskModelData)state).isCompleted;
+            set
+            {
+                //If there is an error where nothing updates when this is set or unset, look ehre
+                //this may not be changing the data at the reference...
+                TaskModelData theData = ((TaskModelData)state);
+                if (value != theData.isCompleted)
+                {
+                    theData.isCompleted = value;
+                    OnPropertyChanged(nameof(IsComplete));
+                }
+            }
+        }
+
+        public string Name
+        {
+            get => ((TaskModelData)state).taskName;
+            set
+            {
+                TaskModelData theData = ((TaskModelData)state);
+                if (!value.Equals(theData.taskName))
+                {
+                    theData.taskName = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public ObservableCollection<PlannerItemViewModel> SubItems
+        {
+            get => ((TaskModelData)state).subItems;
+            set
+            {
+                ((TaskModelData)state).subItems = value;
+                OnPropertyChanged(nameof(SubItems));
+            }
+        }
+
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public TaskViewModel() : base(new TaskModelData())
+        {
+            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
+            SubItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem,CanMoveTask);
+            System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem,null);
+        }
+
+        //constructor for making a new task at specific coordinates
+        public TaskViewModel(Point coords) : base(new TaskModelData())
+        {
+            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
+            ((TaskModelData)state).subItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+
+            ((TaskModelData)state).coordinates = coords;
+        }
+        #endregion
+
+
+
+        #region Commands
+        public ICommand AddSubItemCommand { get; private set; }
+        public ICommand RemoveSubItemCommand { get; private set; }
+
+        #region Commmand related methods
+        public virtual void AddSubItem(object obj)
+        {
+            PlannerItemViewModel addedItem = obj.ToString() switch
+            {
+                "Task" => new TaskViewModel(),
+                "Text" => new TextViewModel(),
+                "Date" => new TaskDurationViewModel(),
+                //"Image" => new ImageItemViewModel(),
+                //"Linker" => new PlanReferenceViewModel(),
+                //_ => new TaskItemViewModel(),
+            };
+            System.Console.WriteLine("Adding object");
+            addedItem.SetParent(this.state);
+            SubItems.Add(addedItem);
+            OnPropertyChanged(nameof(SubItems));
+        }
+
+        //Perhaps I should try to move the parent if this is false?? IDK
+        public virtual bool CanMoveTask(object? parameter)
+        {
+            return Parent == null;
+        }
+
+        public virtual void RemoveSubItem(object obj)
+        {
+
+            throw new NotImplementedException("The RemoveSubItem method has not been properly implemented -- parameters should not be an object");
+            SubItems.Remove(obj as PlannerItemViewModel);
+            OnPropertyChanged(nameof(SubItems));
+        }
+        #endregion
+        #endregion
+    }
+}

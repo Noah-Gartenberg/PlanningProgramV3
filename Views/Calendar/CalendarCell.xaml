@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="PlanningProgramV3.Views.Calendar.CalendarCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlanningProgramV3.Views.Calendar"
+             xmlns:viewmodel="clr-namespace:PlanningProgramV3.ViewModels.Calendar"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel Background="#1B1E27" Height="Auto" Width="Auto">
+        <TextBlock Name="CellDateTextBlock" Background="#FFDEDAB5" Margin="5" DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Center"
+                   Text="{Binding CellDate, StringFormat='{}{0:MM/dd/yyyy}'}" MouseDown="CellDateTextBlock_MouseDown"/>
+        <Grid x:Name="Tasks" Background="#FFDEDAB5" Margin="0"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+        </Grid>
+    </DockPanel>
+</UserControl>

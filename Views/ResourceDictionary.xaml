@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Controls="clr-namespace:PlanningProgramV3.Views.PlanControls"
+                    xmlns:Scripts="clr-namespace:PlanningProgramV3.ViewModels">
+
+    <DataTemplate x:Key="TaskTemplate">
+        <Controls:TaskUserControl/>
+    </DataTemplate>
+    <DataTemplate x:Key="TextTemplate">
+        <Controls:TextControl/>
+    </DataTemplate>
+    <DataTemplate x:Key="DateTemplate">
+        <Controls:DateDurationUserControl/>
+    </DataTemplate>
+
+    <Scripts:SubItemTemplateSelector x:Key="ItemTemplateSelector"
+                                     Task="{StaticResource TaskTemplate}"
+                                     Text="{StaticResource TextTemplate}"
+                                     Date="{StaticResource DateTemplate}"/>
+
+</ResourceDictionary>

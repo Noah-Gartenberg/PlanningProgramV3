@@ -1,0 +1,185 @@
+﻿<Window x:Class="PlanningProgramV3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlanningProgramV3"
+        mc:Ignorable="d"
+        xmlns:CalendarControls="clr-namespace:PlanningProgramV3.Views.Calendar"
+        xmlns:Plan_Controls="clr-namespace:PlanningProgramV3.Views.PlanControls"
+        xmlns:Converters="clr-namespace:PlanningProgramV3.Converters"
+        Title="MainWindow" Height="1080" Width="1920">
+    
+
+    <Window.Resources>
+        <Converters:PixelToCoordinate x:Key="ConvertToPixel"/>
+    </Window.Resources>
+
+    <!--Agenda Portion-->
+    <Grid>
+        
+
+        <!--<local:CalendarCell Grid.RowSpan="1"/>-->
+        <!--Menu-->
+
+        <Menu HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" Padding="20,1,0,1" Background="#FFE0E5E2">
+            <MenuItem Header="File" BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
+                <!--a) new
+            b) open - - > display monthly, weekly, daily calendars
+            c) save
+            d) save as
+            e) exit-->
+            </MenuItem>
+
+            <MenuItem Header="Edit"  BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
+                <!--a) cut
+            b) copy
+            c) paste
+            d) undo
+            e) redo
+            f) show clipboard history
+            g) insert link to file
+                g.1) as task
+                g.2) as description-->
+
+            </MenuItem>
+            <MenuItem Header="Add"  BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
+                <!--a) Task
+        b) Sub-item (greyed out when not selecting a task)
+            c) Task 
+            d) Description
+            e) Image-->
+
+
+
+            </MenuItem> -->
+        </Menu>
+        <DockPanel Grid.Row="1">
+            <!--Prototypical represnttation of spiral binding on stuff-->
+            <!--<Rectangle MaxWidth="50" MinWidth="20" Height="Auto" Fill="Black" StrokeThickness="1" DockPanel.Dock="Left"/>-->
+
+            <!--Agenda Tabs-->
+                <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
+
+            <!--Need to convert below into a user control-->
+            <ListView Style="{DynamicResource CustomListView}" x:Name="PlannerDisplayer" DockPanel.Dock="Top" 
+                    VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True" 
+                            HorizontalAlignment ="Stretch" ItemTemplateSelector="{StaticResource ItemTemplateSelector}"
+                            MouseMove="PlannerDisplayer_MouseMove" Drop="PlannerDisplayer_Drop" DragOver="PlannerDisplayer_DragOver"
+                            DragLeave="PlannerDisplayer_DragLeave" SelectionChanged="PlannerDisplayer_SelectionChanged">
+                <!---->
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Height="{Binding ElementName=PlannerDisplayer, Path=Height}"
+                            Width="{Binding ElementName=PlannerDisplayer, Path=Width}" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView> 
+            
+            <!--<TabControl TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+
+                --><!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority--><!--
+                <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
+                    <TabItem.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </TabItem.LayoutTransform>
+                    <CalendarControls:MonthCalendar x:Name="MonthCalendarControl"/>
+                </TabItem>
+
+                --><!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority--><!--
+                <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
+                    <TabItem.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </TabItem.LayoutTransform>
+                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl"/>
+                </TabItem>
+                <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
+                    <TabItem.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </TabItem.LayoutTransform>
+                    <Border BorderBrush="Green" BorderThickness="1"/>
+                </TabItem>
+                <TabItem Header="Plan" Name="PlanTab">
+                    <TabItem.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </TabItem.LayoutTransform>
+                    <Border BorderBrush="Yellow" BorderThickness="1">
+                        <Plan_Controls:TaskUserControl/>
+                    </Border>
+                </TabItem>
+            </TabControl>-->
+        </DockPanel>
+
+        <!--Toolbar-->
+        <!--TODO Replace words with icons/images-->
+        <!--<ToolBarTray DockPanel.Dock="Top" Height="Auto" HorizontalAlignment="Stretch">
+            <ToolBar Background="#FFE0E5E2" Band="0" x:Name="File">
+                <Button Content="Open" Margin="1,0,1,0"/>
+                <Button Content="Save" Margin="1,0,1,0"/>
+                <Button Content="Save As" Margin="1,0,1,0"/>
+            </ToolBar>
+
+            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="1" x:Name="Edit">
+                <Button Content="Cut" Margin="1,0,1,0"/>
+                <Button Content="Copy" Margin="1,0,1,0"/>
+                <Button Content="Paste" Margin="1,0,1,0"/>
+                <Separator/>
+                <Button Content="Undo" Margin="1,0,1,0"/>
+                <Button Content="Redo" Margin="1,0,1,0"/>
+                <Separator/>
+                <Button Content="Show Clipboard History" Margin="1,0,1,0"/>
+            </ToolBar>
+
+            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="2" x:Name="Add" >
+                <Button Content="Add Item" Margin="1,0,1,0"/>
+            </ToolBar>
+        </ToolBarTray>
+
+
+        <StackPanel x:Name="TabsAndPages" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            Margin="10" Orientation="Vertical" Background="#FFE0E5E2">
+            <Border x:Name="Tabs" Background="#FFE0E5E2">
+                <TabControl HorizontalAlignment="Stretch" Background="#FFE0E5E2">
+                    <TabItem Header="Monday"/>
+                    <TabItem Header="Tuesday"/>
+                    <TabItem Header="Personal Projects"/>
+                    <TabItem Header="Bounce Up"/>
+                </TabControl>
+            </Border>
+
+            --><!--<Frame x:Name="Display" Background="#FFBDCAC2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Expander Style="{DynamicResource CustomExpander}" HorizontalAlignment="Left" Height="100" Header="Expander" Margin="389,198,0,0" VerticalAlignment="Top" Width="100" IsExpanded="True">
+                <Grid Background="#FFE5E5E5">
+                </Grid>
+            </Expander>--><!--
+
+        </StackPanel>-->
+    </Grid>
+
+</Window>
