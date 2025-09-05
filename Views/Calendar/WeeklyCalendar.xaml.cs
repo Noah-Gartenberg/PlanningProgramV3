@@ -31,7 +31,7 @@ namespace PlanningProgramV3.Views.Calendar
         public IEnumerable<object> Tasks
         {
             get { return (IEnumerable<object>)GetValue(TasksProperty); }
-            set { SetValue(TasksProperty, value); }
+            set { SetValue(TasksProperty, value);}
         }
 
         public static readonly DependencyProperty TasksProperty =
@@ -120,7 +120,7 @@ namespace PlanningProgramV3.Views.Calendar
         {
             get
             {
-                //return _mainWindow.DaySelected; 
+                //return _mainWindow.DateSelected; 
                 return currentDate;
             }
             set
@@ -207,7 +207,7 @@ namespace PlanningProgramV3.Views.Calendar
             //May need to refactor to decouple
             foreach (CalendarCell day in DaysInCurrentWeek)
             {
-                foreach (CalendarTaskView e in day.Tasks.Children)
+                foreach (CalendarTaskView e in day.CellTasks.Children)
                 {
                     if (e.DataContext == taskToSelect.DataContext)
                     {
@@ -289,7 +289,8 @@ namespace PlanningProgramV3.Views.Calendar
                 today.CellDateTextBlock.Background = Color0;
             }
 
-            DrawTasks();
+            if (Tasks != null && Tasks.Count() > 0)
+                DrawTasks();
         }
 
         public void DrawDays()
@@ -360,8 +361,9 @@ namespace PlanningProgramV3.Views.Calendar
         private void DrawTasks()
         {
             //This method can be called when tasks aren't yet bound, so check that case and return
-            if (Tasks == null)
+            if (Tasks == null) 
             {
+                System.Diagnostics.Debug.WriteLine("Tasks were null");
                 return;
             }
 
@@ -388,7 +390,7 @@ namespace PlanningProgramV3.Views.Calendar
                     var dateTo = (DateTime)t.DateEnd;
 
                     //loop all days of current task
-                    for (DateTime date = dateFrom; date <= dateTo; date.AddDays(1))
+                    for (DateTime date = dateFrom; date <= dateTo; date = date.AddDays(1))
                     {
                         //get DayOfWeek for current day of currrent task
                         CalendarCell day = DaysInCurrentWeek.Where(d => d.CellDate.Date == date.Date).FirstOrDefault();
@@ -404,9 +406,9 @@ namespace PlanningProgramV3.Views.Calendar
                         }
 
                         //but if there are some events before, event won't be in first row, but after previous events
-                        if (day.Tasks.Children.Count > taskRow)
+                        if (day.CellTasks.Children.Count > taskRow)
                         {
-                            taskRow = Grid.GetRow(day.Tasks.Children[day.Tasks.Children.Count - 1]) + 1;
+                            taskRow = Grid.GetRow(day.CellTasks.Children[day.CellTasks.Children.Count - 1]) + 1;
                         }
 
                         //get color for task
@@ -416,7 +418,7 @@ namespace PlanningProgramV3.Views.Calendar
 
                         calendarTaskView.DataContext = t;
                         Grid.SetRow(calendarTaskView, taskRow);
-                        day.Tasks.Children.Add(calendarTaskView);
+                        day.CellTasks.Children.Add(calendarTaskView);
                     }
                     accentColor++;
 
@@ -475,6 +477,43 @@ namespace PlanningProgramV3.Views.Calendar
                 firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
             }
             return (date - firstMonthMonday).Days / 7 + 1;
+        }
+
+        /**
+         * Helper method to get the first day of the week in which the date that is the parameter is within.
+         * @param: date - DateTime - the date which the user wants to search for the first day of the week that it is part of
+         */
+        public static DateTime GetFirstDayOfWeekDate(DateTime date)
+        {
+            DayOfWeek day = date.DayOfWeek;
+            int daysFromStartOfWeek = 0;
+            //figure out how many days from start of the week the current date is. 
+            switch (day)
+            {
+                case DayOfWeek.Monday:
+                    daysFromStartOfWeek = 0;
+                    break;
+                case DayOfWeek.Tuesday:
+                    daysFromStartOfWeek = 1;
+                    break;
+                case DayOfWeek.Wednesday:
+                    daysFromStartOfWeek = 2;
+                    break;
+                case DayOfWeek.Thursday:
+                    daysFromStartOfWeek = 3;
+                    break;
+                case DayOfWeek.Friday:
+                    daysFromStartOfWeek = 4;
+                    break;
+                case DayOfWeek.Saturday:
+                    daysFromStartOfWeek = 5;
+                    break;
+                case DayOfWeek.Sunday:
+                    daysFromStartOfWeek = 6;
+                    break;
+            }
+
+            return new DateTime(date.Year, date.Month, date.AddDays(-1 * daysFromStartOfWeek).Day);
         }
     }
 }

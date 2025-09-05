@@ -110,7 +110,7 @@ namespace PlanningProgramV3.Views.Calendar
         {
             get 
             {
-                //return _mainWindow.DaySelected; 
+                //return _mainWindow.DateSelected; 
                 return currentDate;
             }
             set
@@ -188,7 +188,7 @@ namespace PlanningProgramV3.Views.Calendar
             //May need to refactor to decouple
             foreach (CalendarCell day in DaysInCurrentMonth)
             {
-                foreach (CalendarTaskView e in day.Tasks.Children)
+                foreach (CalendarTaskView e in day.CellTasks.Children)
                 {
                     if (e.DataContext == eventToSelect.DataContext)
                     {
@@ -268,11 +268,14 @@ namespace PlanningProgramV3.Views.Calendar
                 {
                     today.CellDateTextBlock.Background = Color0;
                 }
-
-                DrawTasks();
+                
 
             }
+            if (Tasks != null && Tasks.Count() > 0)
+                DrawTasks();
         }
+
+        
 
         private void DrawTopBorder()
         {
@@ -324,8 +327,9 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void DrawTasks()
         {
+            //this method's getting called a lot
             //This method can be called when tasks aren't yet bound, so check that case and return
-            if(Tasks == null)
+            if(Tasks == null || Tasks.Count() == 0)
             {
                 return;
             }
@@ -338,11 +342,10 @@ namespace PlanningProgramV3.Views.Calendar
 
                 //index to array of colors
                 int accentColor = 0;
-
-                //loop all tasks -- ensure all have date starts, and assume if no date end, then just have only one day
+                
                 foreach (var t in tasks.OrderBy(t => t.DateStart))
                 {
-                    if(!t.DateStart.HasValue /*|| !t.DateEnd.HasValue*/)
+                    if(!t.DateStart.HasValue || !t.DateEnd.HasValue)
                     {
                         continue;
                     }
@@ -353,7 +356,8 @@ namespace PlanningProgramV3.Views.Calendar
                     var dateTo = (DateTime)t.DateEnd;
 
                     //loop all days of current task
-                    for (DateTime date = dateFrom; date <= dateTo; date.AddDays(1))
+                    //youre kidding me... I literally forgot to set the value for date... it was just date.adddays, not date = date.adddays
+                    for (DateTime date = dateFrom; date <= dateTo; date = date.AddDays(1))
                     {
                         //get DayOfWeek for current day of currrent task
                         CalendarCell day = DaysInCurrentMonth.Where(d => d.CellDate.Date == date.Date).FirstOrDefault();
@@ -368,10 +372,10 @@ namespace PlanningProgramV3.Views.Calendar
                             taskRow = 0;
                         }
 
-                        //but if there are some events before, event won't be in first row, but after previous events
-                        if (day.Tasks.Children.Count > taskRow)
+                        //but if there are some tasks before, tasks won't be in first row, but after previous events
+                        if (day.CellTasks.Children.Count > taskRow)
                         {
-                            taskRow = Grid.GetRow(day.Tasks.Children[day.Tasks.Children.Count - 1]) + 1;
+                            taskRow = Grid.GetRow(day.CellTasks.Children[day.CellTasks.Children.Count - 1]) + 1;
                         }
 
                         //get color for task
@@ -381,7 +385,7 @@ namespace PlanningProgramV3.Views.Calendar
 
                         calendarTaskView.DataContext = t;
                         Grid.SetRow(calendarTaskView, taskRow);
-                        day.Tasks.Children.Add(calendarTaskView);
+                        day.CellTasks.Children.Add(calendarTaskView);
                     }
                     accentColor++;
 

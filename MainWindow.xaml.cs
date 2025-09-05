@@ -14,13 +14,14 @@ using PlanningProgramV3.Views;
 using PlanningProgramV3.Views.Calendar;
 using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
+using System.ComponentModel;
 
 namespace PlanningProgramV3
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
 
@@ -33,7 +34,24 @@ namespace PlanningProgramV3
             set => SetValue(SelectedObjectProperty, value);
         }
 
-        public PlannerViewModel CurrPlanner { get; set; }
+        //private List<ICalendarTask> _tasks;
+        //public List<ICalendarTask> Tasks
+        //{
+        //    get { return _tasks; }
+        //    set
+        //    {
+        //        if (_tasks != value)
+        //        {
+        //            _tasks = value;
+        //            OnPropertyChanged(nameof(Tasks));
+        //
+        //            WeeklyCalendarControl.DrawDays();
+        //            MonthlyCalendarControl.DrawDays();
+        //        }
+        //    }
+        //}
+
+        
 
         public DateTime DaySelected { get; set; }
         public ICalendarDisplay CalendarInView;
@@ -41,11 +59,41 @@ namespace PlanningProgramV3
         {
             InitializeComponent();
             DaySelected = DateTime.Today;
-            CurrPlanner = new();
-            //MonthCalendarControl.SetMainWindow(this);
+            MonthlyCalendarControl.SetMainWindow(this);
             //WeeklyCalendarControl.SetMainWindow(this);
-            CurrPlanner.HighestTasks.Add(new TaskViewModel());
-            PlannerDisplayer.ItemsSource = CurrPlanner.HighestTasks;
+            //_tasks = new List<ICalendarTask>();
+            DataAccess.InitializeDatabase();
+
+            //hard setting this for sake of testing purposes - will change when can
+            //MonthlyCalendarControl.Tasks = DataAccess.GetTasksFromMonth(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1));
+            //MonthlyCalendarControl.Tasks = DataAccess.GetAllTasks();
+            //WeeklyCalendarControl.Tasks = DataAccess.GetTasksFromMonth(
+            //    new DateTime(DateTime.Today.Year, DateTime.Today.Month, WeeklyCalendar.GetFirstDayOfWeekDate(DateTime.Today).Day),
+            //    new DateTime(DateTime.Today.Year, DateTime.Today.Month, WeeklyCalendar.GetFirstDayOfWeekDate(DateTime.Today).Day).AddDays(7)
+            //    );
+
+            //why is the app not running (at least in debug mode)???? Previously, this was an issue with the sqlite connection. There are no errors as of right now. 
+            //it loads when things are commented out, so lets try setting the tasks ienumerable to a new ienumerable with a few dummy objects???
+
+            //temp.Add(new CalendarTaskData("GUID1", true, true, "TASK", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //temp.Add(new CalendarTaskData("GUID1", true, true, "TASK2", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //temp.Add(new CalendarTaskData("GUID1", true, true, "TASK3", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //
+            //WeeklyCalendarControl.Tasks = temp;
+            //SO THAT ENCOUNTERED THE SAME ISSUE!!!!!!! HOLY CRAP I must just be doing something wrong with this!
+            //Let's go check as to how the person did their calendar events, with the IEnumerable interface
+            //okay, so let's set this up in xaml maybe? Maybe I just have to bind them?
+
+            //Okay test two, data binding ought to be set up
+            //Tasks.Add(new CalendarTaskData("GUID1", true, true, "TASK", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //Tasks.Add(new CalendarTaskData("GUID1", true, true, "TASK2", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //Tasks.Add(new CalendarTaskData("GUID1", true, true, "TASK3", true, DateTime.Today, DateTime.Today.AddDays(1)));
+            //
+            //MonthlyCalendarControl.DrawDays();
+            //WeeklyCalendarControl.DrawDays();
+            //AND THE TASKS STILL DON'T DISPLAY... BUT THEY'RE IN THE LISTS!!!!!!
+            //Okay, so the tasks seem to be going out of scope, or not binding properly???
+
         }
 
         public event EventHandler<CalendarTaskView> EventCalendarTaskDoubleClickedEvent;
@@ -61,114 +109,18 @@ namespace PlanningProgramV3
         }
 
         public event EventHandler<CalendarTaskView> EventCalendarTaskClickedEvent;
-        
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public void EventCalendarTaskClicked(CalendarTaskView taskToSelect)
         {
             CalendarInView.HighlightTask(taskToSelect);
         }
 
-        private void PlannerDisplayer_MouseMove(object sender, MouseEventArgs e)
-        {
-            //For right now, will just not do selection logic if the selected item is not the highest level parent -- need to figure out how to ensure that selected view model is at top of its stack though
-            if ((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null && e.LeftButton == MouseButtonState.Pressed)
-            {
-                
-                DataObject data = new DataObject(DataFormats.Serializable, PlannerDisplayer.SelectedItem);
-
-                DragDrop.DoDragDrop(SelectedObject, data, DragDropEffects.Move);
-                if(SelectedObject != null)
-                {
-                    SelectedObject.IsHitTestVisible = false;
-                }
-                
-            }
-        }
-        //protected override void OnGiveFeedback(GiveFeedbackEventArgs e)
-        //{
-        //    base.OnGiveFeedback(e);
-        //    //these effects values are set in the drop target's drago over event handler
-        //    if(e.Effects.HasFlag(DragDropEffects.Move))
-        //    {
-        //        Mouse.SetCursor(Cursors.Hand);
-        //    }
-        //    else
-        //    {
-        //        Mouse.SetCursor(Cursors.No);
-        //    }
-        //        e.Handled = true;
-        //}
-
-        private void PlannerDisplayer_DragOver(object sender, DragEventArgs e)
-        {
-            //For right now, will just not do selection logic if the selected item is not the highest level parent
-            if((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null)
-            {
-                Point dropPosition = e.GetPosition(PlannerDisplayer);
-
-                Canvas.SetLeft(SelectedObject, dropPosition.X);
-                Canvas.SetTop(SelectedObject, dropPosition.Y);
-
-            }
-
-        }
-
-        private void PlannerDisplayer_Drop(object sender, DragEventArgs e)
-        {
-
-
-            object data = e.Data.GetData(DataFormats.Serializable);
-
-            if (data is UIElement element)
-            {
-
-                Point dropPosition = e.GetPosition(PlannerDisplayer);
-                Canvas.SetLeft(SelectedObject, dropPosition.X);
-                Canvas.SetTop(SelectedObject, dropPosition.Y);
-
-                CurrPlanner.AddHighestTask(element);
-                
-            }
-            SelectedObject.IsHitTestVisible = true;
-            PlannerDisplayer.SelectedIndex = -1;
-
-        }
-
-        private void PlannerDisplayer_DragLeave(object sender, DragEventArgs e)
-        {
-            if (e.OriginalSource == PlannerDisplayer)
-            {
-                object data = e.Data.GetData(DataFormats.Serializable);
-
-
-
-                if (data is UIElement element)
-                {
-                    CurrPlanner.RemoveTopTask(data);
-                }
-            }
-
-
-        }
-
-        private void PlannerDisplayer_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-            //Shout out people in comments explaining how I can fix this so that selected object doesn't throw an error
-            //https://stackoverflow.com/questions/610343/wpf-listbox-getting-uielement-instead-of-of-selecteditem
-            //in theory at least if I can get it working
-
-            //for right now, only worrying about one item
-            if (SelectedObject != null)
-            {
-                SelectedObject.IsHitTestVisible = true;
-            }
-            if (PlannerDisplayer.SelectedIndex != -1)
-            {
-                
-                SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(PlannerDisplayer.SelectedItem) as FrameworkElement;
-            }
-            else
-                SelectedObject = null;
-        }
+       
     }
 }

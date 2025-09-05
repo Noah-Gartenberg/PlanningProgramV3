@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <TextBlock x:Name="TaskTextBlock" MaxHeight="30" Width="Auto" Height="Auto" 
                Background="{Binding ElementName=calendarTaskView, Path=BackgroundColor, UpdateSourceTrigger=PropertyChanged}"
-               Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"
+               Text="{Binding TaskName, UpdateSourceTrigger=PropertyChanged}"
                MouseDown="TaskTextBlock_MouseDown"/>
     <!--Is Label a thing? Or could the Binding be to any property?-->
 </UserControl>

@@ -1,9 +1,14 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.Windows;
+using PlanningProgramV3.Models;
+using System;
 using System.Collections.Generic;
+//using System.Data.Linq;
 using System.IO;
 using System.Windows;
+using Windows.Management.Core;
 using Windows.Storage;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace PlanningProgramV3.ViewModels.Calendar
@@ -12,67 +17,255 @@ namespace PlanningProgramV3.ViewModels.Calendar
     public static class DataAccess
     {
 
-        public async static void InitializeDatabase()
+        public static void InitializeDatabase()
         {
-            /**
-             * For finished version, use ApplicationData
-             */
-            await ApplicationData.Current.LocalFolder.CreateFileAsync("CalendarTasks.db", CreationCollisionOption.OpenIfExists);
-            string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "CalendarTasks.db");
 
-            using (var db = new SqliteConnection($"Filename={dbpath}"))
+            #region For testing purposes only - delete in final -- how to make work in final only????
+
+
+            #endregion
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
             {
-                db.Open();
+                connection.Open();
 
-                string tableCommand = "CREATE TABLE IF NOT " +
-                    "EXISTS MyTable (Primary_Key INTEGER PRIMARY KEY, " +
-                    "Text_Entry NVARCHAR(2048) NULL)";
+                //so calendar tasks need a few columns: date start, date end, task name, completion, task id, filename????
 
-                var createTable = new SqliteCommand(tableCommand, db);
-
-                createTable.ExecuteReader();
+                var command = connection.CreateCommand();
+                command.CommandText =
+                    @"
+                        CREATE TABLE IF NOT EXISTS CalendarTasks(
+                            tableGUID TEXT PRIMARY KEY,
+                            taskGUID TEXT,
+                            TaskFileName TEXT,
+                            TaskName TEXT NOT NULL,
+                            TaskCompletion BOOLEAN NOT NULL,
+                            DateStart DATE NOT NULL,
+                            DateEnd DATE NOT NULL
+                    );
+                    INSERT OR REPLACE INTO CalendarTasks VALUES ('TABLEGUID1','GUID1', 'TaskFileName', 'TaskName1', 1, '2025-08-26 00:00:00.000','2025-08-27 00:00:00.000'),
+                                                                    ('TABLEGUID2','GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
+                                                                    ('TABLEGUID3','GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-01 00:00:00.000');";
+                //FURTHER TEST STUFF
+                //('GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
+                //('GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-01 00:00:00.000')
+                System.Console.WriteLine(connection.ConnectionString);
+                command.ExecuteNonQuery();
             }
         }
 
-        public static void AddData(string inputText)
+        public static void AddTask(ref TaskDurationModelData CalendarTaskData)
         {
-            string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path,
-                                 "CalendarTasks.db");
-            using (var db = new SqliteConnection($"Filename={dbpath}"))
-            {
-                db.Open();
-
-                var insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                // Use parameterized query to prevent SQL injection attacks
-                insertCommand.CommandText = "INSERT INTO MyTable VALUES (NULL, @Entry);";
-                insertCommand.Parameters.AddWithValue("@Entry", inputText);
-
-                insertCommand.ExecuteReader();
-            }
+            
         }
 
-        public static List<string> GetData()
+        public static void AddTask(ref string guid, ref string taskFileName, ref string TaskName, bool taskCompletion, ref DateTime dateStart, ref DateTime dateEnd)
         {
-            var entries = new List<string>();
-            string dbpath = Path.Combine(ApplicationData.Current.LocalFolder.Path,
-                                         "CalendarTasks.db");
-            using (var db = new SqliteConnection($"Filename={dbpath}"))
+
+        }
+
+        #region Methods for getting the Data
+        //TABLE FOR TELLING IF A TASK IS WITHIN A PERIOD OF TIME;
+        //ASSUME THAT THE TASK'S END DATE IS MORE THAN OR EQUAL TO THE TASK START DATE
+        //BOTH START AND END DATES ARE INCLUSIVE
+        /* |==================================================================================================================|
+         * |Variables and info: TPS = Time Period Start | TPE = Time Period End | TSD = Task Start Date | TSE = Task End Date |
+         * |         Assume Task End Date >= Task Start Date                                                                  |
+         * |Case 1: Task starts in and ends in time period:                                                                   |
+         * |         Task Start Date >= Time Period Start && Task Start Date <= Time Period End                               |
+         * |         Task End Date   >= Time Period Start && Task End Date   <= Time Period End                               |
+         * |                                                                                                                  |
+         * |Case 2: Task starts in time period, and ends after time period                                                    |
+         * |         Task Start Date >= Time Period Start && Task Start Date <= Time Period End                               |
+         * |         Task End Date   >= Time Period Start && Task End Date   >= Time Period End                               |
+         * |                                                                                                                  |
+         * |Case 3: Task starts before time period, and ends after time period                                                |
+         * |         Task Start Date < Time Period Start && Task Start Date <= Time Period End                                |
+         * |         Task End Date  >= Time Period Start && Task End Date   <= Time Period End                                |
+         * |                                                                                                                  |
+         * |Case 4: Task starts before and ends after time period                                                             |
+         * |         Task Start Date < Time Period Start && Task Start Date <= Time Period End                                |
+         * |         Task End Date  >= Time Period Start && Task End Date   >= Time Period End                                |
+         * |                                                                                                                  |
+         * |                                                                                                                  |
+         * |                                                                                                                  |
+         * |Commonallities between all:                                                                                       |
+         * |     Task Start Date MUST be before Time Period End                                                               |
+         * |     Task End Date   MUST NOT be before Time Period Start                                                         |
+         * |==================================================================================================================|
+         *      
+         */
+        public static List<CalendarTaskData> GetTasksFromDate(DateTime Date)
+        {
+            var entries = new List<CalendarTaskData>();
+            #region ONLY FOR TESTING PURPOSES- WILL CHANGE IN FINAL VERSION - HOW DO I DO THIS?
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
             {
-                db.Open();
-                var selectCommand = new SqliteCommand
-                    ("SELECT Text_Entry from MyTable", db);
+                connection.Open();
+                var selectCommmand = new SqliteCommand(
+                    "SELECT * FROM CalendarTasks WHERE DateStart<=$Date AND DateEnd>=$Date;", connection);
+                //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
+                    //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                    //but maybe can store bool as to whether or not those are empty?
+                selectCommmand.Parameters.AddWithValue("@Date", Date);
 
-                SqliteDataReader query = selectCommand.ExecuteReader();
-
+                SqliteDataReader query = selectCommmand.ExecuteReader();
+                //var db = new DataContext(connection);
                 while (query.Read())
                 {
-                    entries.Add(query.GetString(0));
+
+                    //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
+                    
+
+                    var temp = new CalendarTaskData(
+                        query.GetString(0),
+                        query.GetString(1) != null ? true : false, 
+                        query.GetString(2) != null ? true : false, 
+                        query.GetString(3), 
+                        query.GetBoolean(4), 
+                        query.GetDateTime(5), 
+                        query.GetDateTime(5));
+                    entries.Add(temp);
                 }
+
+                
             }
+
+
+            #endregion
 
             return entries;
         }
+
+        public static List<CalendarTaskData> GetTasksFromWeek(DateTime WeekStart, DateTime WeekEnd)
+        {
+            var entries = new List<CalendarTaskData>();
+            #region ONLY FOR TESTING PURPOSES- WILL CHANGE IN FINAL VERSION - HOW DO I DO THIS?
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
+            {
+                connection.Open();
+                var selectCommmand = new SqliteCommand(
+                    "SELECT tableGUID FROM CalendarTasks WHERE DateStart<=@WeekEnd AND DateEnd>=@WeekStart;", connection);
+                //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
+                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                //but maybe can store bool as to whether or not those are empty?
+                selectCommmand.Parameters.AddWithValue("@WeekStart", WeekStart);
+                selectCommmand.Parameters.AddWithValue("@WeekEnd", WeekEnd);
+
+                SqliteDataReader query = selectCommmand.ExecuteReader();
+                //var db = new DataContext(connection);
+                while (query.Read())
+                {
+
+                    //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
+
+
+                    var temp = new CalendarTaskData(
+                        query.GetString(0),
+                        query.GetString(1) != null ? true : false,
+                        query.GetString(2) != null ? true : false,
+                        query.GetString(3),
+                        query.GetBoolean(4),
+                        query.GetDateTime(5),
+                        query.GetDateTime(6));
+                    entries.Add(temp);
+                }
+
+
+            }
+
+
+            #endregion
+
+            return entries;
+        }
+
+        //LITERALLY FOR THE LOVE OF G-D, DO NOT USE THIS OUTSIDE OF TESTING PURPOSES!!!
+        public static List<CalendarTaskData> GetAllTasks()
+        {
+            var entries = new List<CalendarTaskData>();
+            #region ONLY FOR TESTING PURPOSES- WILL CHANGE IN FINAL VERSION - HOW DO I DO THIS?
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
+            {
+                connection.Open();
+                var selectCommmand = new SqliteCommand(
+                    "SELECT * FROM CalendarTasks WHERE 1;", connection);
+                //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
+                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                //but maybe can store bool as to whether or not those are empty?
+
+                SqliteDataReader query = selectCommmand.ExecuteReader();
+                //var db = new DataContext(connection);
+                while (query.Read())
+                {
+
+                    //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
+
+
+                    var temp = new CalendarTaskData(
+                        query.GetString(0),
+                        query.GetString(1) != null ? true : false,
+                        query.GetString(2) != null ? true : false,
+                        query.GetString(3),
+                        query.GetBoolean(4),
+                        query.GetDateTime(5),
+                        query.GetDateTime(6));
+                    entries.Add(temp);
+                }
+
+
+            }
+
+
+            #endregion
+
+            return entries;
+        }
+
+        public static List<CalendarTaskData> GetTasksFromMonth(DateTime MonthStart, DateTime MonthEnd)
+        {
+            var entries = new List<CalendarTaskData>();
+            #region ONLY FOR TESTING PURPOSES- WILL CHANGE IN FINAL VERSION - HOW DO I DO THIS?
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
+            {
+                connection.Open();
+                var selectCommmand = new SqliteCommand(
+                    "SELECT * FROM CalendarTasks WHERE DateStart<=@MonthEnd AND DateEnd>=@MonthStart", connection);
+                //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
+                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                //but maybe can store bool as to whether or not those are empty?
+                    
+
+                selectCommmand.Parameters.AddWithValue("@MonthStart", MonthStart);
+                selectCommmand.Parameters.AddWithValue("@MonthEnd", MonthEnd);
+
+                SqliteDataReader query = selectCommmand.ExecuteReader();
+                //var db = new DataContext(connection);
+                while (query.Read())
+                {
+
+                    //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
+
+
+                    var temp = new CalendarTaskData(
+                        query.GetString(0),
+                        query.GetString(1) != null ? true : false,
+                        query.GetString(2) != null ? true : false,
+                        query.GetString(3),
+                        query.GetBoolean(4),
+                        query.GetDateTime(5),
+                        query.GetDateTime(6));
+                    entries.Add(temp);
+                }
+
+
+            }
+
+
+            #endregion
+
+            return entries;
+        }
+
+        #endregion
     }
 }

@@ -5,15 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlanningProgramV3"
         mc:Ignorable="d"
+        xmlns:viewmodel="clr-namespace:PlanningProgramV3.ViewModels"
         xmlns:CalendarControls="clr-namespace:PlanningProgramV3.Views.Calendar"
         xmlns:Plan_Controls="clr-namespace:PlanningProgramV3.Views.PlanControls"
         xmlns:Converters="clr-namespace:PlanningProgramV3.Converters"
+        xmlns:PlanControl="clr-namespace:PlanningProgramV3.Views"
+        x:Name="mainWindow"
         Title="MainWindow" Height="1080" Width="1920">
     
 
     <Window.Resources>
         <Converters:PixelToCoordinate x:Key="ConvertToPixel"/>
     </Window.Resources>
+    <Window.DataContext>
+        <viewmodel:MainWindowViewModel/>
+    </Window.DataContext>
 
     <!--Agenda Portion-->
     <Grid>
@@ -61,30 +67,11 @@
             <!--Agenda Tabs-->
                 <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
 
-            <!--Need to convert below into a user control-->
-            <ListView Style="{DynamicResource CustomListView}" x:Name="PlannerDisplayer" DockPanel.Dock="Top" 
-                    VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True" 
-                            HorizontalAlignment ="Stretch" ItemTemplateSelector="{StaticResource ItemTemplateSelector}"
-                            MouseMove="PlannerDisplayer_MouseMove" Drop="PlannerDisplayer_Drop" DragOver="PlannerDisplayer_DragOver"
-                            DragLeave="PlannerDisplayer_DragLeave" SelectionChanged="PlannerDisplayer_SelectionChanged">
-                <!---->
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas IsItemsHost="True" Height="{Binding ElementName=PlannerDisplayer, Path=Height}"
-                            Width="{Binding ElementName=PlannerDisplayer, Path=Width}" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView> 
             
-            <!--<TabControl TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            
+            <TabControl TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-                --><!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority--><!--
+                <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
                 <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
                     <TabItem.LayoutTransform>
                         <TransformGroup>
@@ -94,10 +81,11 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </TabItem.LayoutTransform>
-                    <CalendarControls:MonthCalendar x:Name="MonthCalendarControl"/>
+                    <!---->
+                    <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}"/>
                 </TabItem>
 
-                --><!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority--><!--
+                <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
                 <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
                     <TabItem.LayoutTransform>
                         <TransformGroup>
@@ -107,7 +95,7 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </TabItem.LayoutTransform>
-                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl"/>
+                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}"/>
                 </TabItem>
                 <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
                     <TabItem.LayoutTransform>
@@ -130,10 +118,10 @@
                         </TransformGroup>
                     </TabItem.LayoutTransform>
                     <Border BorderBrush="Yellow" BorderThickness="1">
-                        <Plan_Controls:TaskUserControl/>
+                        <PlanControl:PlanDisplayerControl/>
                     </Border>
                 </TabItem>
-            </TabControl>-->
+            </TabControl>
         </DockPanel>
 
         <!--Toolbar-->
