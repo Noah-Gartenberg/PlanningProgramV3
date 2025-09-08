@@ -18,6 +18,7 @@ namespace PlanningProgramV3.Models
      *      
      *      in this way, I can kind of use the composition pattern to keep this data by itself
      */
+    [Serializable()]
     public class TaskModelData : BaseItemModelData
     {
 

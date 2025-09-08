@@ -13,6 +13,7 @@ namespace PlanningProgramV3.Models
      *  Technically may only need a string to a filepath, or it could need whatever else?
      *  https://www.codeproject.com/Articles/5360403/How-to-Make-WPF-Behave-like-Windows-when-Dealing-w follow this link
      */
+    [Serializable()]
     public class ImageModelData : BaseItemModelData
     {
         public string path;

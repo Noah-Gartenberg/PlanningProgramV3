@@ -11,6 +11,7 @@ namespace PlanningProgramV3.Models
      * This class stores date information for a task that is time sensetive
      * 
      */
+    [Serializable()]
     public class TaskDurationModelData : BaseItemModelData
     {
         public string parentPlanFile = "";

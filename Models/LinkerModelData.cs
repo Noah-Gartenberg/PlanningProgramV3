@@ -12,6 +12,7 @@ namespace PlanningProgramV3.Models
      * TBH, really unsure how to implement these as well, 
      *  but in theory should only need a path to the file and the UUID Of the file
      */
+    [Serializable()]
     public class LinkerModelData : BaseItemModelData
     {
         //path to file from root of Plan

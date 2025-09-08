@@ -9,10 +9,10 @@
              xmlns:Converters="clr-namespace:PlanningProgramV3.Converters"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <Converters:PixelToCoordinate x:Key="ConvertToPixel"/>
+        <Converters:PixelToCoordinate x:Key="ConvertToPixel" x:Name="PixelCoordConverter"/>
     </UserControl.Resources>
     <ListView Style="{DynamicResource CustomListView}" x:Name="PlannerDisplayer" DockPanel.Dock="Top" 
-VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True" 
+        VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True" ItemsSource="{Binding CurrentPlan.HighestTasks}"
         HorizontalAlignment ="Stretch" ItemTemplateSelector="{StaticResource ItemTemplateSelector}"
         MouseMove="PlannerDisplayer_MouseMove" Drop="PlannerDisplayer_Drop" DragOver="PlannerDisplayer_DragOver"
         DragLeave="PlannerDisplayer_DragLeave" SelectionChanged="PlannerDisplayer_SelectionChanged">
@@ -29,5 +29,13 @@ VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True"
                 <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
             </Style>
         </ListView.ItemContainerStyle>
+        <ListView.ContextMenu>
+            <ContextMenu x:Name="cm_AddSubItem">
+                <MenuItem Header="Cut"/>
+                <MenuItem Header="Copy"/>
+                <MenuItem Header="Paste"/>
+                <MenuItem Header="Add Task" Command="{Binding Path=CurrentPlan.AddTask}"/>
+            </ContextMenu>
+        </ListView.ContextMenu>
     </ListView>
 </UserControl>

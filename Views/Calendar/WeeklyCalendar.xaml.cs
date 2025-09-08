@@ -1,9 +1,7 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -28,6 +26,18 @@ namespace PlanningProgramV3.Views.Calendar
     public partial class WeeklyCalendar : UserControl, INotifyPropertyChanged, ICalendarDisplay
     {
         public MainWindow _mainWindow;
+
+        //dependency property for current date
+            //THIS PROPERTY DOES NOT BIND CORRECTLY - THERE IS AN ISSUE IN THIS CALENDAR, IN HOW IT IS IMPLEMENTED SUCH THAT THE CURRENTDATE IS SET TO BE A DEFAULT VALUE (1,1,2001) INSTEAD OF THE ACTUAL VALUE IT SHOULD BE!
+            //ALSO, TASKS DON'T SHOW UP CORRECTLY IN SUNDAYS,AND THE TASKS SEEM TO BE DOUBLING UP...
+        public static readonly DependencyProperty CurrentDateProperty =
+            DependencyProperty.Register("CurrentDate", typeof(DateTime), typeof(WeeklyCalendar),
+                new PropertyMetadata(OnCurrentDateChangedCallBack));
+        public DateTime CurrentDate
+        {
+            get { return (DateTime)GetValue(CurrentDateProperty); }
+            set { SetValue(CurrentDateProperty, value); }
+        }
         public IEnumerable<object> Tasks
         {
             get { return (IEnumerable<object>)GetValue(TasksProperty); }
@@ -105,43 +115,40 @@ namespace PlanningProgramV3.Views.Calendar
             WeeklyCalendar calendar = sender as WeeklyCalendar;
             if (calendar != null)
             {
-                calendar.DrawDays();
+                calendar.DrawDaysOnStart();
             }
 
+        }
+
+        private static void OnCurrentDateChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            WeeklyCalendar calendar = sender as WeeklyCalendar;
+            try
+            {
+                calendar?.DrawDaysOnStart();
+                calendar?.SetDateSelectionComboBoxesByCurrentDate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Something went wrong with drawing the calendar stuff: " + ex.Message);
+            }
+            
         }
 
         //This bool ensures (in theory) that the combo boxes won't set themselves off when the value for current date changes, just becuase they changed programattically
-            //previously, going forwards any days using the buttons would (on certain months - I'm guessing due to a combo of day + month combo boxes both changing??? idek) 
-            //cause the selectors to change values, causing the corresponding events for them having been fired to fire, so this just tells them not to fire if i've pressed the buttons
-        bool fireComboBoxChangeEvent = true;
-
-        private DateTime currentDate;
-        public DateTime CurrentDate
-        {
-            get
-            {
-                //return _mainWindow.DateSelected; 
-                return currentDate;
-            }
-            set
-            {
-                if (currentDate != value)
-                {
-                    currentDate = value;
-                    OnPropertyChanged(() => currentDate);
-                    DrawDaysOnStart();
-                    SetDateSelectionComboBoxesByCurrentDate();
-                }
-            }
-        }
+        //previously, going forwards any days using the buttons would 
+        //cause the selectors to change values, causing the corresponding events for them having been fired to fire, so this just tells them not to fire if i've pressed the buttons
+        //or if I've changed the date in another month
+        bool programmaticChangingComboBoxFlag;
 
         private void SetDateSelectionComboBoxesByCurrentDate()
         {
+            programmaticChangingComboBoxFlag = true;
             MonthsComboBox.SelectedValue = CurrentDate.Month;
             YearsComboBox.SelectedValue = CurrentDate.Year;
-            fireComboBoxChangeEvent = true;
-            //SetDateSelectionComboBoxesByCurrentDate(); //Want to only fire this method after they have all been changed, to see if this fixes the issue where the setting the combo boxes while setting everything else kind of 
-                                                       //breaks everything
+            programmaticChangingComboBoxFlag = false;
+
+            
             System.Diagnostics.Debug.WriteLine("Set Date Selection Combo Boxes by current date" + CurrentDate.ToString("dd, MM, yyyy"));
 
         }
@@ -149,7 +156,7 @@ namespace PlanningProgramV3.Views.Calendar
         private void SetCurrentDateByDateSelectionComboBoxes()
         {
             //should only fire if FireComboBoxChangeEvent is true
-            if (fireComboBoxChangeEvent && YearsComboBox?.SelectedValue != null && MonthsComboBox?.SelectedValue != null)
+            if (!programmaticChangingComboBoxFlag && YearsComboBox?.SelectedValue != null && MonthsComboBox?.SelectedValue != null)
             {
                 CurrentDate = new DateTime((int)YearsComboBox.SelectedValue, (int)MonthsComboBox.SelectedValue, 1);
                 
@@ -163,9 +170,10 @@ namespace PlanningProgramV3.Views.Calendar
         public WeeklyCalendar()
         {
             InitializeComponent(); 
-            DaysInCurrentWeek = new ObservableCollection<CalendarCell>();
+            DaysInCurrentWeek = [];
             InitializeDayLabels();
             InitializeDateSelectionComboBoxes();
+            DrawDaysOnStart();
         }
 
         public void SetMainWindow(MainWindow mainWindow)
@@ -189,6 +197,7 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void InitializeDateSelectionComboBoxes()
         {
+            programmaticChangingComboBoxFlag = true;
             //why i <= 12??? -- OH MONTHS
             for (int i = 1; i <= 12; i++)
             {
@@ -199,7 +208,8 @@ namespace PlanningProgramV3.Views.Calendar
             {
                 YearsComboBox.Items.Add(i);
             }
-            CurrentDate = DateTime.Today;
+            programmaticChangingComboBoxFlag = false;
+            //CurrentDate = DateTime.Today; -- unecessary since changing the current date thing in main window now
         }
 
         public void HighlightTask(CalendarTaskView taskToSelect)
@@ -223,6 +233,7 @@ namespace PlanningProgramV3.Views.Calendar
 
         /**
          * Draws all days onto screen at the start of the program running 
+         * MAY NEED TO BECOME DEFAULT METHOD INSTEAD OF DRAWDAYS
          */
         public void DrawDaysOnStart()
         {
@@ -295,6 +306,10 @@ namespace PlanningProgramV3.Views.Calendar
 
         public void DrawDays()
         {
+            /**
+             * TO DO: OPTIMIZE THIS AND PROBABLY ALSO IN MONTHLY CALENDAR TOO - CAN CHANGE FOR LOOP TO WORK WITH DATE TIME
+             */
+
             //Since there are only 7 days in a week... I don't need to clear the grid, just need to clear their children's grids.
             DayOfWeek day = CurrentDate.DayOfWeek;
             int daysFromStartOfWeek = 0;
@@ -324,7 +339,7 @@ namespace PlanningProgramV3.Views.Calendar
                     break;
             }
 
-            DateTime firstOfWeek = new DateTime(CurrentDate.Year, CurrentDate.Month, CurrentDate.AddDays(-1 * daysFromStartOfWeek).Day);
+            DateTime firstOfWeek = HelperMethods.GetFirstDayOfWeekDate(CurrentDate);
             for(int i =0; i < daysFromStartOfWeek; i++)
             {
                 CalendarCell currDay = DaysInCurrentWeek[i];
@@ -333,7 +348,8 @@ namespace PlanningProgramV3.Views.Calendar
 
             //need not redraw borders or background
 
-            DrawTasks();
+            if (Tasks != null && Tasks.Count() > 0)
+                DrawTasks();
         }
         
         //Since there is only one row, there should only need to be one method for drawing the borders
@@ -430,18 +446,20 @@ namespace PlanningProgramV3.Views.Calendar
             }
         }
 
-        private void PreviousMonthButtonClicked(object sender, RoutedEventArgs e)
+        private void PreviousWeekButtonClicked(object sender, RoutedEventArgs e)
         {
-            fireComboBoxChangeEvent = false;
+            programmaticChangingComboBoxFlag = true;
             CurrentDate = CurrentDate.AddDays(-7);
+            programmaticChangingComboBoxFlag = false;
             //WeeksComboBox.SelectedIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
         }
 
         private void NextWeekButton_OnClick(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("Next week button " + CurrentDate.AddDays(7).ToString("dd, MM, yyyy"));
-            fireComboBoxChangeEvent = false;
+            programmaticChangingComboBoxFlag = true;
             CurrentDate = CurrentDate.AddDays(7);
+            programmaticChangingComboBoxFlag = false;
             //WeeksComboBox.SelectedIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
         }
 
@@ -458,25 +476,15 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void MonthsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetCurrentDateByDateSelectionComboBoxes();
+            
+            if (!programmaticChangingComboBoxFlag)
+                SetCurrentDateByDateSelectionComboBoxes();
         }
 
         private void YearsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetCurrentDateByDateSelectionComboBoxes();
-        }
-
-        public static int GetWeekNumber(DateTime date)
-        {
-            date = date.Date;
-            DateTime firstMonthDay = new DateTime(date.Year, date.Month, 1);
-            DateTime firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
-            if (firstMonthMonday > date)
-            {
-                firstMonthDay = firstMonthDay.AddMonths(-1);
-                firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
-            }
-            return (date - firstMonthMonday).Days / 7 + 1;
+            if (!programmaticChangingComboBoxFlag)
+                SetCurrentDateByDateSelectionComboBoxes();
         }
     }
 }

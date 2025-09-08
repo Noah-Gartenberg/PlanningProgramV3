@@ -12,6 +12,7 @@ namespace PlanningProgramV3.Models
      * Goal of this class is to handle storing state for Text Items in a planner
      * It needs to store a string - but one that would perhaps be larger
      */
+    [Serializable()]
     public class TextModelData : BaseItemModelData
     {
         public string text = "";

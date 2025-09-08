@@ -41,8 +41,9 @@ namespace PlanningProgramV3
                     daysFromStartOfWeek = 6;
                     break;
             }
-
-            return new DateTime(date.Year, date.Month, date.AddDays(-1 * daysFromStartOfWeek).Day);
+            if(daysFromStartOfWeek != 0)
+                return new DateTime(date.Year, date.Month, date.AddDays(-1 * daysFromStartOfWeek).Day);
+            return date;
         }
     }
 }

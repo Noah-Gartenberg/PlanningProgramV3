@@ -69,7 +69,7 @@
 
             
             
-            <TabControl TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
                 <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
                 <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
@@ -82,7 +82,7 @@
                         </TransformGroup>
                     </TabItem.LayoutTransform>
                     <!---->
-                    <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}"/>
+                    <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
                 </TabItem>
 
                 <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
@@ -95,7 +95,7 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </TabItem.LayoutTransform>
-                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}"/>
+                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
                 </TabItem>
                 <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
                     <TabItem.LayoutTransform>
@@ -118,7 +118,7 @@
                         </TransformGroup>
                     </TabItem.LayoutTransform>
                     <Border BorderBrush="Yellow" BorderThickness="1">
-                        <PlanControl:PlanDisplayerControl/>
+                        <PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>
                     </Border>
                 </TabItem>
             </TabControl>

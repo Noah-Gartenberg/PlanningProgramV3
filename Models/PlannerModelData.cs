@@ -14,6 +14,7 @@ namespace PlanningProgramV3.Models
      * Noah Gartenberg
      * This class will contain the data necessary for storing the data of one plan
      */
+    [Serializable()]
     public class PlannerModelData
     {
         //public Point CameraCoords;
@@ -23,6 +24,7 @@ namespace PlanningProgramV3.Models
 
         public string fileName;
         //Right now only needs to contain the top of the list of plan items, as the rest will contain their children
+            //need to use taskviewmodel instead of taskmodeldata because don't have time/energy to refactor TO DO, REFACTOR
         public ObservableCollection<TaskViewModel> topPlanItems;
 
         public PlannerModelData() {

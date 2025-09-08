@@ -25,7 +25,24 @@ namespace PlanningProgramV3.Views.Calendar
     /// </summary>
     public partial class MonthCalendar : UserControl, INotifyPropertyChanged, ICalendarDisplay
     {
+
+        //This bool ensures (in theory) that the combo boxes won't set themselves off when the value for current date changes, just becuase they changed programattically
+        //previously, going forwards any days using the buttons would 
+        //cause the selectors to change values, causing the corresponding events for them having been fired to fire, so this just tells them not to fire if i've pressed the buttons
+            //or if I've changed the date in another month
+        bool programmaticChangingComboBoxFlag;
+
         public MainWindow _mainWindow;
+
+        //dependency property for current date
+        public static readonly DependencyProperty CurrentDateProperty =
+            DependencyProperty.Register("CurrentDate", typeof(DateTime), typeof(MonthCalendar),
+                new PropertyMetadata(OnCurrentDateChangedCallBack));
+        public DateTime CurrentDate
+        {
+            get {  return (DateTime)GetValue(CurrentDateProperty);}
+            set { SetValue(CurrentDateProperty, value); }
+        }
 
         public IEnumerable<object> Tasks
         {
@@ -105,35 +122,37 @@ namespace PlanningProgramV3.Views.Calendar
             calendar?.DrawDays();
 
         }
-        private DateTime currentDate;
-        public DateTime CurrentDate
+
+        private static void OnCurrentDateChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            get 
+            MonthCalendar calendar = sender as MonthCalendar;
+            try
             {
-                //return _mainWindow.DateSelected; 
-                return currentDate;
+                calendar?.DrawDays();
+                calendar?.SetDateSelectionComboBoxesByCurrentDate();
             }
-            set
+            catch (Exception ex)
             {
-                if(CurrentDate != value)
-                {
-                    currentDate = value;
-                    OnPropertyChanged(() => currentDate);
-                    DrawDays();
-                    SetDateSelectionComboBoxesByCurrentDate();
-                }
+                MessageBox.Show("Something went wrong with drawing the calendar stuff: " + ex.Message);
             }
         }
 
+
         private void SetDateSelectionComboBoxesByCurrentDate()
         {
+            programmaticChangingComboBoxFlag = true;
             MonthsComboBox.SelectedValue = CurrentDate.Month;
             YearsComboBox.SelectedValue = CurrentDate.Year;
+            programmaticChangingComboBoxFlag = false;
+
+            //ohhh wait, this sets the following to true because it them to be usable at the start...
+            //programmaticChangingComboBoxFlag = true;
         }
 
         private void SetCurrentDateByDateSelectionComboBoxes()
         {
-            if (YearsComboBox?.SelectedValue != null && MonthsComboBox?.SelectedValue != null)
+            //should only fire if FireComboBoxChangeEvent is true
+            if (!programmaticChangingComboBoxFlag && YearsComboBox?.SelectedValue != null && MonthsComboBox?.SelectedValue != null)
             {
                 CurrentDate = new DateTime((int)YearsComboBox.SelectedValue, (int)MonthsComboBox.SelectedValue, 1);
             }
@@ -170,8 +189,9 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void InitializeDateSelectionComboBoxes()
         {
+            programmaticChangingComboBoxFlag = true;
             //why i <= 12??? -- OH MONTHS
-            for(int i = 1; i <= 12; i++)
+            for (int i = 1; i <= 12; i++)
             {
                 MonthsComboBox.Items.Add(i);
             }
@@ -180,7 +200,8 @@ namespace PlanningProgramV3.Views.Calendar
             {
                 YearsComboBox.Items.Add(i);
             }
-            CurrentDate = DateTime.Now;
+            programmaticChangingComboBoxFlag = false;
+            //CurrentDate = DateTime.Now; -- unecessary since changing the current date thing in main window now
         }
 
         public void HighlightTask(CalendarTaskView eventToSelect)
@@ -399,20 +420,26 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void PreviousMonthButtonClicked(object sender, RoutedEventArgs e)
         {
+
+            programmaticChangingComboBoxFlag = true;
+
             if (CurrentDate.Month == 1)
             {
                 CurrentDate = CurrentDate.AddYears(-1);
             }
             CurrentDate = CurrentDate.AddMonths(-1);
+            programmaticChangingComboBoxFlag = false;
         }
 
         private void NextMonthButton_OnClick(object sender, RoutedEventArgs e)
         {
+            programmaticChangingComboBoxFlag = true;
             if (CurrentDate.Month == 12)
             {
                 CurrentDate = CurrentDate.AddYears(1);
             }
             CurrentDate = CurrentDate.AddMonths(1);
+            programmaticChangingComboBoxFlag = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -428,12 +455,14 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void MonthsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetCurrentDateByDateSelectionComboBoxes();
+            if (!programmaticChangingComboBoxFlag)
+                SetCurrentDateByDateSelectionComboBoxes();
         }
 
         private void YearsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetCurrentDateByDateSelectionComboBoxes();
+            if(!programmaticChangingComboBoxFlag)
+                SetCurrentDateByDateSelectionComboBoxes();
         }
     }
 }

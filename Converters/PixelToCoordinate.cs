@@ -21,24 +21,24 @@ namespace PlanningProgramV3.Converters
                 return (int)((double)value * int.Parse((string)parameter));
             }
             else
-                return (int)((double)value * 1000);
+                return (int)((double)value * (int)parameter);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
-            return (int)value / (int)parameter;
+            return (double)value / (int)parameter;
         }
         public static object ConvertToCoordinate(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
             if (parameter != null)
             {
-                return (int)((double)value * int.Parse((string)parameter));
+                return (int)((double)value * (int)parameter);
             }
             else
                 return (int)((double)value * 1000);
         }
         public object ConvertBackToPixel(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
-            return (int)value / (int)parameter;
+            return ((int)value) / (int)parameter;
         }
 
         //makign these static so can access in scripts and see if works

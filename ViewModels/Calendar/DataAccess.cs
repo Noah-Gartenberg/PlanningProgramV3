@@ -43,8 +43,8 @@ namespace PlanningProgramV3.ViewModels.Calendar
                             DateEnd DATE NOT NULL
                     );
                     INSERT OR REPLACE INTO CalendarTasks VALUES ('TABLEGUID1','GUID1', 'TaskFileName', 'TaskName1', 1, '2025-08-26 00:00:00.000','2025-08-27 00:00:00.000'),
-                                                                    ('TABLEGUID2','GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
-                                                                    ('TABLEGUID3','GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-01 00:00:00.000');";
+                                                                ('TABLEGUID2','GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
+                                                                ('TABLEGUID3','GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-10 00:00:00.000');";
                 //FURTHER TEST STUFF
                 //('GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
                 //('GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-01 00:00:00.000')
@@ -102,7 +102,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
             {
                 connection.Open();
                 var selectCommmand = new SqliteCommand(
-                    "SELECT * FROM CalendarTasks WHERE DateStart<=$Date AND DateEnd>=$Date;", connection);
+                    "SELECT * FROM CalendarTasks WHERE DateStart<=@Date AND DateEnd>=@Date;", connection);
                 //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
                     //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
                     //but maybe can store bool as to whether or not those are empty?
@@ -126,11 +126,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         query.GetDateTime(5));
                     entries.Add(temp);
                 }
-
-                
             }
-
-
             #endregion
 
             return entries;
@@ -144,7 +140,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
             {
                 connection.Open();
                 var selectCommmand = new SqliteCommand(
-                    "SELECT tableGUID FROM CalendarTasks WHERE DateStart<=@WeekEnd AND DateEnd>=@WeekStart;", connection);
+                    "SELECT * FROM CalendarTasks WHERE DateStart<=@WeekEnd AND DateEnd>=@WeekStart;", connection);
                 //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
                 //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
                 //but maybe can store bool as to whether or not those are empty?
@@ -158,7 +154,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
 
                     //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
 
-
+                    
                     var temp = new CalendarTaskData(
                         query.GetString(0),
                         query.GetString(1) != null ? true : false,
@@ -169,11 +165,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         query.GetDateTime(6));
                     entries.Add(temp);
                 }
-
-
             }
-
-
             #endregion
 
             return entries;
@@ -190,7 +182,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                 var selectCommmand = new SqliteCommand(
                     "SELECT * FROM CalendarTasks WHERE 1;", connection);
                 //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
-                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table when requested
                 //but maybe can store bool as to whether or not those are empty?
 
                 SqliteDataReader query = selectCommmand.ExecuteReader();
@@ -211,11 +203,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         query.GetDateTime(6));
                     entries.Add(temp);
                 }
-
-
             }
-
-
             #endregion
 
             return entries;
@@ -256,6 +244,61 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         query.GetDateTime(6));
                     entries.Add(temp);
                 }
+            }
+            #endregion
+
+            return entries;
+        }
+
+        #endregion
+
+        /**
+         * Generic Method to be used for prototyping purposes and will ideally be replaced when I get the chance/know more about mvvm,
+         * but for right now need to find a way to avoid the calendar controls knowing about the main view model class
+         */
+        public static List<CalendarTaskData> GetTasksFromSandwichMonths(DateTime CurrentDate)
+        {
+            DateTime StartDate = CurrentDate.AddMonths(-1);
+            DateTime EndDate = CurrentDate.AddMonths(1);
+            //because the month doesn't change years
+            if (StartDate.Month == 11)
+                StartDate = StartDate.AddYears(-1);
+            if (EndDate.Month == 0)
+                EndDate = EndDate.AddYears(1);
+            
+            var entries = new List<CalendarTaskData>();
+            #region ONLY FOR TESTING PURPOSES- WILL CHANGE IN FINAL VERSION - HOW DO I DO THIS?
+            using (var connection = new SqliteConnection("Data Source=CalendarTask_Database.db"))
+            {
+                connection.Open();
+                var selectCommmand = new SqliteCommand(
+                    "SELECT * FROM CalendarTasks WHERE DateStart<=@EndDate AND DateEnd>=@StartDate", connection);
+                //Only getting id, task name, task completion, date start, and date end because those are the ones which the calendars NEED to display
+                //the guid, and task file name aren't necessarily necessary, and so storing them would be a waste- can instead fetch them from the table
+                //but maybe can store bool as to whether or not those are empty?
+
+
+                selectCommmand.Parameters.AddWithValue("@StartDate", StartDate);
+                selectCommmand.Parameters.AddWithValue("@EndDate", EndDate);
+
+                SqliteDataReader query = selectCommmand.ExecuteReader();
+                //var db = new DataContext(connection);
+                while (query.Read())
+                {
+
+                    //how turn data from row to this -- might be my solution? https://learn.microsoft.com/en-us/dotnet/api/system.data.linq.datacontext.executequery?view=netframework-4.8.1&redirectedfrom=MSDN#System_Data_Linq_DataContext_ExecuteQuery__1_System_String_System_Object___
+
+
+                    var temp = new CalendarTaskData(
+                        query.GetString(0),
+                        query.GetString(1) != null ? true : false,
+                        query.GetString(2) != null ? true : false,
+                        query.GetString(3),
+                        query.GetBoolean(4),
+                        query.GetDateTime(5),
+                        query.GetDateTime(6));
+                    entries.Add(temp);
+                }
 
 
             }
@@ -265,7 +308,5 @@ namespace PlanningProgramV3.ViewModels.Calendar
 
             return entries;
         }
-
-        #endregion
     }
 }

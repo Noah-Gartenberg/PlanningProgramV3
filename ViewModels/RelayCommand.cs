@@ -8,14 +8,14 @@ namespace PlanningProgramV3.ViewModels
         private Action<object> execute;
 
         private Func<object?, bool> canExecute;
+        private RelayCommand? getTasksForTimePeriod;
+        private object value;
 
         public RelayCommand(Action<object> executeAction, Func<object?,bool>? canExecuteFunc)
         {
             execute = executeAction;
             canExecute = canExecuteFunc;
         }
-
-
 
         public event EventHandler? CanExecuteChanged;
 

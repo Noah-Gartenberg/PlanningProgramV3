@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Width="Auto" Click="PreviousMonthButtonClicked" Content="&lt;-"/>
+            <Button Grid.Column="0" Width="Auto" Click="PreviousMonthButtonClicked" Content="&lt;-" Command="{Binding GetTasksFromTimePeriodCommand}" CommandParameter="Month"/>
             <StackPanel Orientation="Horizontal" Width="Auto" Height="Auto" Grid.Column="1" Margin="50,0,50,0">
                 <ComboBox x:Name="MonthsComboBox" Width="Auto" BorderThickness="0" FontSize="16" FontWeight="DemiBold" SelectionChanged="MonthsComboBox_SelectionChanged">
                     <ComboBox.ItemTemplate>
@@ -32,7 +32,7 @@
                 <ComboBox x:Name="YearsComboBox" Width="Auto" BorderThickness="0" FontSize="16" FontWeight="DemiBold" SelectionChanged="YearsComboBox_SelectionChanged" />
             </StackPanel>
 
-            <Button Grid.Column="2" Width="Auto" Click="NextMonthButton_OnClick" Content="-&gt;" />
+            <Button Grid.Column="2" Width="Auto" Click="NextMonthButton_OnClick" Command="{Binding GetTasksFromTimePeriodCommand}" CommandParameter="Month" Content="-&gt;" />
         </Grid>
 
         <Grid x:Name="DayLabelsGrid" Margin="0,20,0,0" DockPanel.Dock="Top">

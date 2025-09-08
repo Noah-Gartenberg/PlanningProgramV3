@@ -1,4 +1,5 @@
-﻿using PlanningProgramV3.ViewModels;
+﻿using PlanningProgramV3.Converters;
+using PlanningProgramV3.ViewModels;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using PlanningProgramV3.Views.PlanControls;
 using System;
@@ -32,13 +33,19 @@ namespace PlanningProgramV3.Views
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(
             "SelectedObject", typeof(FrameworkElement), typeof(PlanDisplayerControl));
 
-        public PlannerViewModel CurrPlanner { get; set; }
+
+        //dependency and corresponding property so can be binded to by main window
+        public static readonly DependencyProperty CurrPlannerProperty = DependencyProperty.Register(
+            "CurrentPlanner", typeof(PlannerViewModel), typeof(PlanDisplayerControl));
+
+        public PlannerViewModel CurrentPlanner
+        {
+            get => ((PlannerViewModel)GetValue(CurrPlannerProperty));
+            set => SetValue(CurrPlannerProperty, value);
+        }
         public PlanDisplayerControl()
         {
             InitializeComponent();
-            CurrPlanner = new PlannerViewModel();
-            CurrPlanner.AddHighestTask(new TaskUserControl());
-            PlannerDisplayer.ItemsSource = CurrPlanner.HighestTasks;
         }
         
 
@@ -79,17 +86,19 @@ namespace PlanningProgramV3.Views
 
             object data = e.Data.GetData(DataFormats.Serializable);
 
-            if (data is UIElement element)
+            Point dropPosition = e.GetPosition(PlannerDisplayer);
+            Canvas.SetLeft(SelectedObject, dropPosition.X);
+            Canvas.SetTop(SelectedObject, dropPosition.Y);
+            CurrentPlanner.SetTopTaskPosition(SelectedObject);
+
+
+            //set the position of the object
+            //I know this isn't technically MVVM - I mean I don't think it's a violation per se, but yeah. 
+            //couldn't figure out how to do this from the planner
+            if(SelectedObject.DataContext is TaskViewModel task)
             {
-
-                Point dropPosition = e.GetPosition(PlannerDisplayer);
-                Canvas.SetLeft(SelectedObject, dropPosition.X);
-                Canvas.SetTop(SelectedObject, dropPosition.Y);
-                CurrPlanner.AddHighestTask(element);
-                //command isn't called here, for some reason
-                //TO DO MAKE THIS WORK AND FIGURE OUT WHY DROP ISN'T EVER CALLED
-                CurrPlanner.SetTopTaskPosition(element);
-
+                task.X = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.X, typeof(int), 1500,null));
+                task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
             }
             SelectedObject.IsHitTestVisible = true;
             PlannerDisplayer.SelectedIndex = -1;
@@ -106,7 +115,7 @@ namespace PlanningProgramV3.Views
 
                 if (data is UIElement element)
                 {
-                    CurrPlanner.RemoveTopTask(data);
+                    CurrentPlanner.DeleteItem(data);
                 }
             }
 
