@@ -45,6 +45,8 @@
               there is a corresponding file and task that go with the data stored in the database), to create a task that uses the data in the database in a file of the user's choice (if the task/file are not found), or to delete the
               task from the database (if the task/file are not found).
 
+  - While plans are their own files, there should only be one database for the entire program.
+
 **What Resources I have used**
   - As this project has had a massive learning curve, and is pretty large in terms of scope, I have had to consult a variety of resources to get it to even this point.
       - For help and advice, I have gone to one of the computer science professors at my college, as he teaches a course on software development.
@@ -54,14 +56,47 @@
       - Much of the code I have used from online has links to where I got them from commented in my code, so I can go back and see what others did, and to better understand why I did what I have done.
           - My general rule is to try to understand any code I have copied, but sometimes it is best to know where I got code from too, as code from online can sometimes be unoptimized or have its own issues
           - I frequently found myself having to tweak code from online to fit my own needs, so nothing is fully taken from online and copied as it is completely.
-       - I have _not_ used resources like ChatGPT, as while I'm sure they can be very useful tools, my goal with this project is to learn. I don't feel I can learn very well if all I'm doing is taking code from ChatGPT,
-           - which is part of the reason I tend to retype all code I get from online (for the most part - if it's a lot, I'll copypaste, but one or two lines, I won't), so I can better understand it, rather than just
-               copy-pasting it.
-
-
-**Optimization/Weird Code**
+          - I try to learn from the code I take from online, rather than to just copy paste it - if I'm really not understanding something, I'll even go so far as to write it line by line until I understand it.
 
 **Things that are completed, or done for now**
+  - Drag and Drop of tasks in plans - done for now
+  - Models and view models and views for the tasks and sub-tasks - done for now
+  - Getting tasks for calendars - the methods for fetching the tasks and querying the database for this purpose is complete
+  - Plan view - done for now but will return to later
+  - Can add sub-items to tasks, and can add items to plans
+
+**Needs work**
+  - Calendars - need to make more universal (rather than two different files, with lots of shared functionality and minute differences)
+    - Calendars also have a lot of code in the code behind, and I'm not quite sure if that breaks MVVM principles.
+      - I believe the way that the "CurrentDate" property/dependency property is handled currently breaks MVVM, but that was a choice that must also be pinned for later.
+      - Calendar controls are largely adapted from someone else's code, and so I need to do some more work on the code to make it all work.
+      - I would also like to switch out the calendar control combo boxes for a date picker, which will just be much easier, and will ideally enable me to avoid some issues
+          with certain events getting called when the date is set programattically rather than by the user.
+  - Plans - right now the model stores a list of the task view model, thereby breaking MVVM - I need to figure out how to fix this, while also ensuring that the plan control is not having to
+      display the model, rather than the view model.
+  - The Drag and Drop will at some point need to be changed to ensure that
+  - The viewmodel for the mainwindow will need to be changed to ensure that I can have multiple plans open at once (even if only one is displayed at a time) like in a tab control. I'd _like_
+      to only have the controls for one plan created at a time for optimization purposes, but I don't know if the tab control will do that by default.
 
 
-**Up next on my to do list**
+**Next Goals In Order**
+  - Make it so can save and load data into/from xml for the plans. This is my next priority for this project, and hopefully/ideally, by the time that someone sees this code,
+      this is done, but I can't guarantee this, due to school and other personal projects (also with the goal of learning how to do things- one example including my ideas for
+      redoing a dialogue system I made in freshman year to be much better) potentially cropping up or taking priority if I get sufficient things done on said personal projects.
+  - Displaying multiple plans at a time, saving and loading them
+  - Deleting elements and sub-items
+  - Being able to move around in the canvas, such that there is technically "infinite space" to be used in the plans, rather than just what can be displayed on a canvas control
+
+**Optimization/Weird Code**
+  - The fact that a lot of the code in the calendars is in the code behind is a choice made to save time (by not refactoring) - I intend to refactor the code there eventually,  
+      but since they work right now, they are not my immediate priority.
+  - The fact that when CurrentDate is set, the tasks for the month before and after that date are fetched was done intentionally to ensure that when buttons were pressed,
+      the tasks displayed would update. I intend to fix this when I refactor the calendars, but I wanted to prioritize a minimum functioning product right now so I could get this done.
+  - With the amounts of lists being displayed, and nested lists (because a task parented by a task, parented by a plan - each of which have a list; that's 3 lists right there), I've been thinking about how I could optimize the tasks if I needed to, so I could use
+      fewer list view controls. My current idea, is rather than nesting the list views, to have 3 collections per task: the subitems collection, a collection of ints that display if those are open (1) collapsed (0) or lack items (-1), and a list of integers that contains the
+          indentation from the parent, to be multiplied with some constant value to offset the sub-items from their parents (thereby giving the illusion of them being nested). This would remove all of the list views from any-subtasks.
+        - However, this would require a lot of work on my part, so, because I'm not seeing too big of optimization issues while debugging right now, it's not my priority, and I am instead prioritizing saving and loading data. 
+
+
+
+
