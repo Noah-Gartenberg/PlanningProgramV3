@@ -1,4 +1,4 @@
-**Timeline**:
+#Timeline:
   - This is my third attempt at a program that could enable me to emulate and eventually be able to stop using a paper planner.
     - The first attempt was about halfway through freshman year, and died off after less than a few hours total of inconsistent work.
     - The second attempt was worked on inconsistently throughout sophomore year, and was where I first became aware of MVVM. Nothing
@@ -12,7 +12,7 @@
       - Part of the reason for picking this project back up towards the end of the summer was to help me prepare for conducting my Honors research, as I will need to create a tool to use
             for my research during the spring, and WPF is the framework I currently feel most comfortable using. 
 
-**Goals**:
+#Goals:
   - When I began the first attempt into this project, I had big plans, and poorly defined ideas for what I wanted to create, but the core of it stayed consistent:
       - I wanted to create a program where I could create files in which I could list and break down my tasks into smaller "sub-tasks" that could then too be further broken down as needed,
           and where I could expand or collapse these tasks so their sub-tasks would not be visible if I didn't want them to be.
@@ -23,13 +23,15 @@
         - I wanted to be able to move these tasks around within their respetive plans, and to move the user's perspective around such that there could be tasks in the file that are not displayed in the plan,
             enabling rearranging of items on screen, and allowing for more tasks to be packed into one plan.
   - Here is an example of what I had envisioned from my second attempt during Sophomore year. I used example tasks based on some of my current projects and tasks at the time:
+[ImagesForGithubOfPlanningProgram/EarliestPlanningProgramVersion.png]
 
   - In this most recent iteration, I realized that what I really wanted from this tool was a replacement for my paper planner, as having to tie tasks to specific days or times,
       and seeing a day in my planner filled with writing - even if that writing is 75% description or expanding upon what I have to do in a given day - tends to stress me out and make me feel
       like I have to do more than I actually do.
-  - After this realization, I made another visualization of what I was hoping to create, as shown below:
+      - After this realization, I made another visualization of what I was hoping to create, as shown below:
+  [ImagesForGithubOfPlanningProgram/UpdatedPlanningProgramDrawing.jpg]
 
-**How I'm going to accomplish this/How Will It All Work**
+#How I'm going to accomplish this/How Will It All Work:
   - There are largely two parts that I don't fully think are "self-explanatory" as to how I intend to accomplish what I'm doing. These are how I will be saving the plans and tasks, and how I will be
       displaying them to the screen in the calendars.
         - When I say self-explanatory, I don't mean literally self explanatory, but I mean more just that in the case of a good portion of my code, such as with the models and view models and views,
@@ -47,7 +49,7 @@
 
   - While plans are their own files, there should only be one database for the entire program.
 
-**What Resources I have used**
+#What Resources I have used:
   - As this project has had a massive learning curve, and is pretty large in terms of scope, I have had to consult a variety of resources to get it to even this point.
       - For help and advice, I have gone to one of the computer science professors at my college, as he teaches a course on software development.
       - I have also frequently used articles on CodeProject in order to better understand WPF and some of the code I am writing.
@@ -58,13 +60,13 @@
           - I frequently found myself having to tweak code from online to fit my own needs, so nothing is fully taken from online and copied as it is completely.
           - I try to learn from the code I take from online, rather than to just copy paste it - if I'm really not understanding something, I'll even go so far as to write it line by line until I understand it.
 
-**Things that are completed, or done for now**
+#Things that are completed, or done for now:
   - Models and view models and views for the tasks and sub-tasks - done for now
   - Getting tasks for calendars - the methods for fetching the tasks and querying the database for this purpose is complete
   - Plan view - done for now but will return to later
   - Can add sub-items to tasks, and can add items to plans
 
-**Needs work**
+#Needs work:
   - Calendars - need to make more universal (rather than two different files, with lots of shared functionality and minute differences)
     - Calendars also have a lot of code in the code behind, and I'm not quite sure if that breaks MVVM principles.
       - I believe the way that the "CurrentDate" property/dependency property is handled currently breaks MVVM, but that was a choice that must also be pinned for later.
@@ -79,7 +81,7 @@
   - Drag and Drop is done *for now*, but it will need some work as I'm still getting errors every every once in a while while trying to use the program to make example images
 
 
-**Next Goals In Order**
+#Next Goals In Order:
   - Make it so can save and load data into/from xml for the plans. This is my next priority for this project, and hopefully/ideally, by the time that someone sees this code,
       this is done, but I can't guarantee this, due to school and other personal projects (also with the goal of learning how to do things- one example including my ideas for
       redoing a dialogue system I made in freshman year to be much better) potentially cropping up or taking priority if I get sufficient things done on said personal projects.
@@ -87,7 +89,7 @@
   - Deleting elements and sub-items
   - Being able to move around in the canvas, such that there is technically "infinite space" to be used in the plans, rather than just what can be displayed on a canvas control
 
-**Optimization/Weird Code**
+#Optimization/Weird Code:
   - The fact that a lot of the code in the calendars is in the code behind is a choice made to save time (by not refactoring) - I intend to refactor the code there eventually,  
       but since they work right now, they are not my immediate priority.
   - The fact that when CurrentDate is set, the tasks for the month before and after that date are fetched was done intentionally to ensure that when buttons were pressed,
