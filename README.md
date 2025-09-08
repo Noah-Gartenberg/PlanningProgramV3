@@ -59,7 +59,6 @@
           - I try to learn from the code I take from online, rather than to just copy paste it - if I'm really not understanding something, I'll even go so far as to write it line by line until I understand it.
 
 **Things that are completed, or done for now**
-  - Drag and Drop of tasks in plans - done for now
   - Models and view models and views for the tasks and sub-tasks - done for now
   - Getting tasks for calendars - the methods for fetching the tasks and querying the database for this purpose is complete
   - Plan view - done for now but will return to later
@@ -77,6 +76,7 @@
   - The Drag and Drop will at some point need to be changed to ensure that
   - The viewmodel for the mainwindow will need to be changed to ensure that I can have multiple plans open at once (even if only one is displayed at a time) like in a tab control. I'd _like_
       to only have the controls for one plan created at a time for optimization purposes, but I don't know if the tab control will do that by default.
+  - Drag and Drop is done *for now*, but it will need some work as I'm still getting errors every every once in a while while trying to use the program to make example images
 
 
 **Next Goals In Order**
