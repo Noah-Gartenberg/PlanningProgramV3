@@ -67,7 +67,7 @@ namespace PlanningProgramV3.ViewModels
         public void SetTopTaskPosition(object InputViewModel)
         {
             //if I can ensure this is called on drop by binding to it...
-            MessageBox.Show("SetTopTaskPosition has not yet been implemented");
+            //MessageBox.Show("SetTopTaskPosition has not yet been implemented");
             //in theory should also check to see if can move objects, but this is good for now
         }
 

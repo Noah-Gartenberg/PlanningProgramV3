@@ -29,7 +29,7 @@ namespace PlanningProgramV3.ViewModels
                 {
                     currentDate = value;
                     OnPropertyChanged(nameof(CurrentDate));
-                    MessageBox.Show("Current Date is " + value);
+                    //MessageBox.Show("Current Date is " + value); FOR TESTING PURPOSES
                     //technically shouldn't be changing this data in here, but tbh right now I don't care, just want to get a functioning prototype and then I'll refactor later
                     Tasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(currentDate));
                 }
@@ -120,6 +120,7 @@ namespace PlanningProgramV3.ViewModels
             currentDate = DateTime.Today;
 
             DataAccess.InitializeDatabase();
+            Tasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
 
             //Initialize tasks
             
