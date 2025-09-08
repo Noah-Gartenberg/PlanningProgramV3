@@ -6,7 +6,7 @@
         overwhelmed - by my course load and also partially by the amount of things that needed to be done to make my (at the time
         poorly defined and fleshed out) idea a reality.
     - This third attempt began in the last two weeks of summer break, and has continued into the fall semester (this semester) of the academic year, and have worked on it
-        somewhat frequently since - but even then, it's a high learning curve.
+        somewhat frequently since - but even then, it's not something I can prioritize all of or even most of my time to.
   - I am using this project as a way to learn how to develop software in C#, which is the programming language I am most comfortable with. I chose WPF back in the first attempt
       as it seemed like I had already had access to it (rather than having to download a seperate package - I didn't know much at the time, as this was freshman year) and could use it in C#.
       - Part of the reason for picking this project back up towards the end of the summer was to help me prepare for conducting my Honors research, as I will need to create a tool to use
