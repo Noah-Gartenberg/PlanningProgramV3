@@ -1,41 +1,29 @@
 # Timeline:
   - This is my third attempt at a program that could enable me to emulate and eventually be able to stop using a paper planner.
-    - The first attempt was about halfway through freshman year, and died off after less than a few hours total of inconsistent work.
-    - The second attempt was worked on inconsistently throughout sophomore year, and was where I first became aware of MVVM. Nothing
-        much came of it beyond generally figuring out how to make some of the smaller, or less important controls because I got
-        overwhelmed - by my course load and also partially by the amount of things that needed to be done to make my (at the time
-        poorly defined and fleshed out) idea a reality.
-    - This third attempt began in the last two weeks of summer break, and has continued into the fall semester (this semester) of the academic year, and have worked on it
+    - The first two attempts were relatively short lived, and amounted to nothing. The knowledge I'd learned from them was not the most accurate, and I wound up having to rewrite the code from them for this attempt as a result.
+    - Both of the first two attempts took place either half way through last year, or a year before that (respectively). I ceased working on them due to workload, a lack of true planning, and wanting to prioritize other projects.
+    - This third attempt began in the last two weeks of summer break (though I'd been thinking about and drawing ideas a week or two before that), and has continued into the fall semester of this academic year, and have worked on it
         somewhat frequently since - but even then, it's not something I can prioritize all of or even most of my time to.
-  - I am using this project as a way to learn how to develop software in C#, which is the programming language I am most comfortable with. I chose WPF back in the first attempt
-      as it seemed like I had already had access to it (rather than having to download a seperate package - I didn't know much at the time, as this was freshman year) and could use it in C#.
-      - Part of the reason for picking this project back up towards the end of the summer was to help me prepare for conducting my Honors research, as I will need to create a tool to use
-            for my research during the spring, and WPF is the framework I currently feel most comfortable using. 
+  - I am using this project as a way to learn how to develop software programs, and I am doing this in WPF and C#. C# is the programming language I am most comfortable with.
+      - This project will also help me complete the research I need to do as part of my college's honors program, as I need to make a software program to conduct my research, and I plan to use WPF. 
 
 # Goals:
   - When I began the first attempt into this project, I had big plans, and poorly defined ideas for what I wanted to create, but the core of it stayed consistent:
-      - I wanted to create a program where I could create files in which I could list and break down my tasks into smaller "sub-tasks" that could then too be further broken down as needed,
-          and where I could expand or collapse these tasks so their sub-tasks would not be visible if I didn't want them to be.
-      - Examples of subtasks would include: 
-        - I wanted to be to add more details to these tasks, such as being able to put images or descriptions that could further explain them,
-        - I wanted to be able to link to other "plans" or tasks in "plans" (the file I want to create) if I felt a task was getting so big that I needed to break down even more
-              (such as when I'm planning out features for games)
-        - I wanted to be able to move these tasks around within their respetive plans, and to move the user's perspective around such that there could be tasks in the file that are not displayed in the plan,
-            enabling rearranging of items on screen, and allowing for more tasks to be packed into one plan.
-  - Here is an example of what I had envisioned from my second attempt during Sophomore year. I used example tasks based on some of my current projects and tasks at the time:
+      - I wanted to create a program where I could create files in which I could list and break down my tasks into smaller "sub-tasks" or "subtask information" that could then too be further broken down as needed into sub-tasks of their own.
+        - I wanted to be able to expand or collapse these tasks so their sub-tasks would not be visible if I didn't want them to be, thereby decreasing visual clutter and help me figure out my most immediate goals.
+      - Examples of subtasks or "subtask-information" would include: 
+        - I wanted to be to add more details to these tasks, such as being able to put images or descriptions that could further explain them.
+        - I wanted to be able to link to other "plans" or tasks in "plans" (the file I want to create) if I felt a task could be further broken down into smaller parts (such as when I'm planning out features for games).
+        - I wanted to be able to move these tasks around within their respetive plans, and to move the user's perspective around such that there could be tasks in the file that are not displayed in the plan, enabling rearranging of items on screen, and allowing for more tasks to be packed into one plan.
+  - Here is an example of what I had envisioned from my second attempt during Sophomore year. I used example tasks based on some of my projects and workload at the time:
 ![EarliestPlanningProgramDrawing](ImagesForGithubOfPlanningProgram/EarliestPlanningProgramVersion.png)
-
-
-  - In this most recent iteration, I realized that what I really wanted from this tool was a replacement for my paper planner, as having to tie tasks to specific days or times,
-      and seeing a day in my planner filled with writing - even if that writing is 75% description or expanding upon what I have to do in a given day - tends to stress me out and make me feel
-      like I have to do more than I actually do.
-      - After this realization, I made another visualization of what I was hoping to create, as shown below:
+  - In this most recent iteration, I realized that I wanted this tool to replace my paper planner, as having to tie tasks to specific days if they didn't need to be (ex: if they were a project I wanted to work on in general), and seeing a day in my planner filled with writing - even if that writing is 75% description - tends to stress me out and make me feel overwhelmed.
+      - After this realization, I made another visualization of what I was hoping to create, as shown below (apologies for the poor drawing and lack of alt-text right now, I plan to add them later):
   ![UpdatedPlanningProgramDrawing](ImagesForGithubOfPlanningProgram/UpdatedPlanningProgramDrawing.jpg)
 
 
 # How I'm going to accomplish this/How Will It All Work:
-  - There are largely two parts that I don't fully think are "self-explanatory" as to how I intend to accomplish what I'm doing. These are how I will be saving the plans and tasks, and how I will be
-      displaying them to the screen in the calendars.
+  - There are largely two parts that I don't fully think are "self-explanatory" as to how I intend to accomplish what I'm doing. These are how I will be saving the plans and tasks, and how I will be displaying them to the screen in the calendars.
         - When I say self-explanatory, I don't mean literally self explanatory, but I mean more just that in the case of a good portion of my code, such as with the models and view models and views,
             can be explained as being such - and what can't be explained fully within those files as being part of MVVM (or may come across as questionable choices), are choices I will touch on in a later section.
       - In the case of the former, my current plan is to save the data to XML, in part because I feel more comfortable working with XML than JSON or some other data format from when I was working on mods for Baldur's Gate 3.
