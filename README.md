@@ -1,13 +1,5 @@
-# Timeline:
-  - This is my third attempt at a program that could enable me to emulate and eventually be able to stop using a paper planner.
-    - The first two attempts were relatively short lived, and amounted to nothing. The knowledge I'd learned from them was not the most accurate, and I wound up having to rewrite the code from them for this attempt as a result.
-    - The first two attempts took place roughly half way through last year, and a year before that (respectively). I ceased working on them due to workload, a lack of understanding, and wanting to prioritize other projects.
-    - This third attempt began in the last two weeks of summer break (though I'd been thinking up ideas, and researching ways to implement various parts a week or two before that), and has continued into the fall semester of this academic year. I've worked on it frequently since - but even then, it's not something I can prioritize all of or even most of my time to.
-  - I am using this project as a way to learn how to develop software programs using WPF and C#.
-      - This project will also help me complete the research I plan to do for my college's honors program. My research will require a software program, and I plan to make one for myself.
-
 # Goals:
-  - When I began my first attempt, I had big ideas that I had no clue how to create. The core of the program has stayed largely the same:
+  - When I began my first attempt, I had big ideas that I had no clue how to create. The core of the program has stayed largely the same in each attempt:
     - I wanted to create a program where I could create files in which I could list and break down my tasks into smaller "sub-items" that could then too be further broken down - as needed - into sub-items of their own.
       - I wanted to be able to expand or collapse these tasks so their sub-tasks would not be visible if I didn't want them to be, thereby decreasing visual clutter and help me figure out my most immediate goals.
     - Examples of subtasks or "subtask-information" would include: 
@@ -60,13 +52,16 @@
 ![This is an image of the Weekly Calendar with tasks displaying](ImagesForGithubOfPlanningProgram/WeeklyCalendarWithTasks.png)
 ![This is an example of what I would like to be able to do with individual plans, using my current workload for today at the time of writing this readme](ImagesForGithubOfPlanningProgram/ExamplePlanToday.png)
 
-# Immediate goals for a working prototype going:
+# Immediate goals for getting a working prototype going:
 - Saving and Loading Plans
   - I need to able to write an XML document that can be loaded into the code
     - I believe - if I understand correctly - that to do this I need to (or can - admittedly not too sure if its required) create an xml schema to define each type I want to be able to store.
+      - This has been done, but I am unsure if I have done it correctly (in terms of "best practice" - not "is the xml valid")
   - I need to tweak the sqlite database and ensure that the xml documnets have fields for storing the version of the program that tasks were created on, if nothing else to ensure that errors don't occur when I add to the program.
     - This is also something I have learned from working on mods for Baldur's Gate 3.
     - I also need to ensure that the date-duration controls can add themselves to the sqlite database.
+  - Need to do some research into how data serialization works for programs like these, specifically to and from xml. I need to understand how exactly an xml schema would be applied to an xml document (when one is using code, and not manually writing them), and what code I need to write.
+  - Remove any references to view models within the code of the models.
   
 # Goals for after a functioning prototype:
 It bears noting that no issue I mention here is so cumbersome or limiting that I could not use the program (if I could save and load plans now) yet, but they are issues that once I have a functioning prototype, I will need to fix sooner rather than later. 
@@ -106,3 +101,12 @@ These are goals of mine that are not priorities and won't be any time soon until
   - I have not had the time to do a lot of debugging, and I don't want to be trying to optimize things if they're not causing issues, so once I have prototypes of all the features in, I'll see how it runs and how buggy it is.
 - Art and making it look good
   - I'm not an art person. I'd like to learn, but I don't have the time, so I think a faster and better solution to this problem - once again, once a prototype is complete - would be to figure out how I want the program to look and then hire someone to make art for this program. 
+
+
+# Timeline (of attempts):
+  - This is my third attempt at a program that could enable me to emulate and eventually be able to stop using a paper planner.
+    - The first two attempts were relatively short lived, and amounted to nothing. The knowledge I'd learned from them was not the most accurate, and I wound up having to rewrite the code from them for this attempt as a result.
+    - The first two attempts took place roughly half way through last year, and a year before that (respectively). I ceased working on them due to workload, a lack of understanding, and wanting to prioritize other projects.
+    - This third attempt began in the last two weeks of summer break (though I'd been thinking up ideas, and researching ways to implement various parts a week or two before that), and has continued into the fall semester of this academic year. I've worked on it frequently since - but even then, it's not something I can prioritize all of or even most of my time to.
+  - I am using this project as a way to learn how to develop software programs using WPF and C#.
+      - This project will also help me complete the research I plan to do for my college's honors program. My research will require a software program, and I plan to make one for myself.
