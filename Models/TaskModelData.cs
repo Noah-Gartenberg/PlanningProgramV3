@@ -24,13 +24,13 @@ namespace PlanningProgramV3.Models
 
         public bool isCompleted = false;
         public string taskName = "";
-        public ObservableCollection<PlannerItemViewModel> subItems;
+        public ObservableCollection<BaseItemModelData> subItems;
 
         public Point coordinates;
         public string uuid;
 
         public TaskModelData() : base(PlannerItemType.Task) { }
-        public TaskModelData(bool isCompleted, string taskName, ObservableCollection<PlannerItemViewModel> subItems, Point coordinates, string uuid, BaseItemModelData parent) : base(PlannerItemType.Task, parent)
+        public TaskModelData(bool isCompleted, string taskName, ObservableCollection<BaseItemModelData> subItems, Point coordinates, string uuid, BaseItemModelData parent) : base(PlannerItemType.Task, parent)
         {
             this.isCompleted = isCompleted;
             this.taskName = taskName;

@@ -64,6 +64,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
 
         }
+
+        
         //public void SetHighestParent(TaskViewModel? parent)
         //{
         //    if (Parent != null)

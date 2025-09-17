@@ -53,7 +53,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
             }
         }
 
-        public static void AddTask(ref TaskDurationModelData CalendarTaskData)
+        public static void AddTask(ref DateDurationModelData CalendarTaskData)
         {
             
         }

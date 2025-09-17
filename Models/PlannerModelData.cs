@@ -25,10 +25,10 @@ namespace PlanningProgramV3.Models
         public string fileName;
         //Right now only needs to contain the top of the list of plan items, as the rest will contain their children
             //need to use taskviewmodel instead of taskmodeldata because don't have time/energy to refactor TO DO, REFACTOR
-        public ObservableCollection<TaskViewModel> topPlanItems;
+        public ObservableCollection<TaskModelData> topPlanItems;
 
         public PlannerModelData() {
-            topPlanItems = new ObservableCollection<TaskViewModel>();
+            topPlanItems = new ObservableCollection<TaskModelData>();
             fileName = string.Empty;
         }
     }

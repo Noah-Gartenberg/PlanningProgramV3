@@ -24,7 +24,7 @@ namespace PlanningProgramV3.ViewModels
             {
                 return Text;
             }
-            else if (item is TaskDurationViewModel)
+            else if (item is DateDurationViewModel)
             {
                 return Date;
             }

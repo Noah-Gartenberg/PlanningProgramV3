@@ -1,4 +1,5 @@
 ﻿using PlanningProgramV3.ViewModels.Calendar;
+using PlanningProgramV3.ViewModels.ItemViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -115,15 +116,17 @@ namespace PlanningProgramV3.ViewModels
             plans = new ObservableCollection<PlannerViewModel>();
             GetTasksFromTimePeriodCommand = new RelayCommand(GetTasksFromTimePeriod,null);
             plans.Add(new PlannerViewModel());
-
+            
             //initializecurrentDate
             currentDate = DateTime.Today;
 
             DataAccess.InitializeDatabase();
             Tasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
+            //THIS HIGHEST TASKS.ADD IS FOR TESTING PURPOSES
+            plans[0].AddHighestTask(new TaskViewModel());
 
             //Initialize tasks
-            
+
         }
         public virtual void GetTasksFromTimePeriod(object timePeriod)
         {

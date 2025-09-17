@@ -12,14 +12,14 @@ namespace PlanningProgramV3.Models
      * 
      */
     [Serializable()]
-    public class TaskDurationModelData : BaseItemModelData
+    public class DateDurationModelData : BaseItemModelData
     {
         public string parentPlanFile = "";
         public string parentTaskUUID = "";
         public DateTime startDate;
         public DateTime endDate;
 
-        public TaskDurationModelData() : base(PlannerItemType.Date)
+        public DateDurationModelData() : base(PlannerItemType.Date)
         {
             startDate = DateTime.Today;
             endDate = DateTime.Today;

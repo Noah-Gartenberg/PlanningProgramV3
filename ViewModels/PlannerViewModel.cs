@@ -11,6 +11,9 @@ namespace PlanningProgramV3.ViewModels
     
     public class PlannerViewModel : INotifyPropertyChanged
     {
+        
+        
+
         //public List<PlannerItemViewModel> selectedTasks; // this is a placeholder list for the selected objects and stuff...
                                                          // should only have top level objects selected, but unsure how to do that rn, so won't
         private PlannerModelData data;
@@ -36,10 +39,19 @@ namespace PlanningProgramV3.ViewModels
                 }
             }
         }
-
+        //add custom observable collection, and when add to it, add to the inheriting model too
+        private ObservableCollection<TaskViewModel> highestTasks;
         public ObservableCollection<TaskViewModel> HighestTasks
         {
-            get => data.topPlanItems;
+            get => highestTasks;
+            set
+            {
+                if (highestTasks != value)
+                {
+                    highestTasks = value;
+                    OnPropertyChanged(nameof(HighestTasks));
+                }
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -53,10 +65,13 @@ namespace PlanningProgramV3.ViewModels
         {
             if(task is TaskViewModel temp)
             {
-                data.topPlanItems.Add(temp);
+                HighestTasks.Add(temp);
+                //I know this is technically bad practice, but I needed a way to access state so that I could add it to the model data
+                    //which I needed to do to ensure that the planner view model stored only view models, whereas I needed the models to contain only models so they could be serialized
+                data.topPlanItems.Add(temp.State);
                 OnPropertyChanged(nameof(HighestTasks));
             }
-            else
+            else 
             {
                 throw new ArgumentException("Should have been a TaskViewModel");
             }
@@ -104,7 +119,7 @@ namespace PlanningProgramV3.ViewModels
             data = new PlannerModelData();
             //SetPosition = new RelayCommand(SetTopTaskPosition, null);
             AddTask = new RelayCommand(AddTopTask, null);
-            HighestTasks.Add(new TaskViewModel());
+            HighestTasks = new ObservableCollection<TaskViewModel>();
         }
     }
 }

@@ -10,29 +10,29 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
     /**
      * This class contains the view model data for the TimeSensetive Controls
      */
-    public class TaskDurationViewModel : PlannerItemViewModel
+    public class DateDurationViewModel : PlannerItemViewModel
     {
         #region Properties
         public string ParentFilePath
         {
-            get => ((TaskDurationModelData)state).parentPlanFile;
+            get => ((DateDurationModelData)state).parentPlanFile;
             set
             {
-                if (((TaskDurationModelData)state).parentPlanFile != value)
+                if (((DateDurationModelData)state).parentPlanFile != value)
                 {
-                    ((TaskDurationModelData)state).parentPlanFile = value;
+                    ((DateDurationModelData)state).parentPlanFile = value;
                     OnPropertyChanged(nameof(ParentFilePath));
                 }
             }
         }
         public string ParentUUID
         {
-            get => ((TaskDurationModelData)state).parentTaskUUID;
+            get => ((DateDurationModelData)state).parentTaskUUID;
             set
             {
-                if (((TaskDurationModelData)state).parentTaskUUID != value)
+                if (((DateDurationModelData)state).parentTaskUUID != value)
                 {
-                    ((TaskDurationModelData)state).parentTaskUUID = value;
+                    ((DateDurationModelData)state).parentTaskUUID = value;
                     OnPropertyChanged(nameof(ParentUUID));
                 }
             }
@@ -40,13 +40,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         public DateTime StartDate
         {
-            get => ((TaskDurationModelData)state).startDate;
+            get => ((DateDurationModelData)state).startDate;
             set
             {
                 //ensure that the new start date is not more than the end date - if it is, don't set the start date? Set it to the end date? Going with the former for now
-                if (((TaskDurationModelData)state).startDate != value && value > EndDate)
+                if (((DateDurationModelData)state).startDate != value && value > EndDate)
                 {
-                    ((TaskDurationModelData)state).startDate = value;
+                    ((DateDurationModelData)state).startDate = value;
                     OnPropertyChanged(nameof(StartDate));
                 }
             }
@@ -54,13 +54,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         public DateTime EndDate
         {
-            get => ((TaskDurationModelData)state).endDate;
+            get => ((DateDurationModelData)state).endDate;
             set
             {
                 //ensure that new end date is not less than the start date - if it is, same rule as start date, and just don't set
-                if (((TaskDurationModelData)state).endDate != value && value < StartDate)
+                if (((DateDurationModelData)state).endDate != value && value < StartDate)
                 {
-                    ((TaskDurationModelData)state).endDate = value;
+                    ((DateDurationModelData)state).endDate = value;
                     OnPropertyChanged(nameof(EndDate));
                 }
             }
@@ -68,7 +68,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        public TaskDurationViewModel() : base(new TaskDurationModelData())
+        public DateDurationViewModel(DateDurationModelData setState) : base(setState) { }
+        public DateDurationViewModel() : base(new DateDurationModelData())
         {
 
         }
