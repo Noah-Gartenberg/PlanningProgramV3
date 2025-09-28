@@ -3,10 +3,9 @@
         and also the filepath where files should be saved/opened. At least for right now.-->
 
 <xs:schema id="ProgramConfig"
-    elementFormDefault="qualified"
 	xmlns="http://tempuri.org/ProgramConfig.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://tempuri.org/ProgramConfig.xsd"
+	version="1.0"
 >
 
 	

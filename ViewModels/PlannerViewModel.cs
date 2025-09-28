@@ -2,9 +2,11 @@
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
@@ -18,9 +20,23 @@ namespace PlanningProgramV3.ViewModels
                                                          // should only have top level objects selected, but unsure how to do that rn, so won't
         private PlannerModelData data;
 
+        //Dirty flag - if true, needs to be saved
+        private bool dirtyFlag;
+        public bool DirtyFlag 
+        { 
+            get => dirtyFlag;
+            set
+            {
+                if (dirtyFlag != value)
+                {
+                    dirtyFlag = value;
+                    OnPropertyChanged(nameof(DirtyFlag));
+                }
+            }
+        }
+
         //public RelayCommand SetPosition { get; }
         public RelayCommand AddTask { get; }
-
 
         /**
          * 
@@ -120,6 +136,11 @@ namespace PlanningProgramV3.ViewModels
             //SetPosition = new RelayCommand(SetTopTaskPosition, null);
             AddTask = new RelayCommand(AddTopTask, null);
             HighestTasks = new ObservableCollection<TaskViewModel>();
+        }
+
+        public void Serialize_Event(object sender, EventArgs e)
+        {
+            
         }
     }
 }

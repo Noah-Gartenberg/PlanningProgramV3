@@ -41,9 +41,21 @@ namespace PlanningProgramV3
                     daysFromStartOfWeek = 6;
                     break;
             }
-            if(daysFromStartOfWeek != 0)
+            if (daysFromStartOfWeek != 0)
                 return new DateTime(date.Year, date.Month, date.AddDays(-1 * daysFromStartOfWeek).Day);
             return date;
+        }
+
+        /*
+         * This struct will be stored in the main window view model, to ensure the type of object will be saved/accessible by the software where necessary
+         * Currently not in use
+         */
+        public struct SoftwareVersion
+        {
+            int major;
+            int minor;
+            int revision;
+            int build;
         }
     }
 }

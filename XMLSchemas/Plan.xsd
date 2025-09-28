@@ -7,8 +7,8 @@
 <xs:schema id="Plan"
 	xmlns="http://tempuri.org/Plan.xsd"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://tempuri.org/Plan.xsd"
     elementFormDefault="qualified"
+	version="1.0"
 >
 	
 	
