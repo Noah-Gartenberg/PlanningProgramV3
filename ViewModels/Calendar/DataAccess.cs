@@ -34,8 +34,8 @@ namespace PlanningProgramV3.ViewModels.Calendar
                 command.CommandText =
                     @"
                         CREATE TABLE IF NOT EXISTS CalendarTasks(
-                            tableGUID TEXT PRIMARY KEY,
-                            taskGUID TEXT,
+                            tableGUID VARCHAR(36) PRIMARY KEY,
+                            taskGUID VARCHAR(36),
                             TaskFileName TEXT,
                             TaskName TEXT NOT NULL,
                             TaskCompletion BOOLEAN NOT NULL,

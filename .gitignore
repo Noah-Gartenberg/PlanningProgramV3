@@ -7,6 +7,9 @@
 #folder is for images for the readme
 /ImagesForGithubOfPlanningProgram/
 
+#ignore database Files
+.db
+
 
 # User-specific files
 *.rsuser
