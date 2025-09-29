@@ -3,8 +3,10 @@
         and also the filepath where files should be saved/opened. At least for right now.-->
 
 <xs:schema id="ProgramConfig"
+	targetNamespace="http://tempuri.org/ProgramConfig.xsd"
 	xmlns="http://tempuri.org/ProgramConfig.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
 	version="1.0"
 >
 
@@ -35,10 +37,10 @@
 	<xs:element name="FileStoragePath" type="xs:anyURI"/>
 	<!--Storing the version of the software in which the plan was made-->
 
-	<!--Declared types in multiple spots because I couldn't figure out how to make eveyrthing work, where I could have one schema of reusable types like 
-		UUID or Software Version so I'm going to brute force this for now-->
-	
 	<xs:element name="SoftwareVersion" type="SoftwareVersion"/>
+	
+	<!--Bool to store if this is the first time users have opened program, so it can display a "how to use"-->
+	<xs:element name="FirstOpen" type="xs:boolean" default="false"/>
 	
 
 	
