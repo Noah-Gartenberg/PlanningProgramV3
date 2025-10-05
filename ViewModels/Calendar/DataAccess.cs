@@ -34,17 +34,17 @@ namespace PlanningProgramV3.ViewModels.Calendar
                 command.CommandText =
                     @"
                         CREATE TABLE IF NOT EXISTS CalendarTasks(
-                            taskGUID CHAR(36),
+                            tableGUID VARCHAR(36) PRIMARY KEY,
+                            taskGUID VARCHAR(36),
                             TaskFileName TEXT,
                             TaskName TEXT NOT NULL,
                             TaskCompletion BOOLEAN NOT NULL,
                             DateStart DATE NOT NULL,
-                            DateEnd DATE NOT NULL,
-                            PRIMARY KEY (taskGUID, DateStart, DateEnd)
+                            DateEnd DATE NOT NULL
                     );
-                    INSERT OR REPLACE INTO CalendarTasks VALUES ('GUID1', 'TaskFileName', 'TaskName1', 1, '2025-08-26 00:00:00.000','2025-08-27 00:00:00.000'),
-                                                                ('GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
-                                                                ('GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-10 00:00:00.000');";
+                    INSERT OR REPLACE INTO CalendarTasks VALUES ('TABLEGUID1','GUID1', 'TaskFileName', 'TaskName1', 1, '2025-08-26 00:00:00.000','2025-08-27 00:00:00.000'),
+                                                                ('TABLEGUID2','GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
+                                                                ('TABLEGUID3','GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-10 00:00:00.000');";
                 //FURTHER TEST STUFF
                 //('GUID2', 'TaskFileName', 'TaskName2', 0, '2025-08-28 00:00:00.000','2025-08-31 00:00:00.000'),
                 //('GUID3', 'TaskFileName', 'TaskName3', 0, '2025-08-27 00:00:00.000', '2025-09-01 00:00:00.000')
