@@ -9,7 +9,9 @@
 
 #ignore database Files
 .db
-
+#ignore xml Files
+.xml
+XML
 
 # User-specific files
 *.rsuser
