@@ -22,19 +22,36 @@
     </Window.DataContext>
 
     <!--Agenda Portion-->
-    <Grid>
         
 
         <!--<local:CalendarCell Grid.RowSpan="1"/>-->
+        
+    <DockPanel>
         <!--Menu-->
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" Padding="20,1,0,1" Background="#FFE0E5E2">
 
-        <Menu HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" Padding="20,1,0,1" Background="#FFE0E5E2">
+            <Menu.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Open" Executed="CommandBinding_OpenCommandExecuted" CanExecute="CommandBinding_CanExecute_OpenCommand"/>
+                <CommandBinding Command="ApplicationCommands.Save" Executed="CommandBinding_SaveCommandExecuted" CanExecute="CommandBinding_CanExecute_SaveCommand"/>
+            </Menu.CommandBindings>
+
             <MenuItem Header="File" BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
-                <!--a) new
-            b) open - - > display monthly, weekly, daily calendars
-            c) save
-            d) save as
-            e) exit-->
+                <MenuItem Header="Open" Command="ApplicationCommands.Open">
+
+                </MenuItem>
+                <MenuItem Header="Save" Command="ApplicationCommands.Save">
+                    
+                </MenuItem>
+                
+                <MenuItem Header="Save As">
+                    
+                </MenuItem>
+                <MenuItem Header="Close Plan">
+
+                </MenuItem>
+                <MenuItem Header="Exit Program">
+
+                </MenuItem>
             </MenuItem>
 
             <MenuItem Header="Edit"  BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
@@ -58,116 +75,69 @@
 
 
 
-            </MenuItem> -->
+            </MenuItem>
         </Menu>
-        <DockPanel Grid.Row="1">
-            <!--Prototypical represnttation of spiral binding on stuff-->
-            <!--<Rectangle MaxWidth="50" MinWidth="20" Height="Auto" Fill="Black" StrokeThickness="1" DockPanel.Dock="Left"/>-->
+        <!--Prototypical represnttation of spiral binding on stuff-->
+        <!--<Rectangle MaxWidth="50" MinWidth="20" Height="Auto" Fill="Black" StrokeThickness="1" DockPanel.Dock="Left"/>-->
 
-            <!--Agenda Tabs-->
-                <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
-
-            
-            
-            <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
-                <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <!---->
-                    <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
-                </TabItem>
-
-                <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
-                <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
-                </TabItem>
-                <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <Border BorderBrush="Green" BorderThickness="1"/>
-                </TabItem>
-                <TabItem Header="Plan" Name="PlanTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <Border BorderBrush="Yellow" BorderThickness="1">
-                        <PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>
-                    </Border>
-                </TabItem>
-            </TabControl>
-        </DockPanel>
-
-        <!--Toolbar-->
-        <!--TODO Replace words with icons/images-->
-        <!--<ToolBarTray DockPanel.Dock="Top" Height="Auto" HorizontalAlignment="Stretch">
-            <ToolBar Background="#FFE0E5E2" Band="0" x:Name="File">
-                <Button Content="Open" Margin="1,0,1,0"/>
-                <Button Content="Save" Margin="1,0,1,0"/>
-                <Button Content="Save As" Margin="1,0,1,0"/>
-            </ToolBar>
-
-            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="1" x:Name="Edit">
-                <Button Content="Cut" Margin="1,0,1,0"/>
-                <Button Content="Copy" Margin="1,0,1,0"/>
-                <Button Content="Paste" Margin="1,0,1,0"/>
-                <Separator/>
-                <Button Content="Undo" Margin="1,0,1,0"/>
-                <Button Content="Redo" Margin="1,0,1,0"/>
-                <Separator/>
-                <Button Content="Show Clipboard History" Margin="1,0,1,0"/>
-            </ToolBar>
-
-            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="2" x:Name="Add" >
-                <Button Content="Add Item" Margin="1,0,1,0"/>
-            </ToolBar>
-        </ToolBarTray>
+        <!--Agenda Tabs-->
+        <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
 
 
-        <StackPanel x:Name="TabsAndPages" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            Margin="10" Orientation="Vertical" Background="#FFE0E5E2">
-            <Border x:Name="Tabs" Background="#FFE0E5E2">
-                <TabControl HorizontalAlignment="Stretch" Background="#FFE0E5E2">
-                    <TabItem Header="Monday"/>
-                    <TabItem Header="Tuesday"/>
-                    <TabItem Header="Personal Projects"/>
-                    <TabItem Header="Bounce Up"/>
-                </TabControl>
-            </Border>
 
-            --><!--<Frame x:Name="Display" Background="#FFBDCAC2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <Expander Style="{DynamicResource CustomExpander}" HorizontalAlignment="Left" Height="100" Header="Expander" Margin="389,198,0,0" VerticalAlignment="Top" Width="100" IsExpanded="True">
-                <Grid Background="#FFE5E5E5">
-                </Grid>
-            </Expander>--><!--
+        <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-        </StackPanel>-->
-    </Grid>
+            <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
+            <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <!---->
+                <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
+            </TabItem>
+
+            <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
+            <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
+            </TabItem>
+            <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <Border BorderBrush="Green" BorderThickness="1"/>
+            </TabItem>
+            <TabItem Header="Plan" Name="PlanTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <Border BorderBrush="Yellow" BorderThickness="1">
+                    <PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 
 </Window>

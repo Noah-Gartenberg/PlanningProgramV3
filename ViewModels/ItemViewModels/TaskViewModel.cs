@@ -19,9 +19,11 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      */
     public class TaskViewModel : PlannerItemViewModel
     {
+#warning TODO: REWORK ALL CONSTRUCTORS FOR ALL VIEW MODELS
+
 
         //create new observable collection for storing the subitem references in the view models
-            //initialize in constructor
+        //initialize in constructor
         private ObservableCollection<PlannerItemViewModel> subItemViewModels;
 
 
@@ -40,7 +42,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
         }
 
-        public string UUID
+        public Guid UUID
         {
             get => State.uuid;
             set
@@ -136,34 +138,16 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// </summary>
         public TaskViewModel() : base(new TaskModelData())
         {
-            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
-
             //Create observable collection with view models from state
             SubItems = new ObservableCollection<PlannerItemViewModel>();
-            if(State.subItems != null)
-            {
-                foreach (BaseItemModelData item in State.subItems)
-                {
-                    switch (item.dataType)
-                    {
-                        case PlannerItemType.Task:
-                            SubItems.Add(new TaskViewModel(item as TaskModelData));
-                            break;
-                        case PlannerItemType.Text:
-                            SubItems.Add(new TextViewModel(item as TextModelData));
-                            break;
-                        case PlannerItemType.Date:
-                            SubItems.Add(new DateDurationViewModel(item as DateDurationModelData));
-                            break;
-                        default:
-                            throw new ArgumentException("item in model data subitems was not of type supported by current task view model code");
-                            break;
-                    }
-                }
-            }
             AddSubItemCommand = new RelayCommand(AddSubItem,CanMoveTask);
-            System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem,null);
+        }
+
+        //constructor for creating the object as a child of another task
+        public TaskViewModel(TaskViewModel? parent) : base(new TaskModelData(parent.State))
+        {
+
         }
 
 
@@ -194,15 +178,15 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             PlannerItemViewModel addedItem = obj.ToString() switch
             {
-                "Task" => new TaskViewModel(),
-                "Text" => new TextViewModel(),
-                "Date" => new DateDurationViewModel(),
+                "Task" => new TaskViewModel(this),
+                "Text" => new TextViewModel(this),
+                "Date" => new DateDurationViewModel(this),
                 //"Image" => new ImageItemViewModel(),
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
             System.Console.WriteLine("Adding object");
-            addedItem.SetParent(this.state);
+            addedItem.SetParent(this);
             SubItems.Add(addedItem);
             OnPropertyChanged(nameof(SubItems));
         }

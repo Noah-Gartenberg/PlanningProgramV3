@@ -5,6 +5,7 @@
 <xs:schema id="ProgramConfig"
 	xmlns="http://tempuri.org/ProgramConfig.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://tempuri.org/ProgramConfig.xsd"
 	version="1.0"
 >
 
@@ -32,7 +33,7 @@
 
 	<!--Storing URI (admittedly still unsure how different from filepath) to where plans are to be stored (like in say... documents...)-->
 	<!--Unsure if needs to be a relative path, or can be absolute-->
-	<xs:element name="FileStoragePath" type="xs:anyURI"/>
+	<xs:element name="FileStoragePath" type="xs:string"/>
 	<!--Storing the version of the software in which the plan was made-->
 
 	<!--Declared types in multiple spots because I couldn't figure out how to make eveyrthing work, where I could have one schema of reusable types like 

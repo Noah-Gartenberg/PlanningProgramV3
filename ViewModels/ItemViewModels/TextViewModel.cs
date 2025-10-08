@@ -38,6 +38,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #region Constructors
         //constructor for creating a new model from pre-existing model data
         public TextViewModel(TextModelData setState) : base(setState) { }
+        public TextViewModel(TaskViewModel parent) : base(parent.State) { }
         public TextViewModel() : base(new TextModelData()) { }
         #endregion
 

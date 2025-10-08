@@ -25,7 +25,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                 }
             }
         }
-        public string ParentUUID
+        public Guid ParentUUID
         {
             get => ((DateDurationModelData)state).parentTaskUUID;
             set
@@ -69,6 +69,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Constructors
         public DateDurationViewModel(DateDurationModelData setState) : base(setState) { }
+
+        public DateDurationViewModel(TaskViewModel? parent) : base(parent.State)
+        {
+
+        }
+
         public DateDurationViewModel() : base(new DateDurationModelData())
         {
 

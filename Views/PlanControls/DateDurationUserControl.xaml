@@ -20,10 +20,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Start Date" Grid.Column="0" Grid.Row="0"/>
+            <TextBlock Text="Start Date"  Grid.Column="0" Grid.Row="0"/>
             <TextBlock Text="End Date" Grid.Column="1" Grid.Row="0"/>
-            <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding StartDate}" Grid.Column="0" Grid.Row="1" Margin="10,10,10,10"/>
-            <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding EndDate}" Grid.Column="1" Grid.Row="1" Margin="10"/>
+            <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding StartDate, UpdateSourceTrigger=LostFocus}" Grid.Column="0" Grid.Row="1" Margin="10,10,10,10"/>
+            <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding EndDate, UpdateSourceTrigger=LostFocus}" Grid.Column="1" Grid.Row="1" Margin="10"/>
         </Grid>
         
     </StackPanel>

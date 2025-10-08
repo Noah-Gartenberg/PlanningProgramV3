@@ -32,14 +32,15 @@ namespace PlanningProgramV3.Models
     {
         public PlannerItemType? dataType;
 
-        public BaseItemModelData parent;
+        public TaskModelData parent;
 
         public BaseItemModelData(PlannerItemType dataType)
         {
+            parent = null;
             this.dataType = dataType;
         }
 
-        public BaseItemModelData(PlannerItemType dataType, BaseItemModelData parent)
+        public BaseItemModelData(PlannerItemType dataType, TaskModelData? parent)
         {
             this.dataType = dataType;
             this.parent = parent;

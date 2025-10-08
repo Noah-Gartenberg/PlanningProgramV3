@@ -42,7 +42,31 @@ namespace PlanningProgramV3
             InitializeComponent();
             MonthlyCalendarControl.SetMainWindow(this);
             WeeklyCalendarControl.SetMainWindow(this);
-            
+
+
+            //On initialization, check if there exists a programconfig file in the path where the program is installed.
+            //if not, create one
+
+
+
+            //afterwards/if so, check if the first-open boolean is false, and if there exists a file path where plans should be saved
+            //if the former is not true, then display the program config window, and have them select a file path (default to documents folder, and create a "Planner" folder within it)
+            //make it clear that a folder will be created there
+            //then, set the value in the program config for the filepath to that new folder that was created
+
+            #region Not current priority but how to use section
+            //if the first-open boolean is false, display a how to use window
+            /**
+             * Sections of how to use:
+             *      first section would be how to create a plan, and the various options you'd have for creating one
+             *      second section would be the calendar, and how it works and how they communicate
+             */
+
+            //when it's completed or x-ed out, set the how to use boolean to true
+            #endregion
+
+
+
 
         }
 
@@ -71,6 +95,35 @@ namespace PlanningProgramV3
             CalendarInView.HighlightTask(taskToSelect);
         }
 
-       
+
+        #region Can't put these into the view model, so for time being they're going in here.
+        private void CommandBinding_OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Trying to execute load command");
+        }
+
+        /// <summary>
+        /// Don't have any reason why this would not be true right now
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommandBinding_CanExecute_OpenCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Trying to execute save command");
+            (DataContext as MainWindowViewModel).SaveCurrentPlan.Execute(null);
+            MessageBox.Show("Saving executed?");
+
+        }
+
+        private void CommandBinding_CanExecute_SaveCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (DataContext as MainWindowViewModel).SaveCurrentPlan.CanExecute(null);
+        }
+        #endregion
     }
 }

@@ -5,6 +5,11 @@ namespace PlanningProgramV3.ViewModels
     public class RelayCommand : ICommand
     {
 
+        /// <summary>
+        /// NOTE TO SELF, SOMETHING I CAN DO IF I NEED MORE PARAMETERS IS TO ADD 2 PARAMETERS TO CAN EXECUTE: A REFERENCE TO A STACK, AND AN AMOUNT OF PARAMETERS TO POP FROM IT.
+        /// THIS WOULD REQUIRE SOME WORK TO MAKE IT FUNCTION, BUT IT WOULD ALLOW ME TO HAVE MORE PARAMETERS
+        /// </summary>
+
         private Action<object> execute;
 
         private Func<object?, bool> canExecute;

@@ -1,4 +1,5 @@
-﻿using PlanningProgramV3.Models;
+﻿using Microsoft.Win32;
+using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -138,8 +139,29 @@ namespace PlanningProgramV3.ViewModels
             HighestTasks = new ObservableCollection<TaskViewModel>();
         }
 
-        public void Serialize_Event(object sender, EventArgs e)
+        public void TrySaveToFile(string filepath)
         {
+            //save data
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = filepath;
+            saveFileDialog.Filter = "xml file (*.xml)|*.xml";
+            if(FileName == "" && FileName == string.Empty)
+            {
+                FileName = "Untitled";
+                
+            }
+            saveFileDialog.FileName = FileName;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate);
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData), "http://tempuri.org/Plan.xsd");
+                serializer.Serialize(fsout, data);
+                fsout.Close();
+            }
+            
+            
+            
+
             
         }
     }

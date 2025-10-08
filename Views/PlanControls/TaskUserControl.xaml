@@ -36,12 +36,12 @@
                 </Border.ContextMenu>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,5,0">
                     <CheckBox IsChecked="{Binding IsComplete}" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding Name}" MinWidth="50" MaxLines="1" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}" MinWidth="50" MaxLines="1" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Expander.Header>
         <Expander.Content>
-            <ListView ItemsSource="{Binding SubItems}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
+            <ListView ItemsSource="{Binding SubItems, Mode=OneWay}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
             </ListView>
         </Expander.Content>
     </Expander>

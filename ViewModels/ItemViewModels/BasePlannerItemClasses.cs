@@ -20,14 +20,17 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #region Fields
         protected BaseItemModelData state;
         //public TaskViewModel? HighestLevelParent { get; set; }
-        public BaseItemModelData? Parent 
+        private TaskViewModel parent;
+        public TaskViewModel? Parent 
         {
-            get => state.parent;
+            get => parent;
             set
             {
-                if(state.parent != value)
+                if(parent != value)
                 {
-                    state.parent = value;
+                    parent = value;
+                    //do this to maintain mvvm
+                    state.parent = parent.state as TaskModelData;
                     OnPropertyChanged(nameof(Parent));
                 }
             }
@@ -56,11 +59,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * For setting the parent of the subitems of a task -- Parent should only be set if null, otherwise it shouldn't be touched.
          */
-        public void SetParent(BaseItemModelData? parent)
+        public void SetParent(TaskViewModel? parent)
         {
             if (Parent != null)
             {
                 Parent = parent;
+                state.parent = parent.state as TaskModelData;
             }
 
         }
