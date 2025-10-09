@@ -44,7 +44,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             set
             {
                 //ensure that the new start date is not more than the end date - if it is, don't set the start date? Set it to the end date? Going with the former for now
-                if (((DateDurationModelData)state).startDate != value && value > EndDate)
+                if (((DateDurationModelData)state).startDate != value && value <= EndDate)
                 {
                     ((DateDurationModelData)state).startDate = value;
                     OnPropertyChanged(nameof(StartDate));
@@ -58,7 +58,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             set
             {
                 //ensure that new end date is not less than the start date - if it is, same rule as start date, and just don't set
-                if (((DateDurationModelData)state).endDate != value && value < StartDate)
+                if (((DateDurationModelData)state).endDate != value && value >= StartDate)
                 {
                     ((DateDurationModelData)state).endDate = value;
                     OnPropertyChanged(nameof(EndDate));

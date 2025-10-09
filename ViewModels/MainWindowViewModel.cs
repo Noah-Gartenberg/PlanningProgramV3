@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -132,7 +134,7 @@ namespace PlanningProgramV3.ViewModels
             {
                 //if the file exists, then pull data from it, instead of creating a new one/overwriting it
                 FileStream fsout = new FileStream(path, FileMode.Open, FileAccess.Read);
-                XmlSerializer serializer = new XmlSerializer(typeof(ProgramConfig), "http://tempuri.org/ProgramConfig.xsd");
+                XmlSerializer serializer = new XmlSerializer(typeof(ProgramConfig));
                 Config = (ProgramConfig)serializer.Deserialize(fsout);
 
                 fsout.Close();
@@ -143,7 +145,7 @@ namespace PlanningProgramV3.ViewModels
 
                 //NOTE TO SELF, WE SEEM TO BE DOING THIS BIT HERE WRONG - MIGHT NEED TO USE ANOTHER METHOD TO ACCESS THE BIN, BUT I BELIEVE THE BIN WILL BE ACCESSIBLE WHEN SHIPPED
                 FileStream fsout = new FileStream(path, FileMode.OpenOrCreate);
-                XmlSerializer serializer = new XmlSerializer(typeof(ProgramConfig), "http://tempuri.org/ProgramConfig.xsd");
+                XmlSerializer serializer = new XmlSerializer(typeof(ProgramConfig));
 
                 Config = new ProgramConfig(AppDomain.CurrentDomain.BaseDirectory);
 

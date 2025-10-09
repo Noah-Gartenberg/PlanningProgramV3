@@ -10,12 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Deprecated\Model.cs" />
     <Compile Remove="ViewModels\Deprecated\ViewModelData.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Models\Deprecated\ModelData.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,6 +19,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Fields
         protected BaseItemModelData state;
+
+        public BaseItemModelData State
+        {
+            get => state;
+            private set => state = value;
+        }
         //public TaskViewModel? HighestLevelParent { get; set; }
         private TaskViewModel parent;
         public TaskViewModel? Parent 
@@ -36,6 +42,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
         }
 
+        
+
         #endregion
 
         #region Property Changed Event
@@ -48,6 +56,11 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
+        public PlannerItemViewModel(TaskViewModel parent)
+        {
+            this.parent = parent;
+            State.parent = parent.State;
+        }
         public PlannerItemViewModel(BaseItemModelData data)
         {
             state = data;

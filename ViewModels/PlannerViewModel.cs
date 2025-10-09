@@ -113,6 +113,7 @@ namespace PlanningProgramV3.ViewModels
             TaskViewModel tempVar = new TaskViewModel();
             //not setting coordinates to mouse position because can't figure out how to make it work right now
             HighestTasks.Add(tempVar);
+            data.topPlanItems.Add(tempVar.State);
             OnPropertyChanged(nameof(HighestTasks));
         }
 
@@ -153,8 +154,12 @@ namespace PlanningProgramV3.ViewModels
             saveFileDialog.FileName = FileName;
             if (saveFileDialog.ShowDialog() == true)
             {
-                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate);
-                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData), "http://tempuri.org/Plan.xsd");
+                if (File.Exists(saveFileDialog.FileName))
+                {
+                    File.Delete(saveFileDialog.FileName);
+                }
+                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.Create);
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData)/*, new Type[] { typeof(TaskModelData), typeof(BaseItemModelData), typeof(TextModelData), typeof(DateDurationModelData) }*//*, "http://www.tempuri.org/Plan"*/);
                 serializer.Serialize(fsout, data);
                 fsout.Close();
             }

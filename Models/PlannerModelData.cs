@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -17,9 +18,8 @@ namespace PlanningProgramV3.Models
      * Noah Gartenberg
      * This class will contain the data necessary for storing the data of one plan
      */
-    [XmlRootAttribute("Plan", Namespace="http://tempuri.org/Plan.xsd", IsNullable = true)]
-    [XmlInclude(typeof(VersionData)),XmlInclude(typeof(Task))]
-    [XmlType("Plan")]
+    [XmlRoot(Namespace = "http://www.tempuri.org/PlannerModelData.xsd")]
+    [XmlInclude(typeof(VersionData)),XmlInclude(typeof(Task)), XmlInclude(typeof(BaseItemModelData)), XmlInclude(typeof(DateDurationModelData)), XmlInclude(typeof(TextModelData))]
     public class PlannerModelData
     {
         //public Point CameraCoords;
@@ -34,11 +34,11 @@ namespace PlanningProgramV3.Models
         //THIS HAS BEEN DONE, BUT MAYBE SHOULD BE REPLACED WITH A LIST?
 
 
-        
+
         [XmlArrayItem(ElementName = "Task", 
-            Type = typeof(TaskModelData), Namespace = "http://tempuri.org/PlannerProgramSchema"),
+            Type = typeof(TaskModelData)),
             XmlArray(ElementName = "PlanTasks", IsNullable = true)]
-        public ObservableCollection<TaskModelData> topPlanItems;
+        public List<TaskModelData> topPlanItems;
 
         //Current Version
         
@@ -46,12 +46,12 @@ namespace PlanningProgramV3.Models
         VersionData planVersion;
 
         public PlannerModelData() {
-            topPlanItems = new ObservableCollection<TaskModelData>();
+            topPlanItems = new List<TaskModelData>();
             fileName = string.Empty;
             planVersion = VersionData.CurrentVersion;
         }
 
-        public PlannerModelData(ObservableCollection<TaskModelData> planItems, string fileName, VersionData Version)
+        public PlannerModelData(List<TaskModelData> planItems, string fileName, VersionData Version)
         {
             topPlanItems = planItems;
             this.fileName = fileName;

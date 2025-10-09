@@ -19,7 +19,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      */
     public class TaskViewModel : PlannerItemViewModel
     {
-#warning TODO: REWORK ALL CONSTRUCTORS FOR ALL VIEW MODELS
 
 
         //create new observable collection for storing the subitem references in the view models
@@ -153,6 +152,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         //Constructor for making a new task with a specific state
         public TaskViewModel(TaskModelData setState) : base(setState) {    }
+
         //constructor for making a new task at specific coordinates
         public TaskViewModel(Point coords) : base(new TaskModelData())
         {
@@ -186,8 +186,9 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                 //_ => new TaskItemViewModel(),
             };
             System.Console.WriteLine("Adding object");
-            addedItem.SetParent(this);
+            //addedItem.SetParent(this);
             SubItems.Add(addedItem);
+            State.subItems.Add(addedItem.State);
             OnPropertyChanged(nameof(SubItems));
         }
 

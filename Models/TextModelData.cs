@@ -14,10 +14,10 @@ namespace PlanningProgramV3.Models
      * Goal of this class is to handle storing state for Text Items in a planner
      * It needs to store a string - but one that would perhaps be larger
      */
-    [XmlType("Text")]
+    [XmlInclude(typeof(BaseItemModelData))]
     public class TextModelData : BaseItemModelData
     {
-        [XmlElement(ElementName = "TextItem", Namespace = "http://tempuri.org/PlannerProgramSchema")]
+        [XmlElement(ElementName = "TextItem")]
         public string text = "";
         public TextModelData() : base(PlannerItemType.Text) { }
 

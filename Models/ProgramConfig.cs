@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using static System.Net.WebRequestMethods;
 
-namespace PlanningProgramV3
+namespace PlanningProgramV3.Models
 {
     /**
      * This struct stores version data for the program config class
@@ -35,7 +35,7 @@ namespace PlanningProgramV3
     /**
      * This class will store program config information so it can be easily accessed at runtime, while still having it be out of the way. 
      */
-    [XmlRootAttribute("ProgramConfig", Namespace="http://tempuri.org/ProgramConfig.xsd", IsNullable=false)]
+    [XmlRoot("ProgramConfig")]
     [XmlInclude(typeof(VersionData))]
     public class ProgramConfig
     {
@@ -45,9 +45,9 @@ namespace PlanningProgramV3
 
         //well, that explains why nothing's getting stored... can't set values that aren't primitive/simple types...
 
-        [XmlElement(ElementName = "SoftwareVersion", Namespace = "http://tempuri.org/ProgramConfig.xsd")]
+        [XmlElement(ElementName = "SoftwareVersion")]
         public VersionData versionData = VersionData.CurrentVersion;
-        [XmlElement(ElementName = "FileStoragePath", Namespace = "http://tempuri.org/ProgramConfig.xsd")]
+        [XmlElement(ElementName = "FileStoragePath")]
         public string fileStoragePath;
 
         //Sets the file storage path to input

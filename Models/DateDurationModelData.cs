@@ -13,20 +13,20 @@ namespace PlanningProgramV3.Models
      * This class stores date information for a task that is time sensetive
      * 
      */
-    [XmlType("DateDuration")]
+    [XmlInclude(typeof(BaseItemModelData))]
     public class DateDurationModelData : BaseItemModelData
     {
         //wait, for one of these, the parent plan would need to be in the same file, so this isn't necessary
         [XmlIgnore]
         public string parentPlanFile = "";
 
-        [XmlElement(ElementName = "ParentTaskGUID", Namespace = "http://tempuri.org/PlannerProgramSchema", Type = typeof(Guid), IsNullable = false)]
+        [XmlElement(ElementName = "ParentTaskGUID", Type = typeof(Guid), IsNullable = false)]
         public Guid parentTaskUUID;
 
-        [XmlElement(ElementName = "StartDate", Namespace = "http://tempuri.org/PlannerProgramSchema", Type = typeof(DateTime), IsNullable = false)]
+        [XmlElement(ElementName = "StartDate", Type = typeof(DateTime), IsNullable = false)]
         public DateTime startDate;
 
-        [XmlElement(ElementName = "EndDate", Namespace = "http://tempuri.org/PlannerProgramSchema", Type = typeof(DateTime), IsNullable = false)]
+        [XmlElement(ElementName = "EndDate", Type = typeof(DateTime), IsNullable = false)]
         public DateTime endDate;
 
         public DateDurationModelData(TaskModelData? parent) : base(PlannerItemType.Date,parent)
