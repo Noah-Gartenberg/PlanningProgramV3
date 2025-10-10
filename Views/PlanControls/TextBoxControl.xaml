@@ -10,5 +10,5 @@
     <UserControl.DataContext>
         <data:TextViewModel/>
     </UserControl.DataContext>
-    <TextBox Width="Auto" Height="Auto" MinLines="1" AcceptsReturn="True" MaxWidth="300" MinWidth="50" Text="{Binding Text, UpdateSourceTrigger=LostFocus}"/>
+    <TextBox Width="Auto" Height="Auto" MinLines="1" AcceptsReturn="True" MaxWidth="300" MinWidth="50" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 </UserControl>

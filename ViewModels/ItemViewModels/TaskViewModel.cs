@@ -3,6 +3,7 @@ using PlanningProgramV3.Views.PlanControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -123,7 +124,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * Getter property for state - SHOULD ONLY BE USED BY PLANNER MODEL, and only in this class. SHOULD NOT BE SET
          */
-        public TaskModelData State
+        public new TaskModelData State
         {
             get => (TaskModelData)state;
             
@@ -135,7 +136,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <summary>
         /// Default constructor
         /// </summary>
-        public TaskViewModel() : base(new TaskModelData())
+        public TaskViewModel() : base(in new TaskModelData())
         {
             //Create observable collection with view models from state
             SubItems = new ObservableCollection<PlannerItemViewModel>();
@@ -144,25 +145,20 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         }
 
         //constructor for creating the object as a child of another task
-        public TaskViewModel(TaskViewModel? parent) : base(new TaskModelData(parent.State))
+        public TaskViewModel(TaskViewModel? parent) : base(ref new TaskModelData(in parent.State))
         {
-
+            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
 
-
-        //Constructor for making a new task with a specific state
-        public TaskViewModel(TaskModelData setState) : base(setState) {    }
-
         //constructor for making a new task at specific coordinates
-        public TaskViewModel(Point coords) : base(new TaskModelData())
+        public TaskViewModel(Point coords) : base(in new TaskModelData())
         {
-            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
-            //((TaskModelData)state).subItems = [];
-            //AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
-            //System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
-            //RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
-
             State.coordinates = coords;
+            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
         #endregion
 
@@ -178,17 +174,17 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             PlannerItemViewModel addedItem = obj.ToString() switch
             {
-                "Task" => new TaskViewModel(this),
-                "Text" => new TextViewModel(this),
-                "Date" => new DateDurationViewModel(this),
+                "Task" => new TaskViewModel(),
+                "Text" => new TextViewModel(),
+                "Date" => new DateDurationViewModel(),
                 //"Image" => new ImageItemViewModel(),
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
-            System.Console.WriteLine("Adding object");
-            //addedItem.SetParent(this);
+            addedItem.SetParent(ref this);
             SubItems.Add(addedItem);
-            State.subItems.Add(addedItem.State);
+            State.AddItem(addedItem.State);
+            PrintData();
             OnPropertyChanged(nameof(SubItems));
         }
 
@@ -212,6 +208,19 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #region Methods
         
         public BaseItemModelData GetState() { return state; }
+
+        public override void PrintData()
+        {
+            Trace.WriteLine("TaskModel: ");
+            Trace.WriteLine("Parent: " + Parent);
+            Trace.WriteLine("Task Name: " + Name);
+            Trace.WriteLine("Task Completion: " + IsComplete);
+            Trace.WriteLine("Guid: " + UUID);
+            for (int i = 0; i < SubItems.Count; i++)
+            {
+                SubItems[i].PrintData();
+            }
+        }
         #endregion
     }
 }

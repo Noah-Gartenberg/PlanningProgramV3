@@ -21,5 +21,10 @@ namespace PlanningProgramV3.Models
         //the UUID of the item in question -- null if just a plan. 
         public string UUIDofItem = "";
         public LinkerModelData() : base(PlannerItemType.Linker) { }
+
+        public override void PrintData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

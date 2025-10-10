@@ -277,7 +277,8 @@ namespace PlanningProgramV3.ViewModels
         protected virtual bool CanSavePlan(object source)
         {
             //return true, if the dirty flag is true, or if the current plan does not yet have a file name
-            return Plans[currPlan].DirtyFlag || Plans[currPlan].FileName.Equals("");
+            //added true for testing purposes
+            return Plans[currPlan].DirtyFlag || Plans[currPlan].FileName.Equals("") || true;
         }
 
 

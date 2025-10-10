@@ -51,19 +51,27 @@ namespace PlanningProgramV3.Views
 
         private void PlannerDisplayer_MouseMove(object sender, MouseEventArgs e)
         {
-            //For right now, will just not do selection logic if the selected item is not the highest level parent -- need to figure out how to ensure that selected view model is at top of its stack though
-            if ((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null && e.LeftButton == MouseButtonState.Pressed)
+            try
             {
-
-                DataObject data = new DataObject(DataFormats.Serializable, PlannerDisplayer.SelectedItem);
-
-                DragDrop.DoDragDrop(SelectedObject, data, DragDropEffects.Move);
-                if (SelectedObject != null)
+                //For right now, will just not do selection logic if the selected item is not the highest level parent -- need to figure out how to ensure that selected view model is at top of its stack though
+                if ((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null && e.LeftButton == MouseButtonState.Pressed)
                 {
-                    SelectedObject.IsHitTestVisible = false;
-                }
 
+                    DataObject data = new DataObject(DataFormats.Serializable, PlannerDisplayer.SelectedItem);
+
+                    DragDrop.DoDragDrop(SelectedObject, data, DragDropEffects.Move);
+                    if (SelectedObject != null)
+                    {
+                        SelectedObject.IsHitTestVisible = false;
+                    }
+
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
         }
 
         private void PlannerDisplayer_DragOver(object sender, DragEventArgs e)
@@ -82,26 +90,33 @@ namespace PlanningProgramV3.Views
 
         private void PlannerDisplayer_Drop(object sender, DragEventArgs e)
         {
-
-
-            object data = e.Data.GetData(DataFormats.Serializable);
-
-            Point dropPosition = e.GetPosition(PlannerDisplayer);
-            Canvas.SetLeft(SelectedObject, dropPosition.X);
-            Canvas.SetTop(SelectedObject, dropPosition.Y);
-            CurrentPlanner.SetTopTaskPosition(SelectedObject);
-
-
-            //set the position of the object
-            //I know this isn't technically MVVM - I mean I don't think it's a violation per se, but yeah. 
-            //couldn't figure out how to do this from the planner
-            if(SelectedObject.DataContext is TaskViewModel task)
+            try
             {
-                task.X = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.X, typeof(int), 1500,null));
-                task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
+                object data = e.Data.GetData(DataFormats.Serializable);
+
+                Point dropPosition = e.GetPosition(PlannerDisplayer);
+                Canvas.SetLeft(SelectedObject, dropPosition.X);
+                Canvas.SetTop(SelectedObject, dropPosition.Y);
+                CurrentPlanner.SetTopTaskPosition(SelectedObject);
+
+
+                //set the position of the object
+                //I know this isn't technically MVVM - I mean I don't think it's a violation per se, but yeah. 
+                //couldn't figure out how to do this from the planner
+                if (SelectedObject.DataContext is TaskViewModel task)
+                {
+                    task.X = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.X, typeof(int), 1500, null));
+                    task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
+                }
+                SelectedObject.IsHitTestVisible = true;
+                PlannerDisplayer.SelectedIndex = -1;
             }
-            SelectedObject.IsHitTestVisible = true;
-            PlannerDisplayer.SelectedIndex = -1;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            
 
         }
 

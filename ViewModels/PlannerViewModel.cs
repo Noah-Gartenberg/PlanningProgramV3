@@ -3,6 +3,7 @@ using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,6 +67,11 @@ namespace PlanningProgramV3.ViewModels
                 if (highestTasks != value)
                 {
                     highestTasks = value;
+                    foreach (var task in highestTasks)
+                    {
+                        data.topPlanItems.Add(task.State);
+                    }
+
                     OnPropertyChanged(nameof(HighestTasks));
                 }
             }
@@ -142,6 +148,8 @@ namespace PlanningProgramV3.ViewModels
 
         public void TrySaveToFile(string filepath)
         {
+            PrintViewModels();
+            data.PrintPlannerDataMethod();
             //save data
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = filepath;
@@ -163,11 +171,24 @@ namespace PlanningProgramV3.ViewModels
                 serializer.Serialize(fsout, data);
                 fsout.Close();
             }
-            
-            
-            
+        }
+        
+        public void PrintViewModels()
+        {
+            Trace.WriteLine("File: " + FileName);
+            for (int i = 0; i < highestTasks.Count; i++)
+            {
+                highestTasks[i].PrintData();
+            }
+        }
 
-            
+        public void PrintModels()
+        {
+            Trace.WriteLine("File: " + FileName);
+            for(int i = 0; i < highestTasks.Count; i++)
+            {
+                highestTasks[i].State.PrintData();
+            }
         }
     }
 }

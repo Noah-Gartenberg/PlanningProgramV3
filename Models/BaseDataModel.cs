@@ -45,5 +45,7 @@ namespace PlanningProgramV3.Models
             this.dataType = dataType;
             this.parent = parent;
         }
+
+        public abstract void PrintData();
     }
 }

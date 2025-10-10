@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -67,6 +68,8 @@ namespace PlanningProgramV3.Models
             //I have added break points to ensure the data in the model is being set. it is. 
             //I'm at my wits end and I don't know what's broken...
 
+            //okay, so maybe the data just isn't being passed to the plannerviewmodel or to the plannermodel?????
+
 
             subItems = new List<BaseItemModelData>();
             this.uuid = Guid.NewGuid();
@@ -95,6 +98,28 @@ namespace PlanningProgramV3.Models
             this.subItems = subItems;
             this.coordinates = coordinates;
             this.uuid = Guid.NewGuid();
+        }
+
+        /**
+         * This method exists for testing purposes to help me figure out what's going on between the models and the view models.
+         */
+        public override void PrintData()
+        {
+            Trace.WriteLine("TaskModel: ");
+            Trace.WriteLine("Parent: " + parent);
+            Trace.WriteLine("Task Name: " + taskName);
+            Trace.WriteLine("Task Completion: " + isCompleted);
+            Trace.WriteLine("Guid: " + uuid);
+            for (int i = 0; i < subItems.Count; i++)
+            {
+                subItems[i].PrintData();
+            }
+        }
+
+        public void AddItem(BaseItemModelData item)
+        {
+            subItems.Add(item);
+            PrintData();
         }
     }
 }

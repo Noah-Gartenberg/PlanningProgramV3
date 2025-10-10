@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -56,6 +57,17 @@ namespace PlanningProgramV3.Models
             topPlanItems = planItems;
             this.fileName = fileName;
             this.planVersion = Version;
+        }
+
+        public void PrintPlannerDataMethod()
+        {
+            Trace.WriteLine("Planner Data: ");
+            Trace.WriteLine("FileName: " + fileName);
+            for (int i = 0; i < topPlanItems.Count; i++) {
+                topPlanItems[i].PrintData();
+            }
+            
+
         }
     }
 }

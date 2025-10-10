@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -24,6 +25,13 @@ namespace PlanningProgramV3.Models
         public TextModelData(string text) : base(PlannerItemType.Text)
         {
             this.text = text;
+        }
+
+        public override void PrintData()
+        {
+            Trace.WriteLine("Text: ");
+            Trace.WriteLine("Parent: " + parent);
+            Trace.WriteLine("Text: " + text);
         }
     }
 }

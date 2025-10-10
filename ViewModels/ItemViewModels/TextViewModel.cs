@@ -1,6 +1,7 @@
 ﻿using PlanningProgramV3.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +38,14 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Constructors
         //constructor for creating a new model from pre-existing model data
-        public TextViewModel(TextModelData setState) : base(setState) { }
-        public TextViewModel(TaskViewModel parent) : base(parent.State) { }
-        public TextViewModel() : base(new TextModelData()) { }
+        public TextViewModel(ref TaskViewModel parent) : base(in parent.State) { }
+        public TextViewModel() : base(in new TextModelData()) { }
+
+        public override void PrintData()
+        {
+            Trace.WriteLine("Parent: " + Parent);
+            Trace.WriteLine("Text: " +  Text);
+        }
         #endregion
 
     }

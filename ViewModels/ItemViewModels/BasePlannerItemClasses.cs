@@ -14,7 +14,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * Last Updated: 7/11/2025
      * The goal of this class is to provide an abstract class with commmon methods for the views to display
      */
-    public class PlannerItemViewModel
+    public abstract class PlannerItemViewModel
     {
 
         #region Fields
@@ -56,12 +56,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        public PlannerItemViewModel(TaskViewModel parent)
+        public PlannerItemViewModel(ref TaskViewModel parent)
         {
             this.parent = parent;
             State.parent = parent.State;
         }
-        public PlannerItemViewModel(BaseItemModelData data)
+        public PlannerItemViewModel(ref BaseItemModelData data)
         {
             state = data;
         }
@@ -72,17 +72,20 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * For setting the parent of the subitems of a task -- Parent should only be set if null, otherwise it shouldn't be touched.
          */
-        public void SetParent(TaskViewModel? parent)
+        public virtual void SetParent(ref TaskViewModel? parent)
         {
-            if (Parent != null)
-            {
-                Parent = parent;
-                state.parent = parent.state as TaskModelData;
-            }
+            //OMFG I CALLED THIS METHOD AND IT DOES NOTHING IF PARENT IS NULL BECAUSE I WAS THINKING "OH IF A TASK DOESN'T HAVE A PARENT, THEN WHAT IF...-" I CAN'T MOVE TASKS AROUND SO THE IF STATEMENT IS POINTLESS!
+            //if (Parent != null)
+            //{
+            //    Parent = parent;
+            //    state.parent = parent.state as TaskModelData;
+            //}
+            Parent = parent;
+            state.parent = parent.state as TaskModelData;
 
         }
 
-        
+
         //public void SetHighestParent(TaskViewModel? parent)
         //{
         //    if (Parent != null)
@@ -90,6 +93,9 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         //        HighestLevelParent = parent;
         //    }
         //}
+
+
+        public abstract void PrintData();
         #endregion
     }
 }

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using PlanningProgramV3.Models;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PlanningProgramV3.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PlanningProgramV3.ViewModels.ItemViewModels
 {
@@ -68,15 +70,37 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        public DateDurationViewModel(DateDurationModelData setState) : base(setState) { }
 
-        public DateDurationViewModel(TaskViewModel? parent) : base(parent.State)
+        public DateDurationViewModel(ref TaskViewModel? parent) : base(in parent.State)
         {
-
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now;
+            ParentUUID = parent.UUID;
         }
 
-        public DateDurationViewModel() : base(new DateDurationModelData())
+        public DateDurationViewModel() : base(in new DateDurationModelData())
         {
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now;
+        }
+
+        public override void PrintData()
+        {
+            Trace.WriteLine("Parent: " + Parent);
+            Trace.WriteLine("StartDate: " + StartDate);
+            Trace.WriteLine("EndDate: " + EndDate);
+        }
+
+        /**
+         * Overriding in this class so can update the guid too
+         */
+        public override void SetParent(ref TaskViewModel? parent)
+        {
+            base.SetParent(ref parent);
+#pragma warning disable CS8602 // Dereference of a possibly null reference - date duration models can't have a null parent
+            ParentUUID = parent.UUID;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
 
         }
         #endregion

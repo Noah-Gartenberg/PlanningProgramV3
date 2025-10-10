@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PlanningProgramV3.Models
 {
@@ -50,5 +52,12 @@ namespace PlanningProgramV3.Models
             this.endDate = endDate;
         }
 
+        public override void PrintData()
+        {
+            Trace.WriteLine("DateDurationModel: ");
+            Trace.WriteLine("Parent: " + parent);
+            Trace.WriteLine("StartDate: " + startDate);
+            Trace.WriteLine("EndDate: " + endDate);
+        }
     }
 }
