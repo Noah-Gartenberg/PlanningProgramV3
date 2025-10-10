@@ -136,7 +136,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <summary>
         /// Default constructor
         /// </summary>
-        public TaskViewModel() : base(in new TaskModelData())
+        public TaskViewModel() : base(new TaskModelData())
         {
             //Create observable collection with view models from state
             SubItems = new ObservableCollection<PlannerItemViewModel>();
@@ -145,7 +145,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         }
 
         //constructor for creating the object as a child of another task
-        public TaskViewModel(TaskViewModel? parent) : base(ref new TaskModelData(in parent.State))
+        public TaskViewModel(TaskViewModel? parent) : base(new TaskModelData(parent.State))
         {
             SubItems = new ObservableCollection<PlannerItemViewModel>();
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
@@ -153,7 +153,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         }
 
         //constructor for making a new task at specific coordinates
-        public TaskViewModel(Point coords) : base(in new TaskModelData())
+        public TaskViewModel(Point coords) : base(new TaskModelData())
         {
             State.coordinates = coords;
             SubItems = new ObservableCollection<PlannerItemViewModel>();
@@ -181,7 +181,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
-            addedItem.SetParent(ref this);
+            addedItem.SetParent(this);
             SubItems.Add(addedItem);
             State.AddItem(addedItem.State);
             PrintData();

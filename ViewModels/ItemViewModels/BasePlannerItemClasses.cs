@@ -56,12 +56,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        public PlannerItemViewModel(ref TaskViewModel parent)
+        public PlannerItemViewModel(TaskViewModel parent)
         {
             this.parent = parent;
             State.parent = parent.State;
         }
-        public PlannerItemViewModel(ref BaseItemModelData data)
+        public PlannerItemViewModel(BaseItemModelData data)
         {
             state = data;
         }
@@ -72,7 +72,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * For setting the parent of the subitems of a task -- Parent should only be set if null, otherwise it shouldn't be touched.
          */
-        public virtual void SetParent(ref TaskViewModel? parent)
+        public virtual void SetParent(TaskViewModel? parent)
         {
             //OMFG I CALLED THIS METHOD AND IT DOES NOTHING IF PARENT IS NULL BECAUSE I WAS THINKING "OH IF A TASK DOESN'T HAVE A PARENT, THEN WHAT IF...-" I CAN'T MOVE TASKS AROUND SO THE IF STATEMENT IS POINTLESS!
             //if (Parent != null)
@@ -80,6 +80,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             //    Parent = parent;
             //    state.parent = parent.state as TaskModelData;
             //}
+            if (parent == null)
+                return;
             Parent = parent;
             state.parent = parent.state as TaskModelData;
 

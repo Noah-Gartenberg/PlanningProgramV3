@@ -71,14 +71,14 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Constructors
 
-        public DateDurationViewModel(ref TaskViewModel? parent) : base(in parent.State)
+        public DateDurationViewModel(ref TaskViewModel? parent) : base(parent.State)
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
             ParentUUID = parent.UUID;
         }
 
-        public DateDurationViewModel() : base(in new DateDurationModelData())
+        public DateDurationViewModel() : base(new DateDurationModelData())
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
@@ -94,9 +94,9 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * Overriding in this class so can update the guid too
          */
-        public override void SetParent(ref TaskViewModel? parent)
+        public override void SetParent(TaskViewModel? parent)
         {
-            base.SetParent(ref parent);
+            base.SetParent(parent);
 #pragma warning disable CS8602 // Dereference of a possibly null reference - date duration models can't have a null parent
             ParentUUID = parent.UUID;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
