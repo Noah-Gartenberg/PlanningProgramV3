@@ -36,38 +36,57 @@ namespace PlanningProgramV3.Models
 
 
 
+        //the highest level calendarTasks in plan
+        //in this way, this will be more of a linked list than anything else
         [XmlArrayItem(ElementName = "Task", 
             Type = typeof(TaskModelData)),
             XmlArray(ElementName = "PlanTasks", IsNullable = true)]
-        public List<TaskModelData> topPlanItems;
+        public List<TaskModelData> planTasks;
 
         //Current Version
         
         [XmlElement(ElementName = "SoftwareVersion",Type = typeof(VersionData))]
         VersionData planVersion;
 
+        #region Constructors
+        //default constructor
         public PlannerModelData() {
-            topPlanItems = new List<TaskModelData>();
+            planTasks = new List<TaskModelData>();
             fileName = string.Empty;
             planVersion = VersionData.CurrentVersion;
         }
 
-        public PlannerModelData(List<TaskModelData> planItems, string fileName, VersionData Version)
+        /// <summary>
+        /// Constructor with items that need to be inputted
+        /// </summary>
+        /// <param name="planItems"></param>
+        /// <param name="fileName"></param>
+        /// <param name="Version"></param>
+        public PlannerModelData(ref List<TaskModelData> planItems, string fileName, VersionData Version)
         {
-            topPlanItems = planItems;
+            planTasks = planItems;
             this.fileName = fileName;
             this.planVersion = Version;
         }
+        #endregion
+
 
         public void PrintPlannerDataMethod()
         {
             Trace.WriteLine("Planner Data: ");
             Trace.WriteLine("FileName: " + fileName);
-            for (int i = 0; i < topPlanItems.Count; i++) {
-                topPlanItems[i].PrintData();
+            for (int i = 0; i < planTasks.Count; i++) {
+                planTasks[i].PrintData();
             }
-            
+        }
 
+        /// <summary>
+        /// Method to add calendarTasks - done this way to ensure that I'm not directly accessing the list from the view model, for rigth now
+        /// </summary>
+        /// <param name="task"></param>
+        public void AddTask(TaskModelData task)
+        {
+            planTasks.Add(task);
         }
     }
 }

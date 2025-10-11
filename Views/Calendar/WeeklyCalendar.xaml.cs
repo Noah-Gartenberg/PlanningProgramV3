@@ -376,23 +376,23 @@ namespace PlanningProgramV3.Views.Calendar
 
         private void DrawTasks()
         {
-            //This method can be called when tasks aren't yet bound, so check that case and return
+            //This method can be called when calendarTasks aren't yet bound, so check that case and return
             if (Tasks == null) 
             {
                 System.Diagnostics.Debug.WriteLine("Tasks were null");
                 return;
             }
 
-            //when Tasks is bound, check if it is collection of ICalendarTasks
+            //when CalendarTasks is bound, check if it is collection of ICalendarTasks
             if (Tasks is IEnumerable<ICalendarTask> tasks)
             {
-                //add colors of tasks to array to pick up them using number
+                //add colors of calendarTasks to array to pick up them using number
                 SolidColorBrush[] colors = { Color0, Color1, Color2 };
 
                 //index to array of colors
                 int accentColor = 0;
 
-                //loop all tasks -- ensure all have date starts, and assume if no date end, then just have only one day
+                //loop all calendarTasks -- ensure all have date starts, and assume if no date end, then just have only one day
                 foreach (var t in tasks.OrderBy(t => t.DateStart))
                 {
                     if (!t.DateStart.HasValue /*|| !t.DateEnd.HasValue*/)

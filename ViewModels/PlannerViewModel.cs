@@ -12,14 +12,16 @@ using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
-    
+
+
+#warning REFACTOR THE CODE IN THE PLANNER VIEW MODEL TO BE MORE CONSISTENT AND TO BE MORE CONSISTENT IN WHAT VALUES I'M ACCESSING/PROPERTY VS FIELD BEING ACCESSED
     public class PlannerViewModel : INotifyPropertyChanged
     {
-        
-        
+
+        #region Fields and Properties
 
         //public List<PlannerItemViewModel> selectedTasks; // this is a placeholder list for the selected objects and stuff...
-                                                         // should only have top level objects selected, but unsure how to do that rn, so won't
+        // should only have top level objects selected, but unsure how to do that rn, so won't
         private PlannerModelData data;
 
         //Dirty flag - if true, needs to be saved
@@ -69,13 +71,15 @@ namespace PlanningProgramV3.ViewModels
                     highestTasks = value;
                     foreach (var task in highestTasks)
                     {
-                        data.topPlanItems.Add(task.State);
+                        data.planTasks.Add(task.State);
                     }
 
                     OnPropertyChanged(nameof(HighestTasks));
                 }
             }
         }
+        
+        #region Property Changed
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -83,22 +87,67 @@ namespace PlanningProgramV3.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
+        #endregion
 
-        public void AddHighestTask(object task)
+        #region Constructors
+        /// <summary>
+        /// Default Constructor a plan that has been created
+        /// will need to create another constructor to handle creating other data
+        /// </summary>
+        public PlannerViewModel()
         {
-            if(task is TaskViewModel temp)
+            data = new PlannerModelData();
+            //SetPosition = new RelayCommand(SetTopTaskPosition, null);
+            AddTask = new RelayCommand(AddNewTask, null);
+            HighestTasks = new ObservableCollection<TaskViewModel>();
+        }
+
+        #endregion
+
+        #region Methods
+        public void TrySaveToFile(string filepath)
+        {
+            PrintViewModels();
+            data.PrintPlannerDataMethod();
+            //save data
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = filepath;
+            saveFileDialog.Filter = "xml file (*.xml)|*.xml";
+            if(FileName == "")
             {
-                HighestTasks.Add(temp);
-                //I know this is technically bad practice, but I needed a way to access state so that I could add it to the model data
-                    //which I needed to do to ensure that the planner view model stored only view models, whereas I needed the models to contain only models so they could be serialized
-                data.topPlanItems.Add(temp.State);
-                OnPropertyChanged(nameof(HighestTasks));
+                FileName = "Untitled";
+                
             }
-            else 
+            saveFileDialog.FileName = FileName;
+            if (saveFileDialog.ShowDialog() == true)
             {
-                throw new ArgumentException("Should have been a TaskViewModel");
+                if (File.Exists(saveFileDialog.FileName))
+                {
+                    File.Delete(saveFileDialog.FileName);
+                }
+                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.Create);
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData));
+                serializer.Serialize(fsout, data);
+                fsout.Close();
             }
-            
+        }
+
+        /// <summary>
+        /// This method will add a new task to the plan
+        /// </summary>
+        /// <param name="shouldBeNull">Name is self-explanatory. It should literally be null, as there is no use for the variable, but I am using it anyway for some reason... 
+        ///                                 I should probably create no-parameter, and multi parameter (use a stack) version of the command.</param>
+        public void AddNewTask(object shouldBeNull)
+        {
+            //create the task
+            TaskViewModel temp = new TaskViewModel();
+
+            HighestTasks.Add(temp);
+
+            data.AddTask(temp.State);
+
+            OnPropertyChanged(nameof(HighestTasks));
         }
 
         //pass in the view model, to set its position
@@ -119,13 +168,13 @@ namespace PlanningProgramV3.ViewModels
             TaskViewModel tempVar = new TaskViewModel();
             //not setting coordinates to mouse position because can't figure out how to make it work right now
             HighestTasks.Add(tempVar);
-            data.topPlanItems.Add(tempVar.State);
+            data.planTasks.Add(tempVar.State);
             OnPropertyChanged(nameof(HighestTasks));
         }
 
         public void SetTaskPosition(TaskViewModel task, Point position)
         {
-            
+
         }
 
 
@@ -138,41 +187,10 @@ namespace PlanningProgramV3.ViewModels
 
         }
 
-        public PlannerViewModel()
-        {
-            data = new PlannerModelData();
-            //SetPosition = new RelayCommand(SetTopTaskPosition, null);
-            AddTask = new RelayCommand(AddTopTask, null);
-            HighestTasks = new ObservableCollection<TaskViewModel>();
-        }
 
-        public void TrySaveToFile(string filepath)
-        {
-            PrintViewModels();
-            data.PrintPlannerDataMethod();
-            //save data
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = filepath;
-            saveFileDialog.Filter = "xml file (*.xml)|*.xml";
-            if(FileName == "" && FileName == string.Empty)
-            {
-                FileName = "Untitled";
-                
-            }
-            saveFileDialog.FileName = FileName;
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                if (File.Exists(saveFileDialog.FileName))
-                {
-                    File.Delete(saveFileDialog.FileName);
-                }
-                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.Create);
-                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData)/*, new Type[] { typeof(TaskModelData), typeof(BaseItemModelData), typeof(TextModelData), typeof(DateDurationModelData) }*//*, "http://www.tempuri.org/Plan"*/);
-                serializer.Serialize(fsout, data);
-                fsout.Close();
-            }
-        }
-        
+        /// <summary>
+        /// Method for testing what is inside the view model
+        /// </summary>
         public void PrintViewModels()
         {
             Trace.WriteLine("File: " + FileName);
@@ -182,6 +200,9 @@ namespace PlanningProgramV3.ViewModels
             }
         }
 
+        /// <summary>
+        /// Method for testing what data is inside the model
+        /// </summary>
         public void PrintModels()
         {
             Trace.WriteLine("File: " + FileName);
@@ -190,5 +211,6 @@ namespace PlanningProgramV3.ViewModels
                 highestTasks[i].State.PrintData();
             }
         }
+        #endregion
     }
 }

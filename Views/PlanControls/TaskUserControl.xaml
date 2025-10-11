@@ -41,7 +41,7 @@
             </Border>
         </Expander.Header>
         <Expander.Content>
-            <ListView ItemsSource="{Binding SubItems, Mode=TwoWay}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
+            <ListView ItemsSource="{Binding SubItems, Mode=OneWay}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
             </ListView>
         </Expander.Content>
     </Expander>
