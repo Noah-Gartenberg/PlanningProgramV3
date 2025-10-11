@@ -43,7 +43,7 @@ namespace PlanningProgramV3.ViewModels
                     OnPropertyChanged(nameof(CurrentDate));
                     //MessageBox.Show("Current Date is " + value); FOR TESTING PURPOSES
                     //technically shouldn't be changing this data in here, but tbh right now I don't care, just want to get a functioning prototype and then I'll refactor later
-                    CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(currentDate));
+                    Tasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(currentDate));
                 }
             }
         }
@@ -99,17 +99,17 @@ namespace PlanningProgramV3.ViewModels
         }
 
 
-        //list of calendarTasks necessary
-        private ObservableCollection<CalendarTaskData> calendarTasks;
-        public ObservableCollection<CalendarTaskData> CalendarTasks
+        //list of tasks necessary
+        private ObservableCollection<CalendarTaskData> tasks;
+        public ObservableCollection<CalendarTaskData> Tasks
         {
-            get { return calendarTasks; }
+            get { return tasks; }
             set
             {
-                if (calendarTasks != value)
+                if (tasks != value)
                 {
-                    calendarTasks = value;
-                    OnPropertyChanged(nameof(CalendarTasks));
+                    tasks = value;
+                    OnPropertyChanged(nameof(Tasks));
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace PlanningProgramV3.ViewModels
             #endregion
 
 
-            calendarTasks = new ObservableCollection<CalendarTaskData>();
+            tasks = new ObservableCollection<CalendarTaskData>();
             plans = new ObservableCollection<PlannerViewModel>();
 
 
@@ -182,7 +182,17 @@ namespace PlanningProgramV3.ViewModels
             currentDate = DateTime.Today;
 
             DataAccess.InitializeDatabase();
-            CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
+            Tasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
+            //THIS HIGHEST TASKS.ADD IS FOR TESTING PURPOSES
+            plans[0].AddHighestTask(new TaskViewModel());
+
+
+
+
+                
+
+
+            //Initialize tasks
 
         }
         #region Methods
@@ -198,16 +208,16 @@ namespace PlanningProgramV3.ViewModels
                         break;
                     case "Week":
                         //in order for this to work, I need to set datetime variables, to ensure the dates are the right dates
-                        //if I don't, I might wind up with 8/25/2025 as the start, and 8/1/2025 as the end (random example, totally -- what happened was I was adding seven days to the current date, which if it went into the next month could be lower than the first date, and so no calendarTasks would be returned.
+                        //if I don't, I might wind up with 8/25/2025 as the start, and 8/1/2025 as the end (random example, totally -- what happened was I was adding seven days to the current date, which if it went into the next month could be lower than the first date, and so no tasks would be returned.
                         DateTime startDate = new DateTime(CurrentDate.Year, CurrentDate.Month, HelperMethods.GetFirstDayOfWeekDate(CurrentDate).Day);
                         DateTime endDate = startDate.AddDays(7);
 
-                        CalendarTasks = new ObservableCollection<CalendarTaskData>(
+                        Tasks = new ObservableCollection<CalendarTaskData>(
                             DataAccess.GetTasksFromWeek(startDate, endDate)
                             );
                         break;
                     case "Month":
-                        CalendarTasks = new ObservableCollection<CalendarTaskData>(
+                        Tasks = new ObservableCollection<CalendarTaskData>(
                             DataAccess.GetTasksFromMonth(
                                 new DateTime(CurrentDate.Year, CurrentDate.Month, 1),
                                 new DateTime(CurrentDate.Year, CurrentDate.Month, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month))

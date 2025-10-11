@@ -17,7 +17,7 @@ namespace PlanningProgramV3.Models
      * Noah Gartenberg
      * Last Updated: 7/9/2025
      * * Goal of this class is to handle any information tied to the data stored in a generic task
-     *      Data like start or end dates -- which only certain calendarTasks should have -- or subitems should be stored 
+     *      Data like start or end dates -- which only certain tasks should have -- or subitems should be stored 
      *      in a different object
      *      
      *      in this way, I can kind of use the composition pattern to keep this data by itself
@@ -50,11 +50,9 @@ namespace PlanningProgramV3.Models
         [XmlElement("GUID", Type = typeof(Guid))]
         public Guid uuid;
 
-        #region Constructors
-        /// <summary>
-        /// Default constructor for serialization
-        /// </summary>
-        /// <param name="parent"></param>
+
+        //this is what is stored when data is serialized - why?? -- NOT AS IN "WHY IS IT USED" BUT AS IN "WHY IS THE DATA THAT ALREADY EXISTS NOT USED WHEN IT'S SERIALIZED?
+            //due to breakpoints, know that data must be set in models, or that something must be getting lost otherwise
         public TaskModelData() : base(PlannerItemType.Task) 
         {
             //okay so what I know is this:
@@ -70,33 +68,21 @@ namespace PlanningProgramV3.Models
             //I have added break points to ensure the data in the model is being set. it is. 
             //I'm at my wits end and I don't know what's broken...
 
-#warning SERIALIZATION ISSUE APPEARS TO BE THAT WHAT IS DISPLAYED AND WAHT IS IN LISTS THAT ARE SERIALIZED APPEAR TO BE DIFFERENT VALUES? COULD BE PASS BY REFERENCE/VALUE ISSUE? COULD BE ISSUE OF SYNCING THE MODEL/VIEW MODEL
+            //okay, so maybe the data just isn't being passed to the plannerviewmodel or to the plannermodel?????
 
 
             subItems = new List<BaseItemModelData>();
             this.uuid = Guid.NewGuid();
         }
 
-        /// <summary>
-        /// Constructor to call when creating a new task from scratch
-        /// </summary>
-        /// <param name="parent"></param>
-        public TaskModelData(TaskModelData parent) : base(parent, PlannerItemType.Task)
+        
+        public TaskModelData(TaskModelData? parent) : base(PlannerItemType.Task, parent)
         {
             subItems = new List<BaseItemModelData>();
             this.uuid = Guid.NewGuid();
         }
 
-        /// <summary>
-        /// Constructor to call when creating a new task from pre-existing data that hasn't yet been formatted into state
-        /// </summary>
-        /// <param name="isCompleted"></param>
-        /// <param name="taskName"></param>
-        /// <param name="subItems"></param>
-        /// <param name="coordinates"></param>
-        /// <param name="uuid"></param>
-        /// <param name="parent"></param>
-        public TaskModelData(bool isCompleted, string taskName, List<BaseItemModelData> subItems, Point coordinates, Guid uuid, TaskModelData parent) : base(parent, PlannerItemType.Task)
+        public TaskModelData(bool isCompleted, string taskName, List<BaseItemModelData> subItems, Point coordinates, Guid uuid, TaskModelData? parent) : base(PlannerItemType.Task, parent)
         {
             this.isCompleted = isCompleted;
             this.taskName = taskName;
@@ -105,7 +91,7 @@ namespace PlanningProgramV3.Models
             this.uuid = uuid;
         }
 
-        public TaskModelData(bool isCompleted, string taskName, List<BaseItemModelData> subItems, Point coordinates, TaskModelData parent) : base(parent, PlannerItemType.Task)
+        public TaskModelData(bool isCompleted, string taskName, List<BaseItemModelData> subItems, Point coordinates, TaskModelData? parent) : base(PlannerItemType.Task, parent)
         {
             this.isCompleted = isCompleted;
             this.taskName = taskName;
@@ -113,9 +99,10 @@ namespace PlanningProgramV3.Models
             this.coordinates = coordinates;
             this.uuid = Guid.NewGuid();
         }
-        #endregion
-        #region Methods
-        
+
+        /**
+         * This method exists for testing purposes to help me figure out what's going on between the models and the view models.
+         */
         public override void PrintData()
         {
             Trace.WriteLine("TaskModel: ");
@@ -134,6 +121,5 @@ namespace PlanningProgramV3.Models
             subItems.Add(item);
             PrintData();
         }
-        #endregion
     }
 }

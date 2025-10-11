@@ -28,7 +28,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
             {
                 connection.Open();
 
-                //so calendar calendarTasks need a few columns: date start, date end, task name, completion, task id, filename????
+                //so calendar tasks need a few columns: date start, date end, task name, completion, task id, filename????
 
                 var command = connection.CreateCommand();
                 command.CommandText =

@@ -11,7 +11,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
 {
     
     /**
-     * This class will actually be what is stored in calendar calendarTasks -- right now needs only hold the int ID in the table for the task
+     * This class will actually be what is stored in calendar tasks -- right now needs only hold the int ID in the table for the task
      *  as all other data can be fetched from the SQL table?    
      *          NO! NEEDS TO HOLD ALL ICALENDARTASK DATA AND THE INT ID
      *          
@@ -23,7 +23,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
      */
     public class CalendarTaskData : ICalendarTask
     {
-        //returns if the table had a bool, since bool is smaller than a string, and since this data is only necessary if users click on the calendarTasks
+        //returns if the table had a bool, since bool is smaller than a string, and since this data is only necessary if users click on the tasks
         public string TableGUID { get; set; } 
         public bool HadGUID { get; set; }
         public bool HadFileName { get; set; }

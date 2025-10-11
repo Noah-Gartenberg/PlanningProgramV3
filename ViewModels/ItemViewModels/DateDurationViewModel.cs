@@ -10,41 +10,31 @@ using static System.Net.Mime.MediaTypeNames;
 namespace PlanningProgramV3.ViewModels.ItemViewModels
 {
     /**
-     * Noah Gartenberg
-     * Last Edited:10/10/2025
      * This class contains the view model data for the TimeSensetive Controls
-     * 
-     * Refactored constructors, added State property, and thought about removing parent file path
      */
     public class DateDurationViewModel : PlannerItemViewModel
     {
         #region Properties
-        public new DateDurationModelData State
-        {
-            get => (DateDurationModelData)state;
-        }
-
-#warning Honestly, I'm not sure if this property/field is necessary - I may be better off just having an event that I can call in the main window view model to get the plan, but then do I need to store the plan's file name? 
         public string ParentFilePath
         {
-            get => State.parentPlanFile;
+            get => ((DateDurationModelData)state).parentPlanFile;
             set
             {
-                if (State.parentPlanFile != value)
+                if (((DateDurationModelData)state).parentPlanFile != value)
                 {
-                    State.parentPlanFile = value;
+                    ((DateDurationModelData)state).parentPlanFile = value;
                     OnPropertyChanged(nameof(ParentFilePath));
                 }
             }
         }
         public Guid ParentUUID
         {
-            get => State.parentTaskUUID;
+            get => ((DateDurationModelData)state).parentTaskUUID;
             set
             {
-                if (State.parentTaskUUID != value)
+                if (((DateDurationModelData)state).parentTaskUUID != value)
                 {
-                    State.parentTaskUUID = value;
+                    ((DateDurationModelData)state).parentTaskUUID = value;
                     OnPropertyChanged(nameof(ParentUUID));
                 }
             }
@@ -52,13 +42,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         public DateTime StartDate
         {
-            get => State.startDate;
+            get => ((DateDurationModelData)state).startDate;
             set
             {
                 //ensure that the new start date is not more than the end date - if it is, don't set the start date? Set it to the end date? Going with the former for now
-                if (State.startDate != value && value <= EndDate)
+                if (((DateDurationModelData)state).startDate != value && value <= EndDate)
                 {
-                    State.startDate = value;
+                    ((DateDurationModelData)state).startDate = value;
                     OnPropertyChanged(nameof(StartDate));
                 }
             }
@@ -66,13 +56,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         public DateTime EndDate
         {
-            get => State.endDate;
+            get => ((DateDurationModelData)state).endDate;
             set
             {
                 //ensure that new end date is not less than the start date - if it is, same rule as start date, and just don't set
-                if (State.endDate != value && value >= StartDate)
+                if (((DateDurationModelData)state).endDate != value && value >= StartDate)
                 {
-                    State.endDate = value;
+                    ((DateDurationModelData)state).endDate = value;
                     OnPropertyChanged(nameof(EndDate));
                 }
             }
@@ -80,44 +70,38 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        /// <summary>
-        /// Default constructor to call when creating a new date duration sub-item
-        /// </summary>
-        /// <param name="parent"></param>
-        public DateDurationViewModel(TaskViewModel parent) : base(parent, PlannerItemType.Date)
-        {
-            StartDate = DateTime.Now;
-            EndDate = DateTime.Now;
-            ParentUUID = parent.UUID;
-        }
-        /// <summary>
-        /// Constructor to call when creating a new date duration sub-item from pre-existing data or state
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="state"></param>
-        public DateDurationViewModel(TaskViewModel parent, BaseItemModelData state) : base(parent, state, PlannerItemType.Date)
+
+        public DateDurationViewModel(ref TaskViewModel? parent) : base(parent.State)
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
             ParentUUID = parent.UUID;
         }
 
-        /// <summary>
-        /// Default constructor for controls
-        /// </summary>
-        public DateDurationViewModel() : base(PlannerItemType.Date) 
+        public DateDurationViewModel() : base(new DateDurationModelData())
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
         }
-        #endregion
 
-        #region Methods
         public override void PrintData()
         {
-            Trace.WriteLine("Parent: " + parent);
+            Trace.WriteLine("Parent: " + Parent);
             Trace.WriteLine("StartDate: " + StartDate);
             Trace.WriteLine("EndDate: " + EndDate);
+        }
+
+        /**
+         * Overriding in this class so can update the guid too
+         */
+        public override void SetParent(TaskViewModel? parent)
+        {
+            base.SetParent(parent);
+#pragma warning disable CS8602 // Dereference of a possibly null reference - date duration models can't have a null parent
+            ParentUUID = parent.UUID;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+
         }
         #endregion
     }
