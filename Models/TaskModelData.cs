@@ -70,10 +70,7 @@ namespace PlanningProgramV3.Models
             //I have added break points to ensure the data in the model is being set. it is. 
             //I'm at my wits end and I don't know what's broken...
 
-#warning SERIALIZATION ISSUE APPEARS TO BE THAT WHAT IS DISPLAYED AND WAHT IS IN LISTS THAT ARE SERIALIZED APPEAR TO BE DIFFERENT VALUES? COULD BE PASS BY REFERENCE/VALUE ISSUE? COULD BE ISSUE OF SYNCING THE MODEL/VIEW MODEL
-
-
-            subItems = new List<BaseItemModelData>();
+            subItems = [];
             this.uuid = Guid.NewGuid();
         }
 
@@ -83,7 +80,7 @@ namespace PlanningProgramV3.Models
         /// <param name="parent"></param>
         public TaskModelData(TaskModelData parent) : base(parent, PlannerItemType.Task)
         {
-            subItems = new List<BaseItemModelData>();
+            subItems = [];
             this.uuid = Guid.NewGuid();
         }
 

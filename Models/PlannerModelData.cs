@@ -51,7 +51,7 @@ namespace PlanningProgramV3.Models
         #region Constructors
         //default constructor
         public PlannerModelData() {
-            planTasks = new List<TaskModelData>();
+            planTasks = [];
             fileName = string.Empty;
             planVersion = VersionData.CurrentVersion;
         }

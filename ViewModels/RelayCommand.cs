@@ -2,7 +2,7 @@
 
 namespace PlanningProgramV3.ViewModels
 {
-    public class RelayCommand : ICommand
+    public partial class RelayCommand(Action<object> executeAction, Func<object?, bool>? canExecuteFunc) : ICommand
     {
 
         /// <summary>
@@ -10,17 +10,11 @@ namespace PlanningProgramV3.ViewModels
         /// THIS WOULD REQUIRE SOME WORK TO MAKE IT FUNCTION, BUT IT WOULD ALLOW ME TO HAVE MORE PARAMETERS
         /// </summary>
 
-        private Action<object> execute;
+        private Action<object> execute = executeAction;
 
-        private Func<object?, bool> canExecute;
+        private Func<object?, bool>? canExecute = canExecuteFunc;
         private RelayCommand? getTasksForTimePeriod;
-        private object value;
-
-        public RelayCommand(Action<object> executeAction, Func<object?,bool>? canExecuteFunc)
-        {
-            execute = executeAction;
-            canExecute = canExecuteFunc;
-        }
+        private object? value;
 
         public event EventHandler? CanExecuteChanged;
 
@@ -34,7 +28,9 @@ namespace PlanningProgramV3.ViewModels
 
         public void Execute(object? parameter)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             execute(parameter);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

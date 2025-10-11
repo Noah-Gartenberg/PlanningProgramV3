@@ -16,7 +16,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * 
      * Refactored constructors, added State property, and thought about removing parent file path
      */
-    public class DateDurationViewModel : PlannerItemViewModel
+    public partial class DateDurationViewModel : PlannerItemViewModel
     {
         #region Properties
         public new DateDurationModelData State

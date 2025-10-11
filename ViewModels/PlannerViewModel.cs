@@ -12,10 +12,7 @@ using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
-
-
-#warning REFACTOR THE CODE IN THE PLANNER VIEW MODEL TO BE MORE CONSISTENT AND TO BE MORE CONSISTENT IN WHAT VALUES I'M ACCESSING/PROPERTY VS FIELD BEING ACCESSED
-    public class PlannerViewModel : INotifyPropertyChanged
+    public partial class PlannerViewModel : INotifyPropertyChanged
     {
 
         #region Fields and Properties
@@ -100,7 +97,7 @@ namespace PlanningProgramV3.ViewModels
             data = new PlannerModelData();
             //SetPosition = new RelayCommand(SetTopTaskPosition, null);
             AddTask = new RelayCommand(AddNewTask, null);
-            HighestTasks = new ObservableCollection<TaskViewModel>();
+            HighestTasks = [];
         }
 
         #endregion

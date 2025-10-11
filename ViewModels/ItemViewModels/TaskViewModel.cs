@@ -20,7 +20,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * 
      * Removed default constructor and refactored constructors to try and get saving data to work
      */
-    public class TaskViewModel : PlannerItemViewModel
+    public partial class TaskViewModel : PlannerItemViewModel
     {
 
 
@@ -31,11 +31,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Properties
 
+#pragma warning disable CS8603 // Possible null reference return. If it is null, I want it to return as such
         //Task view model is the only object to actually need to expose the parent as a property
         public TaskViewModel Parent
         {
             get => parent;
         }
+#pragma warning restore CS8603 // Possible null reference return.
 
         public Point Coordinates
         {
@@ -148,7 +150,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <param name="parent"></param>
         public TaskViewModel(TaskViewModel parent) : base(parent, PlannerItemType.Task)
         {
-            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
@@ -160,7 +162,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <param name="state"></param>
         public TaskViewModel(ref TaskViewModel parent, ref BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
         {
-            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
@@ -170,7 +172,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// </summary>
         public TaskViewModel() : base(PlannerItemType.Task)
         {
-            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
@@ -186,6 +188,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         //9/17/2025 TO DO!!! CHANGE THIS TO CREATE THE VIEW MODELS FROM STATE. //also, need to figure out how to make this work for copy paste
         public virtual void AddSubItem(object obj)
         {
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             PlannerItemViewModel addedItem = obj.ToString() switch
             {
                 "Task" => new TaskViewModel(this),
@@ -195,6 +198,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             SubItems.Add(addedItem);
             State.AddItem(addedItem.State);
             PrintData();
@@ -212,8 +216,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
 
             throw new NotImplementedException("The RemoveSubItem method has not been properly implemented -- parameters should not be an object");
-            SubItems.Remove(obj as PlannerItemViewModel);
-            OnPropertyChanged(nameof(SubItems));
         }
         #endregion
         #endregion

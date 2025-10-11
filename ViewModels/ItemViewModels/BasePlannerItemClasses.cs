@@ -95,8 +95,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
 
             BaseItemModelData newState;
-
-#warning Ensure that the states of the view models are set up correctly, to maintain a synced state between the view models and the models' states
             //The way I've refactored the code right now should allow me to bypass any mess ups with parenting data, as soon as I figure out how to refactor this code such that the parent can be passed in by reference instead of by value
             switch (Type)
             {
@@ -110,7 +108,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                     newState = new DateDurationModelData(parent.State);
                     break;
                 default:
-                    throw new NotImplementedException("The item view model you tried to create of type " + Type + " is not yet implemented, or is of generic type and will not have functionality");
+                    MessageBox.Show("The item view model you tried to create of type " + Type + " is not yet implemented, or is of generic type and will not have functionality");
+                    newState = new TaskModelData(parent.State);
                     break;
             }
             this.state = newState;
@@ -138,7 +137,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                     newState = new DateDurationModelData();
                     break;
                 default:
-                    throw new NotImplementedException("The item view model you tried to create of type " + Type + " is not yet implemented, or is of generic type and will not have functionality");
+                    MessageBox.Show("The item view model you tried to create of type " + Type + " is not yet implemented, or is of generic type and will not have functionality");
+                    newState = new TaskModelData();
                     break;
             }
             state = newState;
