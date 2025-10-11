@@ -31,27 +31,35 @@ namespace PlanningProgramV3.Models
         [XmlElement(ElementName = "EndDate", Type = typeof(DateTime), IsNullable = false)]
         public DateTime endDate;
 
-        public DateDurationModelData(TaskModelData? parent) : base(PlannerItemType.Date,parent)
-        {
-            startDate = DateTime.Today;
-            endDate = DateTime.Today;
-            parentTaskUUID = parent.uuid;
-        }
-
-        //need parameterless constructor for serialization...
-        public DateDurationModelData() : base(PlannerItemType.Date) 
-        {
-            startDate = DateTime.Today;
-            endDate = DateTime.Today;
-        }
-
-        public DateDurationModelData(Guid parentTaskUUID, DateTime startDate, DateTime endDate) : base(PlannerItemType.Date)
+        #region Constructors
+        /// <summary>
+        /// Constructor to call when creating a new date duration sub-item from pre-existing data that hasn't been organized into state yet
+        /// </summary>
+        /// <param name="parentTaskUUID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="parent"></param>
+        public DateDurationModelData(Guid parentTaskUUID, DateTime startDate, DateTime endDate, TaskModelData parent) : base(parent, PlannerItemType.Date)
         {
             this.parentTaskUUID = parentTaskUUID;
             this.startDate = startDate;
             this.endDate = endDate;
         }
 
+        /// <summary>
+        /// Constructor to call when creating a new date duration sub-item
+        /// </summary>
+        /// <param name="parent"></param>
+        public DateDurationModelData(TaskModelData parent) : base(parent, PlannerItemType.Date)
+        {
+            startDate = DateTime.Today;
+            endDate = DateTime.Today;
+            parentTaskUUID = parent.uuid;
+        }
+
+        //need parameterless constructor for serialization/deserialization...
+        public DateDurationModelData() : base(PlannerItemType.Date) { }
+        #endregion
         public override void PrintData()
         {
             Trace.WriteLine("DateDurationModel: ");

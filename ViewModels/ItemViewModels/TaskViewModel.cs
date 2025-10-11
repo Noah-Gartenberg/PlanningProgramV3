@@ -14,9 +14,11 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 {
     /**
      * Noah Gartenberg
-     * Last Updated: 8/6/2025
+     * Last Updated: 10/10/2025
      * This contains the view model for the Task Item
-     * Tasks are also the only ones able to contain subitems
+     * CalendarTasks are also the only ones able to contain subitems
+     * 
+     * Removed default constructor and refactored constructors to try and get saving data to work
      */
     public class TaskViewModel : PlannerItemViewModel
     {
@@ -28,6 +30,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
 
         #region Properties
+
+        //Task view model is the only object to actually need to expose the parent as a property
+        public TaskViewModel Parent
+        {
+            get => parent;
+        }
 
         public Point Coordinates
         {
@@ -133,29 +141,35 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public TaskViewModel() : base(new TaskModelData())
-        {
-            //Create observable collection with view models from state
-            SubItems = new ObservableCollection<PlannerItemViewModel>();
-            AddSubItemCommand = new RelayCommand(AddSubItem,CanMoveTask);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem,null);
-        }
 
-        //constructor for creating the object as a child of another task
-        public TaskViewModel(TaskViewModel? parent) : base(new TaskModelData(parent.State))
+        /// <summary>
+        /// Constructor for creating a task view model from scratch
+        /// </summary>
+        /// <param name="parent"></param>
+        public TaskViewModel(TaskViewModel parent) : base(parent, PlannerItemType.Task)
         {
             SubItems = new ObservableCollection<PlannerItemViewModel>();
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
 
-        //constructor for making a new task at specific coordinates
-        public TaskViewModel(Point coords) : base(new TaskModelData())
+        /// <summary>
+        /// Constructor to be called when passing in data that has already been formatted into a model, but doesn't yet have a corresponding view model
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="state"></param>
+        public TaskViewModel(ref TaskViewModel parent, ref BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
         {
-            State.coordinates = coords;
+            SubItems = new ObservableCollection<PlannerItemViewModel>();
+            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+        }
+
+        /// <summary>
+        /// Default constructor if such a thing is necessary - and I believe it to be for this class and this class only
+        /// </summary>
+        public TaskViewModel() : base(PlannerItemType.Task)
+        {
             SubItems = new ObservableCollection<PlannerItemViewModel>();
             AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
@@ -174,14 +188,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             PlannerItemViewModel addedItem = obj.ToString() switch
             {
-                "Task" => new TaskViewModel(),
-                "Text" => new TextViewModel(),
-                "Date" => new DateDurationViewModel(),
+                "Task" => new TaskViewModel(this),
+                "Text" => new TextViewModel(this),
+                "Date" => new DateDurationViewModel(this),
                 //"Image" => new ImageItemViewModel(),
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
-            addedItem.SetParent(this);
             SubItems.Add(addedItem);
             State.AddItem(addedItem.State);
             PrintData();
@@ -192,7 +205,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         //9/17/2025 - actually, waht does this method even do? The way Drag&Drop works rn, it will already move the top level parent anyway. 
         public virtual bool CanMoveTask(object? parameter)
         {
-            return Parent == null;
+            return parent == null;
         }
 
         public virtual void RemoveSubItem(object obj)
@@ -212,7 +225,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public override void PrintData()
         {
             Trace.WriteLine("TaskModel: ");
-            Trace.WriteLine("Parent: " + Parent);
+            Trace.WriteLine("Parent: " + parent);
             Trace.WriteLine("Task Name: " + Name);
             Trace.WriteLine("Task Completion: " + IsComplete);
             Trace.WriteLine("Guid: " + UUID);

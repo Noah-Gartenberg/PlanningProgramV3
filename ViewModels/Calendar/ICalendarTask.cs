@@ -9,7 +9,7 @@ using System.Windows.Media;
 namespace PlanningProgramV3.ViewModels.Calendar
 {
     /**
-     * This interface represents most of the things that the Calendar tasks will need (sans a reference to the UUID or Handle
+     * This interface represents most of the things that the Calendar calendarTasks will need (sans a reference to the UUID or Handle
      *  and the filepath to the plans in question)
      */
     public interface ICalendarTask

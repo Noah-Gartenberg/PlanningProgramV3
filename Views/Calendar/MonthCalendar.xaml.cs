@@ -349,16 +349,16 @@ namespace PlanningProgramV3.Views.Calendar
         private void DrawTasks()
         {
             //this method's getting called a lot
-            //This method can be called when tasks aren't yet bound, so check that case and return
+            //This method can be called when calendarTasks aren't yet bound, so check that case and return
             if(Tasks == null || Tasks.Count() == 0)
             {
                 return;
             }
 
-            //when Tasks is bound, check if it is collection of ICalendarTasks
+            //when CalendarTasks is bound, check if it is collection of ICalendarTasks
             if(Tasks is IEnumerable<ICalendarTask> tasks)
             {
-                //add colors of tasks to array to pick up them using number
+                //add colors of calendarTasks to array to pick up them using number
                 SolidColorBrush[] colors = [Color0, Color1, Color2];
 
                 //index to array of colors
@@ -393,7 +393,7 @@ namespace PlanningProgramV3.Views.Calendar
                             taskRow = 0;
                         }
 
-                        //but if there are some tasks before, tasks won't be in first row, but after previous events
+                        //but if there are some calendarTasks before, calendarTasks won't be in first row, but after previous events
                         if (day.CellTasks.Children.Count > taskRow)
                         {
                             taskRow = Grid.GetRow(day.CellTasks.Children[day.CellTasks.Children.Count - 1]) + 1;
