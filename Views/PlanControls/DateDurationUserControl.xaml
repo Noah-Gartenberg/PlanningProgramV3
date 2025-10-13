@@ -7,9 +7,6 @@
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <data:DateDurationViewModel/>
-    </UserControl.DataContext>
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Background="White" HorizontalAlignment="Center">
         <Grid>
             <Grid.ColumnDefinitions>

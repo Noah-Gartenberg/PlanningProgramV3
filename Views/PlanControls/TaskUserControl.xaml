@@ -7,19 +7,10 @@
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <data:TaskViewModel/>
-    </UserControl.DataContext>
-    <!--<UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/../CustomControls.xaml"/>
-                <ResourceDictionary Source="/../ResourceDictionary.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-
-
-    </UserControl.Resources>-->
+    </UserControl.DataContext>-->
+    
     <Expander Style="{DynamicResource TaskExpander}" ExpandDirection="Down" HorizontalAlignment="Left" VerticalAlignment="Center" >
 
         <Expander.Header>
