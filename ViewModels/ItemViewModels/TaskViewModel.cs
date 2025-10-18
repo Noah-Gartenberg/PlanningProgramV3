@@ -18,6 +18,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * This contains the view model for the Task Item
      * CalendarTasks are also the only ones able to contain subitems
      * 
+     * Link to go to to see an example of what Dutton meant when he described when/how to redo the code in the models/viewmodels https://stackoverflow.com/questions/62743207/mvvm-solving-nested-models-and-viewmodels
+     * 
      * Removed default constructor and refactored constructors to try and get saving data to work
      */
     public partial class TaskViewModel : PlannerItemViewModel
@@ -112,6 +114,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             {
                 if (!value.Equals(State.taskName))
                 {
+                    Trace.WriteLine("Printing for name");
+                    PrintData();
                     State.taskName = value;
                     OnPropertyChanged(nameof(Name));
                 }
@@ -151,7 +155,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public TaskViewModel(TaskViewModel parent) : base(parent, PlannerItemType.Task)
         {
             SubItems = [];
-            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
 
@@ -163,7 +167,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public TaskViewModel(ref TaskViewModel parent, ref BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
         {
             SubItems = [];
-            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
 
@@ -173,7 +177,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public TaskViewModel() : base(PlannerItemType.Task)
         {
             SubItems = [];
-            AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
         #endregion

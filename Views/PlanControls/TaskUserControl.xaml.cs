@@ -28,7 +28,6 @@ namespace PlanningProgramV3.Views.PlanControls
         {
             InitializeComponent();
         }
-
         //protected override void OnMouseMove(MouseEventArgs e)
         //{
         //    base.OnMouseMove(e);

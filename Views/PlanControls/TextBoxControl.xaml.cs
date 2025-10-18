@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlanningProgramV3.ViewModels.ItemViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,9 +19,9 @@ namespace PlanningProgramV3.Views.PlanControls
     /// <summary>
     /// Interaction logic for DescriptionControl.xaml
     /// </summary>
-    public partial class TextControl : UserControl
+    public partial class TextUserControl : UserControl
     {
-        public TextControl()
+        public TextUserControl()
         {
             InitializeComponent();
         }

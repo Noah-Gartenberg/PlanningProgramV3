@@ -1,19 +1,25 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Controls="clr-namespace:PlanningProgramV3.Views.PlanControls"
-                    xmlns:Scripts="clr-namespace:PlanningProgramV3.ViewModels">
+                    xmlns:TemplateSelector="clr-namespace:PlanningProgramV3.ViewModels"
+                    xmlns:ViewModels="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels">
 
-    <DataTemplate x:Key="TaskTemplate">
+    <!--<DataTemplate x:Key="TaskTemplate">
         <Controls:TaskUserControl/>
+    </DataTemplate>-->
+    <HierarchicalDataTemplate x:Key="TaskTemplate" DataType="{x:Type ViewModels:TaskViewModel}"
+                              ItemsSource="{Binding Path=SubItems}">
+        <Controls:TaskUserControl/>
+    </HierarchicalDataTemplate>
+    <DataTemplate x:Key="TextTemplate" DataType="{x:Type ViewModels:TextViewModel}">
+        <Controls:TextUserControl/>
     </DataTemplate>
-    <DataTemplate x:Key="TextTemplate">
-        <Controls:TextControl/>
-    </DataTemplate>
-    <DataTemplate x:Key="DateTemplate">
+    <DataTemplate x:Key="DateTemplate" DataType="{x:Type ViewModels:DateDurationViewModel}">
         <Controls:DateDurationUserControl/>
     </DataTemplate>
 
-    <Scripts:SubItemTemplateSelector x:Key="ItemTemplateSelector"
+
+    <TemplateSelector:SubItemTemplateSelector x:Key="ItemTemplateSelector"
                                      Task="{StaticResource TaskTemplate}"
                                      Text="{StaticResource TextTemplate}"
                                      Date="{StaticResource DateTemplate}"/>
