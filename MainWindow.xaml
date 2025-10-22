@@ -134,6 +134,7 @@
                     </TransformGroup>
                 </TabItem.LayoutTransform>
                 <Border BorderBrush="Yellow" BorderThickness="1">
+                    <!--Need to refactor the below control into this control, and also make the main window a singleton-->
                     <PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>
                 </Border>
             </TabItem>

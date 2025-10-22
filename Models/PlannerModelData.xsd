@@ -26,12 +26,12 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="BaseItemModelData" abstract="true" mixed="true">
+  <!--<xs:complexType name="BaseItemModelData" abstract="true" mixed="true">
     <xs:sequence>
       <xs:element minOccurs="1" maxOccurs="1" name="dataType" nillable="true" type="PlannerItemType" />
       <xs:element minOccurs="0" maxOccurs="1" name="parent" type="TaskModelData" />
     </xs:sequence>
-  </xs:complexType>
+  </xs:complexType>-->
   <xs:simpleType name="PlannerItemType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Generic" />

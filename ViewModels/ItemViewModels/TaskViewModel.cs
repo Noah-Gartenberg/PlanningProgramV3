@@ -164,9 +164,37 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="state"></param>
-        public TaskViewModel(ref TaskViewModel parent, ref BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
+        public TaskViewModel(TaskViewModel parent, BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
         {
             SubItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+        }
+        /// <summary>
+        /// Constructor for creating a new task view model when loading a plan into memory
+        /// </summary>
+        /// <param name="state"></param>
+        public TaskViewModel(BaseItemModelData state) : base(state,PlannerItemType.Task)
+        {
+            //load subitems into list
+            var temp = state as TaskModelData;
+            for (int i = 0; i <temp.subItems.Count; i++)
+            {
+                subItemViewModels = [];
+                var subItem = temp.subItems[i];
+                switch(subItem.dataType)
+                { 
+                    case PlannerItemType.Task:
+                        subItemViewModels.Add(new TaskViewModel(this,subItem as TaskModelData));
+                        break;
+                    case PlannerItemType.Text:
+                        subItemViewModels.Add(new TextViewModel(this,subItem as TextModelData));
+                        break;
+                    case PlannerItemType.Date:
+                        subItemViewModels.Add(new DateDurationViewModel(this,subItem as DateDurationModelData));
+                        break;
+                }
+            }
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
@@ -189,7 +217,34 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public ICommand RemoveSubItemCommand { get; private set; }
 
         #region Commmand related methods
-        //9/17/2025 TO DO!!! CHANGE THIS TO CREATE THE VIEW MODELS FROM STATE. //also, need to figure out how to make this work for copy paste
+        
+
+        /// <summary>
+        /// When inputting an item model, create a view model to represent the item and add it to the subitems collection
+        /// do not have to add to the list in the model, because the data will come from the model, and be added to this list
+        /// </summary>
+        /// <param name="item"></param>
+        public virtual void AddSubItem(BaseItemModelData item)
+        {
+            if(item is TaskModelData)
+            {
+                subItemViewModels.Add(new TaskViewModel(this,item as TaskModelData));
+            }
+            else if(item is TextModelData)
+            {
+                subItemViewModels.Add(new TextViewModel(this,item as TextModelData));
+            }
+            else if(item is DateDurationModelData)
+            {
+                subItemViewModels.Add(new DateDurationViewModel(this, item as DateDurationModelData));
+            }
+            else
+            {
+                throw new System.NotImplementedException("Tried to add an unimplemented view model/model type to the subitems list");
+            }
+
+            OnPropertyChanged(nameof(SubItems));
+        }
         public virtual void AddSubItem(object obj)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).

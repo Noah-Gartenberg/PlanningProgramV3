@@ -47,7 +47,16 @@ namespace PlanningProgramV3.Views
         {
             InitializeComponent();
         }
-        
+
+        private void AddTaskItem_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentPlanner.AddTask.Execute(this);
+        }
+
+        public void RefreshList()
+        {
+            PlannerDisplayer.Items.Refresh();
+        }
 
         private void PlannerDisplayer_MouseMove(object sender, MouseEventArgs e)
         {
@@ -120,6 +129,8 @@ namespace PlanningProgramV3.Views
 
         }
 
+        
+
         private void PlannerDisplayer_DragLeave(object sender, DragEventArgs e)
         {
             if (e.OriginalSource == PlannerDisplayer)
@@ -157,5 +168,6 @@ namespace PlanningProgramV3.Views
             else
                 SelectedObject = null;
         }
+
     }
 }

@@ -31,6 +31,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                 //so calendar calendarTasks need a few columns: date start, date end, task name, completion, task id, filename????
 
                 var command = connection.CreateCommand();
+                //thinking here: maybe I want a table for tasks that have date durations, and then a table for the actual start and end dates themselves - that way I'm not saving unnecessary data
                 command.CommandText =
                     @"
                         CREATE TABLE IF NOT EXISTS CalendarTasks(

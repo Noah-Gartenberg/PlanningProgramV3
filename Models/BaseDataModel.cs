@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace PlanningProgramV3.Models
 {
@@ -32,7 +33,9 @@ namespace PlanningProgramV3.Models
      */
     public abstract class BaseItemModelData
     {
+        [XmlIgnore]
         public PlannerItemType dataType;
+        [XmlIgnore]
 
         public TaskModelData? parent;
 

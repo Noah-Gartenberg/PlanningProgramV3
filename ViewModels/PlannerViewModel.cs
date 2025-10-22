@@ -6,8 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
@@ -16,9 +15,16 @@ namespace PlanningProgramV3.ViewModels
     {
 
         #region Fields and Properties
+        /**
+         * 
+         * Information for storing the viewport and camera data
+         * Need to store the camera location (center of screen) - anything else (ex: canvas size) should be stored in the main window
+         */
+        private Point CameraLoc;
 
-        //public List<PlannerItemViewModel> selectedTasks; // this is a placeholder list for the selected objects and stuff...
-        // should only have top level objects selected, but unsure how to do that rn, so won't
+        
+
+
         private PlannerModelData data;
 
         //Dirty flag - if true, needs to be saved
@@ -130,6 +136,37 @@ namespace PlanningProgramV3.ViewModels
             }
         }
 
+        public void TryLoadFromFile(string filepath)
+        {
+            OpenFileDialog openFileDialogue = new OpenFileDialog();
+            openFileDialogue.InitialDirectory = filepath;
+            openFileDialogue.Filter = "xml file (*.xml)|*.xml";
+            if(openFileDialogue.ShowDialog() == true)
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData));
+                using(XmlReader reader = XmlReader.Create(openFileDialogue.FileName))
+                {
+                    data = (PlannerModelData)serializer.Deserialize(reader);
+                }
+                
+            }
+            //name has been updated
+            OnPropertyChanged(nameof(FileName));
+
+            //need to loop through highest tasks, and add it to the list, based on what is in the plan 
+            //highest tasks must be manually updated, add to the field, not the property, so that in theory, the property doesn't update the model behind it
+            for (int i = 0; i < data.planTasks.Count; i++)
+            {
+                
+                highestTasks.Add(new TaskViewModel(data.planTasks[i]));
+                
+            }
+            OnPropertyChanged(nameof(HighestTasks));
+
+
+
+        }
+
         /// <summary>
         /// This method will add a new task to the plan
         /// </summary>
@@ -156,18 +193,16 @@ namespace PlanningProgramV3.ViewModels
         }
 
         /**
-         * Adds a task to the top of the list at the user's mouse's position
-         *      Unsure as of yet what the input will be - maybe mouse position
-         *      may be passing in a reference to the canvas?
+         * Adds a task to the top of the list, where the task is an already existing object?
          */
-        public void AddTopTask(object input)
-        {
-            TaskViewModel tempVar = new TaskViewModel();
-            //not setting coordinates to mouse position because can't figure out how to make it work right now
-            HighestTasks.Add(tempVar);
-            data.planTasks.Add(tempVar.State);
-            OnPropertyChanged(nameof(HighestTasks));
-        }
+        //public void AddTopTask(object input)
+        //{
+        //    TaskViewModel tempVar = new TaskViewModel();
+        //    //not setting coordinates to mouse position because can't figure out how to make it work right now
+        //    HighestTasks.Add(tempVar);
+        //    data.planTasks.Add(tempVar.State);
+        //    OnPropertyChanged(nameof(HighestTasks));
+        //}
 
         public void SetTaskPosition(TaskViewModel task, Point position)
         {

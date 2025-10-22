@@ -24,7 +24,6 @@ namespace PlanningProgramV3
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
-
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(
             "SelectedObject", typeof(FrameworkElement), typeof(ListView));
 
@@ -100,6 +99,9 @@ namespace PlanningProgramV3
         private void CommandBinding_OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             MessageBox.Show("Trying to execute load command");
+            (DataContext as MainWindowViewModel).LoadPlan.Execute(null);
+            
+
         }
 
         /// <summary>

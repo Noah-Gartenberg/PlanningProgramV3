@@ -56,10 +56,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <param name="state"></param>
         public TextViewModel(TaskViewModel parent, BaseItemModelData state) : base(parent, state, PlannerItemType.Text) { }
 
-#warning WAIT A MINUTE! IN ORDER FOR THE CONTROLS TO WORK, THEY NEED AN ACCESSIBLE CONSTRUCTOR - PROBABLY A DEFAULT CONSTRUCTOR!!!! WHICH MEANS THE DATA IN THE CONTROLS IS BEING SET TO DEFAULT???? COULD THAT BE THE ISSUE?
-#warning I NEED TO GO MAKE SOME CHANGES TO THE CODE, THEN?
-        public TextViewModel() : base(PlannerItemType.Text) { }
-
         #endregion
 
         #region Methods

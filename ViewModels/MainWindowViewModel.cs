@@ -122,6 +122,7 @@ namespace PlanningProgramV3.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        //default constructor
         public MainWindowViewModel()
         {
             //Make sure that there is a program config in existence, and that we have a reference to wherever files ought to be stored
@@ -231,11 +232,6 @@ namespace PlanningProgramV3.ViewModels
          */
 
         #region Main Window Interaction Commands
-
-
-
-
-
         /// <summary>
         /// This method will load a plan from an xml file into memory
         /// It will need to throw an error if a file that's not an xml file, or if it's not the correct format of xml file
@@ -243,7 +239,7 @@ namespace PlanningProgramV3.ViewModels
         /// <param name="source">Unsure if this will be a string of the filename (if I'm doing the file dialogue in this class or in the code-behind)</param>
         protected virtual void LoadPlan_Command(object source)
         {
-
+            Plans[currPlan].TryLoadFromFile(Config.fileStoragePath);
         }
 
         /// <summary>

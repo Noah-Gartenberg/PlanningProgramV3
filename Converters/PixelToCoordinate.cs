@@ -12,6 +12,7 @@ namespace PlanningProgramV3.Converters
     /**
      * For right now, all this class does is convert the pixels from the left and top of the canvas to coordinates
      */
+    //https://www.youtube.com/watch?v=ZQBkV9X_FAM video for screen coordinates should fix my problem for the saving data
     public class PixelToCoordinate : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo cultureInfo)
@@ -25,7 +26,12 @@ namespace PlanningProgramV3.Converters
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
-            return (double)value / (int)parameter;
+            if (parameter != null)
+            {
+                return (int)((double)value * (int)parameter);
+            }
+            else
+                return (int)((double)value / (float)(int)parameter);
         }
         public static object ConvertToCoordinate(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
@@ -34,7 +40,7 @@ namespace PlanningProgramV3.Converters
                 return (int)((double)value * (int)parameter);
             }
             else
-                return (int)((double)value * 1000);
+                return (int)((double)value /(float)(int)parameter);
         }
         public object ConvertBackToPixel(object value, Type targetType, object parameter, CultureInfo cultureInfo)
         {
