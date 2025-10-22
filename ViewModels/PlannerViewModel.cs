@@ -18,11 +18,11 @@ namespace PlanningProgramV3.ViewModels
         /**
          * 
          * Information for storing the viewport and camera data
-         * Need to store the camera location (center of screen) - anything else (ex: canvas size) should be stored in the main window
+         * Need to store the camera location (center of screen), camera pan amount, and camera zoom amount
          */
         private Point CameraLoc;
-
-        
+        private int cameraPanAmount;
+        private int zoomCameraAmount;
 
 
         private PlannerModelData data;

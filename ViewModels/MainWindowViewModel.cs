@@ -23,6 +23,7 @@ namespace PlanningProgramV3.ViewModels
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+
         public RelayCommand GetTasksFromTimePeriodCommand { get; private set; }
         public RelayCommand SaveCurrentPlan { get; private set; }
         public RelayCommand LoadPlan { get; private set; }
