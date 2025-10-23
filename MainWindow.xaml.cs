@@ -212,6 +212,24 @@ namespace PlanningProgramV3
             }
         }
 
+        /// <summary>
+        /// Going to use this event to check what the hit object is, and if it is something that actually can be hit, use that
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlannerDisplayer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //ensure sender is list view (tbh, not sure if is necessary but whatever), and that the hit object is not the list view
+            if(sender is ListView && e.OriginalSource is PlannerItemViewModel)
+            {
+                SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(e.OriginalSource) as FrameworkElement;
+            }
+            else if(!(e.OriginalSource is PlannerItemViewModel) && sender is ListView)
+            {
+                SelectedObject = null;
+            }
+        }
+
         private void PlannerDisplayer_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Shout out people in comments explaining how I can fix this so that selected object doesn't throw an error
