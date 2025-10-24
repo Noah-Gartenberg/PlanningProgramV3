@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlanningProgramV3
+namespace PlanningProgramV3.MiscellaniousScripts
 {
     public class HelperMethods
     {

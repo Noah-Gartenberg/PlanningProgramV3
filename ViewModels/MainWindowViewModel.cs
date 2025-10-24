@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PlanningProgramV3.MiscellaniousScripts;
 using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
@@ -25,6 +26,7 @@ namespace PlanningProgramV3.ViewModels
     {
 
         public RelayCommand GetTasksFromTimePeriodCommand { get; private set; }
+        public RelayCommand AddTaskToCurrentPlan {  get; private set; }
         public RelayCommand SaveCurrentPlan { get; private set; }
         public RelayCommand LoadPlan { get; private set; }
 
@@ -100,7 +102,7 @@ namespace PlanningProgramV3.ViewModels
         }
 
 
-        //list of calendarTasks necessary
+        //These are the tasks that are displayed on the calendar
         private ObservableCollection<CalendarTaskData> calendarTasks;
         public ObservableCollection<CalendarTaskData> CalendarTasks
         {
@@ -177,6 +179,12 @@ namespace PlanningProgramV3.ViewModels
             GetTasksFromTimePeriodCommand = new RelayCommand(GetTasksFromTimePeriod, null);
             SaveCurrentPlan = new RelayCommand(SavePlan_Command, CanSavePlan);
             LoadPlan = new RelayCommand(LoadPlan_Command, null);
+            AddTaskToCurrentPlan = new RelayCommand((object shouldBeNull) =>
+                {
+                    CurrentPlan.AddNewTask(shouldBeNull);
+                },
+                null
+            );
 
             plans.Add(new PlannerViewModel());
 

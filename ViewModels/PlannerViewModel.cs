@@ -22,8 +22,6 @@ namespace PlanningProgramV3.ViewModels
          */
         private Point CameraLoc;
         private int cameraPanAmount;
-        private int zoomCameraAmount;
-
 
         private PlannerModelData data;
 

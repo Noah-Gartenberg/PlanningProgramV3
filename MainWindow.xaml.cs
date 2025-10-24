@@ -86,7 +86,7 @@ namespace PlanningProgramV3
         }
 
         /// <summary>
-        /// Don't have any reason why this would not be true right now
+        /// Don't have any reason why users shouldn't be able to load a plan at any time right now
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -213,23 +213,39 @@ namespace PlanningProgramV3
         }
 
         /// <summary>
-        /// Going to use this event to check what the hit object is, and if it is something that actually can be hit, use that
+        /// This method won't fire unless the user selects the background, so it will set the selected object property to null, and the selected index to negative 1
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void PlannerDisplayer_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //ensure sender is list view (tbh, not sure if is necessary but whatever), and that the hit object is not the list view
-            if(sender is ListView && e.OriginalSource is PlannerItemViewModel)
-            {
-                SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(e.OriginalSource) as FrameworkElement;
-            }
-            else if(!(e.OriginalSource is PlannerItemViewModel) && sender is ListView)
+#warning There is an issue, where if you select/move an object with your mouse in the blue bounding box, it can get stuck un-hit-testable. I'm not yet sure how to fix this, but I know what causes it
+            //ensure the left button is the one being pressed for unselecting objects
+            //I could create a variable for dragging objects, check that, and if it's true, don't do this? 
+            if(e.LeftButton == MouseButtonState.Pressed)
             {
                 SelectedObject = null;
+                PlannerDisplayer.SelectedIndex = -1;
             }
         }
 
+        
+        /// <summary>
+        /// Method for any OnMouseUp Functionality - not sure what is needed, but just in case
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlannerDisplayer_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
+
+        /// <summary>
+        /// For right now, this method handles changing the selection of objects, and changing the selection to anything that's not null
+        ///     to handle multiple objects, will have to handle any selected indices and selected objects plural and stuff
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlannerDisplayer_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Shout out people in comments explaining how I can fix this so that selected object doesn't throw an error
@@ -247,7 +263,9 @@ namespace PlanningProgramV3
                 SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(PlannerDisplayer.SelectedItem) as FrameworkElement;
             }
             else
+            {
                 SelectedObject = null;
+            }
         }
     }
 }

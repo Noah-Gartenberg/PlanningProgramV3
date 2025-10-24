@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PlanningProgramV3.MiscellaniousScripts;
 using PlanningProgramV3.ViewModels.Calendar;
 
 namespace PlanningProgramV3.Views.Calendar
