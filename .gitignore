@@ -371,3 +371,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CalendarTask_Database.db
+/CalendarTask_Database.db
