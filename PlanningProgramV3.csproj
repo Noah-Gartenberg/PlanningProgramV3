@@ -10,16 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\Deprecated\ViewModelData.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.8" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ViewModels\Deprecated\ViewModelData.cs" />
   </ItemGroup>
 
 </Project>
