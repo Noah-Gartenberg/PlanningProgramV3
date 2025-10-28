@@ -15,12 +15,19 @@
 
 
 # How I'm going to accomplish this/How Will It All Work:
+- I am using the MVVM programming pattern, along with C#, and the WPF framework, to create this program, and most of the functionality.
+- To store data, I will be using XML to store the individual plans, and an SQLite database to store the data for a calendar to display timesensetive tasks
+  - There will be more information on the SQLite database's design soon.
+  - SQLite was used because I needed something that could store lots of data, and that I could query to find, update, add, or delete data from, while also allowing users to store their data on their computers
+
+<details See More>
+  <summary>More In Depth Explanation (that is admittedly not the best written)</summary>
   - There are two major parts that I haven't yet (fully) implemented and won't fully be explained in the code. These are how I will be saving the plans and tasks, and how tasks will get displayed to the screen on the calendar(s).
     - My plan for handling saving data is to store the plans and the tasks in XML, where everything is kind of nested together in a hierarchy of \[PLAN\]-->\[TASK\]-->\[SUBITEMS\]-->\[SUBITEMS' SUBITEMS\], where each of those items listed will have lists of the items next in the hierarchy (in a way, similar to a linked-list or a tree). When displayed in a plan - not on the calendars - it will be roughly similar in structure, just using code
       - it should be made clear that each of the above have their own lists, so the plan "knows" only of the tasks that are its immediate children, the first task on that list only knows of the items that are its immediate children, and so on
       - I am aware of how many lists - especially observable collections - there are between the tasks (and subitems - they use the same code) and plans. I plan to refactor this when I find the time, but first I want to get a prototype going
       - I am using XML because I have worked with it more than I have JSON, though I've worked with both relatively few times, I have used the former when making mods for Baldur's Gate 3.
-      - Each task/sub-task and date-duration control (my name for the control that will allow tasks to be displayed in the calendar) is intended to have a GUID tied to it - another thing I picked up from how Baldur's Gate 3 stored objects in its files.
+      - Each task/sub-task is intended to have a GUID tied to it, for identification by the calendar.
         - This is so I can search through files for data tied to tasks and/or open plans by clicking on the the tasks displayed in the calendar or by clicking on a linked task within another plan.
     - My plan for displaying any tasks that are "time sensetive" has 3 parts.
       - The first part is the calendars themselves and the CalendarTask related classes - these will ideally (when clicked) enable users to open corresponding plans, add the task to a plan if it doesn't have a file, delete the task from the calendar if it doesn't have a corresponding file, or delete the task in question from the calendar.
@@ -28,10 +35,13 @@
       - The third part is the date-duration sub-item. This control can be a sub-item for any task, and it will access the data for the task that it is a child of. When a plan is saved, the control will call an event to add its information to the sqlite database.
         - Currently, the data these store are the filepath of the file the task they are a child of is in, the name for the task that is their parent, a guid, the date the task starts, the date the task ends, and whether or not the task is completed.
     - As of right now, any classes or objects or files (including the sqlite database) that will contain state for the plans or children of the plans are in somewhat of a state of flux, as there are things that as I get closer to making a prototype I will change - one example is that the sqlite database has some filetypes I will eventually need to change. 
+  
+</details>
 
 # What Resources I have used:
   - As this project has had a massive learning curve, and is pretty large in terms of scope, I have had to consult a variety of resources to get it to even this point.
       - For help and advice, I have gone to one of the computer science professors at my college, as he teaches a course on software development.
+      - For help and advice on databases, I have gone to one of my professors who has taught me about working with databases. 
       - I have also frequently used articles on CodeProject in order to better understand WPF and some of the code I am writing.
       - I have also made frequent usage of the documentation for C# and WPF, as one of my first resources when things go wrong, or just to understand the features of WPF and C#.
   - I have used a lot of online resources - including things like stack overflow questions - to figure out how to do what I want to do, and to understand what's going wrong
@@ -58,38 +68,8 @@
 - Can zoom in plan view (10/25/2025)
 - Improving models and view models (done during October 2025, had not set out to do so, just happened)
 
-# Immediate goals for getting a working prototype going:
-- Implement Database properly - current version of sqlite database will have redundant values if someone has repetetive work or wants to do certain tasks on multiple non-sequential days.
-- Hook calendar system into rest of application
-- Add ability to delete tasks and subtasks from plans
-  
-# Non-urgent but priority goals:
-It bears noting that no issue I mention here is so cumbersome or limiting that I could not use the program (if I could save and load plans now) yet, but they are issues that once I have a functioning prototype, I will need to fix sooner rather than later. 
-- Add ability to pan "camera" in plan view, and make plan view background more differentiable when it is being moved. 
-- Refactor calendar controls into one user control, and refactor what code I can. Improve design with date pickers
-- Add ability to have multiple plans open at once
-- Rework view models - view models are not entirely sticking to mvvm principles. Need to refactor them a little bit to improve them - won't be too big of changews
-
-
- 
-# General Goals: 
-These are goals that aren't essential to a functioning minimum viable prototype, but they'd be nice to have, or will eventually prove problematic, but aren't - as I currently understand - iireconcilable with mvvm principles. These would be more for ensuring code is maintainable
-
-- Completing the code and designs for the rest of the sub-item controls (like that of images, and the linkers).
-
-- Optimizing the amount of lists
-  - I am aware that this program is going to use a lot of lists and a lot of list views. I might be able to store several arrays (one for item data, what branch of the "tree" the item in question is, one for what place in the array the item is).
-    - This idea would require a major restructuring of code, and so it is not a priority - and I have had no optimization issues to lead me to believe it is necessary yet.
-    - This could in theory reduce time complexity for operations relating to accessing elements in the list (like saving, loading, finding tasks or sub-tasks, etc...)
-    - Each sub-item task would contain a boolean value indicating if it was collapsed or uncollapsed.
-    - When a task subitem is collapsed or uncollapsed, it would invoke an event in its parent, to go down the list starting at the item itself, and hide each item that is of a further "branch" than the item that invoked the event, stopping once it reaches an item at the same branch as the collapsed item.
-    - While this idea would have an opportunity cost of making collapsing and uncollapsing items more asymptotically complex (unsure if this is the "right" word to use, but it will get my point across, and I will clarify with my professors as to what the right word is), it would greatly reduce how many list view controls would be needed for this program, which would make the change justified.
-    - You may be wondering why I'm not using a tree-view control. The reason is because the tree-view didn't give me the customization I wanted, which was to have free-floating, looking almost block like, items in plans, rather than a tree of tasks to do. 
-
-
 # Long term/out of reach for now goals:
 These are goals of mine that are not priorities and won't be any time soon until after most features for the program are in. Still they are goals because I know they are necessary - but not how to go about implementing, what is necessary, or because I would prefer to seek outside assistance for implementing them. 
-
 - Accessibility
   - Accessibility features are a must have for me if I ever intend to release this software program for money. I don't know how to implement them, or what features I can or can not expect users to want, so for right now I'm tabling them until I have enough features solidified that I don't have to worry about things changing. I would also prefer to have the aid of another person while working on these.
 - General Debugging and optimization
