@@ -87,7 +87,7 @@ namespace PlanningProgramV3
         #region Can't put these into the view model, so for time being they're going in here.
         private void CommandBinding_OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("Trying to execute load command");
+            //MessageBox.Show("Trying to execute load command");
             (DataContext as MainWindowViewModel).LoadPlan.Execute(null);
             
 
@@ -105,9 +105,9 @@ namespace PlanningProgramV3
 
         private void CommandBinding_SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("Trying to execute save command");
+            //MessageBox.Show("Trying to execute save command");
             (DataContext as MainWindowViewModel).SaveCurrentPlan.Execute(null);
-            MessageBox.Show("Saving executed?");
+            //MessageBox.Show("Saving executed?");
 
         }
 
@@ -229,7 +229,6 @@ namespace PlanningProgramV3
         /// <param name="e"></param>
         private void PlannerDisplayer_MouseDown(object sender, MouseButtonEventArgs e)
         {
-#warning There is an issue, where if you select/move an object with your mouse in the blue bounding box, it can get stuck un-hit-testable. I'm not yet sure how to fix this, but I know what causes it
             //ensure the left button is the one being pressed for unselecting objects
             //I could create a variable for dragging objects, check that, and if it's true, don't do this? 
             if (e.LeftButton == MouseButtonState.Pressed && SelectedObject != null)
@@ -269,7 +268,7 @@ namespace PlanningProgramV3
                 if(mouseDown && mouseDrag && PlannerDisplayer.SelectedIndex != -1)
                 {
                     //set canvas coordinates
-                    Canvas.SetLeft(SelectedObject, Mouse.GetPosition(PlannerDisplayer).X + mouseClickOffset.Y);
+                    Canvas.SetLeft(SelectedObject, Mouse.GetPosition(PlannerDisplayer).X + mouseClickOffset.X);
                     Canvas.SetTop(SelectedObject, Mouse.GetPosition(PlannerDisplayer).Y + mouseClickOffset.Y);
                 }
             }
@@ -400,8 +399,6 @@ namespace PlanningProgramV3
         //    }
         }
         
-
-
         private void PlannerDisplayer_DragLeave(object sender, DragEventArgs e)
         {
         //    if (e.OriginalSource == PlannerDisplayer)
@@ -416,9 +413,5 @@ namespace PlanningProgramV3
         //        //}
         //    }
         }
-
-        
-
-        
     }
 }
