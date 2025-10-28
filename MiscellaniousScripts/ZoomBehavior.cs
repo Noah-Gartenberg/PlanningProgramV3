@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlanningProgramV3.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -114,6 +115,9 @@ namespace PlanningProgramV3.MiscellaniousScripts
             ZoomBehavior.ApplyZoomToAttachedElement(mouseCanvasPosition, scaleFactor, zoomTargetElement);
 
             ZoomBehavior.AdjustScrollViewer(mouseCanvasPosition, scaleFactor, zoomTargetElement);
+
+            //main window view model zoom amount adjust
+            MainWindowViewModel.ZoomTick(scaleFactor);
         }
 
         private static void ApplyZoomToAttachedElement(Point mouseCanvasPosition, double scaleFactor, FrameworkElement zoomTargetElement)

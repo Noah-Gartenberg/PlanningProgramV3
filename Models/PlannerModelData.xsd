@@ -71,8 +71,8 @@
   </xs:complexType>
   <xs:complexType name="Point">
     <xs:sequence>
-      <xs:element minOccurs="1" maxOccurs="1" name="X" type="xs:int" />
-      <xs:element minOccurs="1" maxOccurs="1" name="Y" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="X" type="xs:double" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Y" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
 	<xs:simpleType name="GUID">

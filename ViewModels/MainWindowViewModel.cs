@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,7 +30,6 @@ namespace PlanningProgramV3.ViewModels
         public RelayCommand AddTaskToCurrentPlan {  get; private set; }
         public RelayCommand SaveCurrentPlan { get; private set; }
         public RelayCommand LoadPlan { get; private set; }
-
 
         #region State Data
         public ProgramConfig Config { get; private set; }
@@ -116,6 +116,50 @@ namespace PlanningProgramV3.ViewModels
                 }
             }
         }
+
+        #region Camera Location
+        private Point cameraLocation;
+        public Point CameraLocation
+        {
+            get { return cameraLocation; }
+            set
+            {
+                if (cameraLocation != value)
+                {
+                    cameraLocation = value;
+                    OnPropertyChanged(nameof(CameraLocation));
+                }
+            }
+        }
+
+        public double CameraX
+        {
+            get => cameraLocation.X;
+            set
+            {
+                if(cameraLocation.X != value)
+                {
+                    cameraLocation.X = value;
+                    OnPropertyChanged(nameof(CameraLocation));
+                }
+            }
+        }
+
+        public double CameraY
+        {
+            get => cameraLocation.Y;
+            set
+            {
+                if (CameraLocation.Y != value)
+                {
+                    cameraLocation.Y = value;
+                    OnPropertyChanged(nameof(CameraLocation));
+                }
+            }
+        }
+        #endregion
+
+        private static double zoomAmount = 1.0f;
         #endregion
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -128,6 +172,7 @@ namespace PlanningProgramV3.ViewModels
         //default constructor
         public MainWindowViewModel()
         {
+            cameraLocation = new Point();
             //Make sure that there is a program config in existence, and that we have a reference to wherever files ought to be stored
             //I just realized this will cause issues with the way I've handled versions, but we'll deal with that later I guess
 
@@ -260,8 +305,6 @@ namespace PlanningProgramV3.ViewModels
         protected virtual void SavePlan_Command(object source)
         {
             Plans[currPlan].TrySaveToFile(Config.fileStoragePath);
-            
-            
         }
 
         /// <summary>
@@ -276,7 +319,9 @@ namespace PlanningProgramV3.ViewModels
             return Plans[currPlan].DirtyFlag || Plans[currPlan].FileName.Equals("") || true;
         }
 
-
+        public double GetZoomAmount() { return zoomAmount; }
+        public static void ZoomTick(double zoomIncrement) { zoomAmount = Math.Clamp(zoomAmount + zoomIncrement,zoomIncrement,2); }
+        public void SetZoomAmount(double zoomAmount) { zoomAmount = zoomAmount; }
 
         #endregion
 

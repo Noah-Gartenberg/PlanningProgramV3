@@ -15,7 +15,7 @@
     
 
     <Window.Resources>
-        <Converters:PixelToCoordinate x:Key="ConvertToPixel"/>
+        <Converters:PixelToCoordinate x:Key="ConvertToWorld" x:Name="ToWorldCoordinate"/>
     </Window.Resources>
     <Window.DataContext>
         <viewmodel:MainWindowViewModel/>
@@ -159,13 +159,36 @@
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsItemsHost="True" Height="{Binding ElementName=PlannerDisplayer, Path=Height}"
-                                        Width="{Binding ElementName=PlannerDisplayer, Path=Width}" />
+                                        Width="{Binding ElementName=PlannerDisplayer, Path=Width}">
+                                        <!--Move center of canvas to middle of it?-->
+                                        <Canvas.LayoutTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" CenterX=".5" CenterY=".5" />
+                                        </Canvas.LayoutTransform>
+                                    </Canvas>
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
-                                    <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource ConvertToPixel}, ConverterParameter=1500, Mode=OneWay}"/>
+                                    <Setter Property="Canvas.Left">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource ConvertToWorld}" Mode="OneWay" UpdateSourceTrigger="PropertyChanged" >
+                                                <!--<Binding Path="DataContext.X" RelativeSource="{RelativeSource Mode=Self}"/>-->
+                                                <Binding Path="X" UpdateSourceTrigger="PropertyChanged"/>
+                                                <Binding Path="DataContext.CameraX" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}"/>
+                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Canvas}"/>
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Canvas.Top">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource ConvertToWorld}" Mode="OneWay" UpdateSourceTrigger="PropertyChanged" >
+                                                <!--<Binding Path="DataContext.Y" RelativeSource="{RelativeSource Mode=Self}"/>-->
+                                                <Binding Path="Y" UpdateSourceTrigger="PropertyChanged"/>
+                                                <Binding Path="DataContext.CameraY" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}"/>
+                                                <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Canvas}"/>
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ContextMenu>

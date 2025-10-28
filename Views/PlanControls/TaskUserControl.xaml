@@ -7,11 +7,19 @@
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-   
+
     <!--Why not just use a tree view? Because I want this to look a bit more like building blocks than a tree view allows for-->
     <!--Issue: data binding. The Task View model when a child of another task (or all subsequent view models) are not bound to the right data type - because the type of object in 
         the parent is the PlannerItemViewModel - not a task view model (or the correct view model type and so nothing is bound)?-->
-    <Expander Style="{DynamicResource TaskExpander}" ExpandDirection="Down" HorizontalAlignment="Left" VerticalAlignment="Center" >
+    <Expander Style="{DynamicResource TaskExpander}" ExpandDirection="Down" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" >
+        <Expander.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform/>
+                <SkewTransform/>
+                <RotateTransform/>
+                <TranslateTransform X="0.5" Y="0.5"/>
+            </TransformGroup>
+        </Expander.RenderTransform>
         <Expander.Header>
             <Border Width="Auto" Height="Auto">
                 <Border.ContextMenu>

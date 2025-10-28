@@ -176,11 +176,11 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /// <param name="state"></param>
         public TaskViewModel(BaseItemModelData state) : base(state,PlannerItemType.Task)
         {
+            SubItems = [];
             //load subitems into list
             var temp = state as TaskModelData;
             for (int i = 0; i <temp.subItems.Count; i++)
             {
-                subItemViewModels = [];
                 var subItem = temp.subItems[i];
                 switch(subItem.dataType)
                 { 
@@ -197,6 +197,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            OnPropertyChanged(nameof(SubItems));
         }
 
         /// <summary>
@@ -207,6 +208,10 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            if(Coordinates == new Point(double.NaN, double.NaN))
+            {
+                Coordinates = new Point(0, 0);
+            }
         }
         #endregion
 
@@ -288,12 +293,29 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             Trace.WriteLine("TaskModel: ");
             Trace.WriteLine("Parent: " + parent);
             Trace.WriteLine("Task Name: " + Name);
+            Trace.WriteLine("Coordinates: " + Coordinates);
             Trace.WriteLine("Task Completion: " + IsComplete);
             Trace.WriteLine("Guid: " + UUID);
             for (int i = 0; i < SubItems.Count; i++)
             {
                 SubItems[i].PrintData();
             }
+        }
+
+        /// <summary>
+        /// This method is for setting the coordinates of the tasks in the view model
+        /// </summary>
+        /// <param name="CanvasCoords">This is the coordinates of the task in the canvas view; Left is X, Top is y</param>
+        /// <param name="CanvasDimensions">These are the dimensions of the canvas itself; x is width, y is height</param>
+        /// <param name="CameraLocation">This is the "location" of the camera in the canvas</param>
+        /// <param name="scaleFactor">This is how zoomed in the "camera" is</param>
+        public void DragDropDone(Point CanvasCoords, Vector CanvasDimensions, Point CameraLocation, double scaleFactor)
+        {
+            Trace.WriteLine((CanvasCoords.X - 0.5f * CanvasDimensions.X) * scaleFactor + CameraLocation.X);
+            X = (CanvasCoords.X - 0.5f * CanvasDimensions.X) * scaleFactor + CameraLocation.X;
+            Y = (CanvasCoords.Y - 0.5f * CanvasDimensions.Y) * scaleFactor + CameraLocation.Y;
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
         }
         #endregion
     }

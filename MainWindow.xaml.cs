@@ -1,4 +1,5 @@
-﻿using PlanningProgramV3.Converters;
+﻿using Microsoft.UI.Xaml;
+using PlanningProgramV3.Converters;
 using PlanningProgramV3.ViewModels;
 using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
@@ -7,6 +8,13 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using DependencyProperty = System.Windows.DependencyProperty;
+using DragEventArgs = System.Windows.DragEventArgs;
+using FrameworkElement = System.Windows.FrameworkElement;
+using RoutedEventArgs = System.Windows.RoutedEventArgs;
+using Window = System.Windows.Window;
+
 
 namespace PlanningProgramV3
 {
@@ -116,6 +124,227 @@ namespace PlanningProgramV3
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        #region Drag and Drop Code
+        private bool mouseDown = false;
+        private bool mouseDrag = false;
+        private Point mouseClickPos;
+        private Vector mouseClickOffset;
+        private Vector DisplacementVector;
+
+        /*
+         * What I need for Better Drag and Drop:   is the feature I'm implementing even drag and drop?---- never mind
+         *      MouseClickPos - Pixel coord where the mouse move started
+         *      MouseClickOffset - a vector containing the offset from the hit control's screen coordinates - if I have done my mental math right, I won't need to subtract it from the coordinates when saving/inputting to view models
+         *      DisplacementVector - Direction and Magnitude of Mouse movement
+         *      ZoomAmount - should be gettable from list view/scroll view's dependency objects
+         *      MouseDown - boolean 
+         *      MouseDrag - boolean
+         *      
+         *      
+         *      SelectionChanged in list view:                                      [see method comment as to why not use MouseDown]
+         *              - set MouseClickPos
+         *              - Set SelectedObject accordingly - if necessary
+         *              - set mouseClickOffset using MouseClickPos
+         *              - SetMouseDown to true
+         *      MouseMove in ListView: 
+         *              - If MouseDown is true AND MouseDrag is not true
+         *                  - Subtract MouseClickPos from MousePos (screen coords - in passed in args), and calculate the magnitude of the vector. 
+         *                  - if |MouseClickPos - MousePos| (<--Magnitude) > SystemParameters.MinimumDragDistance
+         *                      - Set MouseDrag to true
+         *              - If MouseDown is true and MouseDrag is true
+         *                  - Set screen coordinates of hit object to MousePos - MouseClickOffset 
+         *                          DO NOT UPDATE THE VIEW MODEL COORDINATES
+         *                  - How handle going off screen?
+         *                      - obviously, screen needs to pan - maybe there's some constant "pan factor" that gets added to/removed from displacement when this happens, adjusted by zoom and scaled accordingly?
+         *                      - for right now, don't worry about it
+         *              - Else
+         *                  - nothing I can think of right now
+         *              
+         *              
+         *      
+         *      MouseUp in list view:
+         *              - MouseDown set to false
+         *              - If MouseDrag is true
+         *                  - DisplacementVector += MousePos - MouseClickPos              [2D point value - adding to, because if the camera pans, then a constant value will be added
+         *                  - Set screen coordinates of object to MousePos - MouseClickOffset
+         *                  - DragObject's coordinates = 
+         *                          Current Coordinates in ViewModel +                         [Get Starting Screen Location] + 
+         *                              DisplacementVector * ZoomFactor                        [Multiply The displacement vector by the zoom factor]
+         *                              
+         *                  - MouseDrag set to false
+         *                  - DisplacementVector set to 0
+         *                              
+         * 
+         * 
+         */
+
+        /// <summary>
+        /// For right now, this method handles changing the selection of objects (which includes when objects are selected for the first time), and changing the selection to anything that's not null
+        ///     to handle multiple objects, will have to handle any selected indices and selected objects plural and stuff
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlannerDisplayer_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Shout out people in comments explaining how I can fix this so that selected object doesn't throw an error
+            //https://stackoverflow.com/questions/610343/wpf-listbox-getting-uielement-instead-of-of-selecteditem
+                //error was because drag and drop required a data object, which in turn required a framework element
+            //in theory at least if I can get it working
+
+            //for right now, only worrying about one item
+            if (SelectedObject != null)
+            {
+                SelectedObject.IsHitTestVisible = true;
+            }
+            if (PlannerDisplayer.SelectedIndex != -1)
+            {
+
+                SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(PlannerDisplayer.SelectedItem) as FrameworkElement;
+                
+                //Set pre-drag/drop variables
+
+                //Mousedown event didn't fire if selected object, so had to use this method
+                    //hopefully it fires before mouse up would - and I can't think of a reason it wouldn't
+                mouseDown = true;
+                //get the mouse position
+                mouseClickPos = Mouse.GetPosition(PlannerDisplayer);
+                
+                //set offset
+                mouseClickOffset.X = Canvas.GetLeft(SelectedObject) - mouseClickPos.X;
+                //say, get top might be the opposite of what I want, but we'll deal with that in a bit
+                mouseClickOffset.Y = Canvas.GetTop(SelectedObject) - mouseClickPos.Y;
+            }
+            else
+            {
+                SelectedObject = null;
+            }
+        }
+
+
+        /// <summary>
+        /// This method won't fire unless the user selects the background, so it will set the selected object property to null, and the selected index to negative 1
+        ///     actually, wait, then I want PreviewMouseDown event, and that could solve the need for selected object
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlannerDisplayer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+#warning There is an issue, where if you select/move an object with your mouse in the blue bounding box, it can get stuck un-hit-testable. I'm not yet sure how to fix this, but I know what causes it
+            //ensure the left button is the one being pressed for unselecting objects
+            //I could create a variable for dragging objects, check that, and if it's true, don't do this? 
+            if (e.LeftButton == MouseButtonState.Pressed && SelectedObject != null)
+            {
+                SelectedObject.IsHitTestVisible = true;
+                SelectedObject = null;
+                PlannerDisplayer.SelectedIndex = -1;
+            }
+        }
+        /// <summary>
+        /// This method is the one that will mostly handle the drag and drop code
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlannerDisplayer_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                //if the mouse is down, and mouse drag is not true
+                if (mouseDown && !mouseDrag && PlannerDisplayer.SelectedIndex != -1)
+                {
+                    //get intermediate pos
+                    Vector intermediatePos = new Vector(
+                        e.GetPosition(PlannerDisplayer).X - mouseClickPos.X,
+                        e.GetPosition(PlannerDisplayer).Y - mouseClickPos.Y
+                    );
+
+                    //if the intermediatePos length > MoveTolerance in screen coordinates
+                    if (intermediatePos.X > SystemParameters.MinimumHorizontalDragDistance || intermediatePos.Y > SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        mouseDrag = true;
+                        SelectedObject.IsHitTestVisible = false;
+                    }
+                }
+                //if mouseDrag becomes true, want below code to execute
+                    //can't conceive of a reason why the selected index would be -1, but doesn't mean it's impossible
+                if(mouseDown && mouseDrag && PlannerDisplayer.SelectedIndex != -1)
+                {
+                    //set canvas coordinates
+                    Canvas.SetLeft(SelectedObject, Mouse.GetPosition(PlannerDisplayer).X + mouseClickOffset.Y);
+                    Canvas.SetTop(SelectedObject, Mouse.GetPosition(PlannerDisplayer).Y + mouseClickOffset.Y);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+
+            //try
+            //{
+            //    //how ensure that the sender is the list view? 
+            //    if (sender is ListView && (PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && e.LeftButton == MouseButtonState.Pressed)
+            //    {
+            //
+            //        DataObject data = new DataObject(DataFormats.Serializable, PlannerDisplayer.SelectedItem);
+            //
+            //        DragDrop.DoDragDrop(SelectedObject, data, DragDropEffects.Move);
+            //        if (SelectedObject != null)
+            //        {
+            //            SelectedObject.IsHitTestVisible = false;
+            //        }
+            //
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //}
+        }
+
+        /// <summary>
+        /// Method for any OnMouseUp Functionality - not sure what is needed, but just in case
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// MouseUp in list view:
+        /*
+         *              - MouseDown set to false
+         *              - If MouseDrag is true
+         *                  - DisplacementVector = MousePos - MouseClickPos              [2D point value; assuming that camera location is updated when pan is done, add constant values to displacement if pan done]
+         *                  
+         *                  - DragObject's coordinates = 
+         *                          Current Coordinates in ViewModel +                         [Get Starting Screen Location] + 
+         *                              DisplacementVector * ZoomFactor                        [Multiply The displacement vector by the zoom factor]
+         *                        - Screen coordinates should auto set when update view model
+         *                  - MouseDrag set to false
+         *                  - DisplacementVector set to 0
+         */
+        private void PlannerDisplayer_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            mouseDown = false;
+            if(mouseDrag)
+            {
+                // adding to, because if the camera pans, then a constant value will be added
+                DisplacementVector += Mouse.GetPosition(PlannerDisplayer) - mouseClickPos;
+
+                SelectedObject.IsHitTestVisible = true;
+
+                (PlannerDisplayer.SelectedItem as TaskViewModel).DragDropDone(
+                    Mouse.GetPosition(PlannerDisplayer),
+                    new Vector(PlannerDisplayer.ActualWidth,PlannerDisplayer.ActualHeight),
+                    (DataContext as MainWindowViewModel).CameraLocation,
+                    (DataContext as MainWindowViewModel).GetZoomAmount());
+
+                (PlannerDisplayer.SelectedItem as TaskViewModel).PrintData();
+
+                DisplacementVector = new Vector(0, 0);
+                mouseDrag = false;
+            }
+        }
+        #endregion
+
+
+
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(
             "SelectedObject", typeof(FrameworkElement), typeof(ListView));
 
@@ -129,143 +358,67 @@ namespace PlanningProgramV3
             (DataContext as MainWindowViewModel).AddTaskToCurrentPlan.Execute(null);
         }
 
-        private void PlannerDisplayer_MouseMove(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                //how ensure that the sender is the list view? 
-                if (sender is ListView && (PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && e.LeftButton == MouseButtonState.Pressed)
-                {
-
-                    DataObject data = new DataObject(DataFormats.Serializable, PlannerDisplayer.SelectedItem);
-
-                    DragDrop.DoDragDrop(SelectedObject, data, DragDropEffects.Move);
-                    if (SelectedObject != null)
-                    {
-                        SelectedObject.IsHitTestVisible = false;
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
         private void PlannerDisplayer_DragOver(object sender, DragEventArgs e)
         {
-            //For right now, will just not do selection logic if the selected item is not the highest level parent
-            if ((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null)
-            {
-                Point dropPosition = e.GetPosition(PlannerDisplayer);
-
-                Canvas.SetLeft(SelectedObject, dropPosition.X);
-                Canvas.SetTop(SelectedObject, dropPosition.Y);
-
-            }
+        //    //For right now, will just not do selection logic if the selected item is not the highest level parent
+        //    if ((PlannerDisplayer.SelectedItem is TaskViewModel viewModel) && viewModel.Parent == null)
+        //    {
+        //        Point dropPosition = e.GetPosition(PlannerDisplayer);
+        //
+        //        Canvas.SetLeft(SelectedObject, dropPosition.X);
+        //        Canvas.SetTop(SelectedObject, dropPosition.Y);
+        //
+        //    }
         }
-
+        
         private void PlannerDisplayer_Drop(object sender, DragEventArgs e)
         {
-            try
-            {
-                object data = e.Data.GetData(DataFormats.Serializable);
-
-                Point dropPosition = e.GetPosition(PlannerDisplayer);
-                Canvas.SetLeft(SelectedObject, dropPosition.X);
-                Canvas.SetTop(SelectedObject, dropPosition.Y);
-                //CurrentPlanner.SetTopTaskPosition(SelectedObject);
-
-
-                //set the position of the object
-                //I know this isn't technically MVVM - I mean I don't think it's a violation per se, but yeah. 
-                //couldn't figure out how to do this from the planner
-                if (SelectedObject.DataContext is TaskViewModel task)
-                {
-                    task.X = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.X, typeof(int), 1500, null));
-                    task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
-                }
-                SelectedObject.IsHitTestVisible = true;
-                PlannerDisplayer.SelectedIndex = -1;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+        //    try
+        //    {
+        //        object data = e.Data.GetData(DataFormats.Serializable);
+        //
+        //        Point dropPosition = e.GetPosition(PlannerDisplayer);
+        //        Canvas.SetLeft(SelectedObject, dropPosition.X);
+        //        Canvas.SetTop(SelectedObject, dropPosition.Y);
+        //        //CurrentPlanner.SetTopTaskPosition(SelectedObject);
+        //
+        //
+        //        //set the position of the object
+        //        //I know this isn't technically MVVM - I mean I don't think it's a violation per se, but yeah. 
+        //        //couldn't figure out how to do this from the planner
+        //        if (SelectedObject.DataContext is TaskViewModel task)
+        //        {
+        //            task.X = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.X, typeof(int), 1500, null));
+        //            task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
+        //        }
+        //        SelectedObject.IsHitTestVisible = true;
+        //        PlannerDisplayer.SelectedIndex = -1;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.ToString());
+        //    }
         }
-
+        
 
 
         private void PlannerDisplayer_DragLeave(object sender, DragEventArgs e)
         {
-            if (e.OriginalSource == PlannerDisplayer)
-            {
-                object data = e.Data.GetData(DataFormats.Serializable);
-
-
-                //commented out for right now
-                //if (data is UIElement element)
-                //{
-                //    CurrentPlanner.DeleteItem(data);
-                //}
-            }
-        }
-
-        /// <summary>
-        /// This method won't fire unless the user selects the background, so it will set the selected object property to null, and the selected index to negative 1
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PlannerDisplayer_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-#warning There is an issue, where if you select/move an object with your mouse in the blue bounding box, it can get stuck un-hit-testable. I'm not yet sure how to fix this, but I know what causes it
-            //ensure the left button is the one being pressed for unselecting objects
-            //I could create a variable for dragging objects, check that, and if it's true, don't do this? 
-            if(e.LeftButton == MouseButtonState.Pressed)
-            {
-                SelectedObject = null;
-                PlannerDisplayer.SelectedIndex = -1;
-            }
+        //    if (e.OriginalSource == PlannerDisplayer)
+        //    {
+        //        object data = e.Data.GetData(DataFormats.Serializable);
+        //
+        //
+        //        //commented out for right now
+        //        //if (data is UIElement element)
+        //        //{
+        //        //    CurrentPlanner.DeleteItem(data);
+        //        //}
+        //    }
         }
 
         
-        /// <summary>
-        /// Method for any OnMouseUp Functionality - not sure what is needed, but just in case
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PlannerDisplayer_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            
-        }
 
-        /// <summary>
-        /// For right now, this method handles changing the selection of objects, and changing the selection to anything that's not null
-        ///     to handle multiple objects, will have to handle any selected indices and selected objects plural and stuff
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PlannerDisplayer_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //Shout out people in comments explaining how I can fix this so that selected object doesn't throw an error
-            //https://stackoverflow.com/questions/610343/wpf-listbox-getting-uielement-instead-of-of-selecteditem
-            //in theory at least if I can get it working
-
-            //for right now, only worrying about one item
-            if (SelectedObject != null)
-            {
-                SelectedObject.IsHitTestVisible = true;
-            }
-            if (PlannerDisplayer.SelectedIndex != -1)
-            {
-
-                SelectedObject = PlannerDisplayer.ItemContainerGenerator.ContainerFromItem(PlannerDisplayer.SelectedItem) as FrameworkElement;
-            }
-            else
-            {
-                SelectedObject = null;
-            }
-        }
+        
     }
 }
