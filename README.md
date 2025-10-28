@@ -22,19 +22,21 @@
 
 <details>
   <summary>More In Depth Explanation (that is admittedly not the best written)</summary>
-   - There are two major parts that I haven't yet (fully) implemented and won't fully be explained in the code. These are how I will be saving the plans and tasks, and how tasks will get displayed to the screen on the calendar(s). <br>
-    - My plan for handling saving data is to store the plans and the tasks in XML, where everything is kind of nested together in a hierarchy of \[PLAN\]-->\[TASK\]-->\[SUBITEMS\]-->\[SUBITEMS' SUBITEMS\], where each of those items listed will have lists of the items next in the hierarchy (in a way, similar to a linked-list or a tree). When displayed in a plan - not on the calendars - it will be roughly similar in structure, just using code. <br>
-      - it should be made clear that each of the above have their own lists, so the plan "knows" only of the tasks that are its immediate children, the first task on that list only knows of the items that are its immediate children, and so on
-      - I am aware of how many lists - especially observable collections - there are between the tasks (and subitems - they use the same code) and plans. I plan to refactor this when I find the time, but first I want to get a prototype going <br>
-      - I am using XML because I have worked with it more than I have JSON, though I've worked with both relatively few times, I have used the former when making mods for Baldur's Gate 3. <br>
-      - Each task/sub-task is intended to have a GUID tied to it, for identification by the calendar. <br>
-        - This is so I can search through files for data tied to tasks and/or open plans by clicking on the the tasks displayed in the calendar or by clicking on a linked task within another plan. <br>
-    - My plan for displaying any tasks that are "time sensetive" has 3 parts. <br>
-      - The first part is the calendars themselves and the CalendarTask related classes - these will ideally (when clicked) enable users to open corresponding plans, add the task to a plan if it doesn't have a file, delete the task from the calendar if it doesn't have a corresponding file, or delete the task in question from the calendar. <br>
-      - The second part is the sqlite database. There will only be one total for each download of the program, and it will hold all the data for tasks that need to be displayed on the calendar(s). <br>
-      - The third part is the date-duration sub-item. This control can be a sub-item for any task, and it will access the data for the task that it is a child of. When a plan is saved, the control will call an event to add its information to the sqlite database. <br>
-        - Currently, the data these store are the filepath of the file the task they are a child of is in, the name for the task that is their parent, a guid, the date the task starts, the date the task ends, and whether or not the task is completed. <br>
-    - As of right now, any classes or objects or files (including the sqlite database) that will contain state for the plans or children of the plans are in somewhat of a state of flux, as there are things that as I get closer to making a prototype I will change - one example is that the sqlite database has some filetypes I will eventually need to change.
+  <ul>
+   * There are two major parts that I haven't yet (fully) implemented and won't fully be explained in the code. These are how I will be saving the plans and tasks, and how tasks will get displayed to the screen on the calendar(s). <br></li>
+    * My plan for handling saving data is to store the plans and the tasks in XML, where everything is kind of nested together in a hierarchy of \[PLAN\]-->\[TASK\]-->\[SUBITEMS\]-->\[SUBITEMS' SUBITEMS\], where each of those items listed will have lists of the items next in the hierarchy (in a way, similar to a linked-list or a tree). When displayed in a plan - not on the calendars - it will be roughly similar in structure, just using code. <br>
+      * it should be made clear that each of the above have their own lists, so the plan "knows" only of the tasks that are its immediate children, the first task on that list only knows of the items that are its immediate children, and so on
+      * I am aware of how many lists - especially observable collections - there are between the tasks (and subitems - they use the same code) and plans. I plan to refactor this when I find the time, but first I want to get a prototype going <br>
+      * I am using XML because I have worked with it more than I have JSON, though I've worked with both relatively few times, I have used the former when making mods for Baldur's Gate 3. <br>
+      * Each task/sub-task is intended to have a GUID tied to it, for identification by the calendar. <br>
+        * This is so I can search through files for data tied to tasks and/or open plans by clicking on the the tasks displayed in the calendar or by clicking on a linked task within another plan. <br>
+    * My plan for displaying any tasks that are "time sensetive" has 3 parts. <br>
+      * The first part is the calendars themselves and the CalendarTask related classes - these will ideally (when clicked) enable users to open corresponding plans, add the task to a plan if it doesn't have a file, delete the task from the calendar if it doesn't have a corresponding file, or delete the task in question from the calendar. <br>
+      * The second part is the sqlite database. There will only be one total for each download of the program, and it will hold all the data for tasks that need to be displayed on the calendar(s). <br>
+      * The third part is the date-duration sub-item. This control can be a sub-item for any task, and it will access the data for the task that it is a child of. When a plan is saved, the control will call an event to add its information to the sqlite database. <br>
+        * Currently, the data these store are the filepath of the file the task they are a child of is in, the name for the task that is their parent, a guid, the date the task starts, the date the task ends, and whether or not the task is completed. <br>
+    * As of right now, any classes or objects or files (including the sqlite database) that will contain state for the plans or children of the plans are in somewhat of a state of flux, as there are things that as I get closer to making a prototype I will change - one example is that the sqlite database has some filetypes I will eventually need to change.
+  </ul>
 </details>
 
 # What Resources I have used:
