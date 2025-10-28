@@ -55,6 +55,7 @@
 # Completed goals:
 - Saving and Loading plans (10/27/2025)
 - Polishing drag and drop  (10/27/2025)
+- Can zoom in plan view (10/25/2025)
 - Improving models and view models (done during October 2025, had not set out to do so, just happened)
 
 # Immediate goals for getting a working prototype going:
@@ -64,6 +65,7 @@
   
 # Non-urgent but priority goals:
 It bears noting that no issue I mention here is so cumbersome or limiting that I could not use the program (if I could save and load plans now) yet, but they are issues that once I have a functioning prototype, I will need to fix sooner rather than later. 
+- Add ability to pan "camera" in plan view, and make plan view background more differentiable when it is being moved. 
 - Refactor calendar controls into one user control, and refactor what code I can. Improve design with date pickers
 - Add ability to have multiple plans open at once
 - Rework view models - view models are not entirely sticking to mvvm principles. Need to refactor them a little bit to improve them - won't be too big of changews
