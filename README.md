@@ -52,44 +52,37 @@
 ![This is an image of the Weekly Calendar with tasks displaying](ImagesForGithubOfPlanningProgram/WeeklyCalendarWithTasks.png)
 ![This is an example of what I would like to be able to do with individual plans, using my current workload for today at the time of writing this readme](ImagesForGithubOfPlanningProgram/ExamplePlanToday.png)
 
-# Immediate goals for getting a working prototype going:
-- Saving and Loading Plans
-  - I need to able to write an XML document that can be loaded into the code
-    - I believe - if I understand correctly - that to do this I need to (or can - admittedly not too sure if its required) create an xml schema to define each type I want to be able to store.
-      - This has been done, but I am unsure if I have done it correctly (in terms of "best practice" - not "is the xml valid")
-  - I need to tweak the sqlite database and ensure that the xml documnets have fields for storing the version of the program that tasks were created on, if nothing else to ensure that errors don't occur when I add to the program.
-    - This is also something I have learned from working on mods for Baldur's Gate 3.
-    - I also need to ensure that the date-duration controls can add themselves to the sqlite database.
-  - Need to do some research into how data serialization works for programs like these, specifically to and from xml. I need to understand how exactly an xml schema would be applied to an xml document (when one is using code, and not manually writing them), and what code I need to write.
-  - Remove any references to view models within the code of the models.
-  
-# Goals for after a functioning prototype:
-It bears noting that no issue I mention here is so cumbersome or limiting that I could not use the program (if I could save and load plans now) yet, but they are issues that once I have a functioning prototype, I will need to fix sooner rather than later. 
+# Completed goals:
+- Saving and Loading plans (10/27/2025)
+- Polishing drag and drop  (10/27/2025)
+- Improving models and view models (done during October 2025, had not set out to do so, just happened)
 
-- Improving the Calendars
-  - Currently there are two classes for the Calendar (one that displays one week at a time, one that displays a month at a time) - there's lots of common code between them, so I believe it might be a good idea to merge them into one class in the near future.
-  - There is also a good bit of code that I believes violates MVVM principles or is simply generally unoptimized (such as how I have the program handle when it should update the tasks that are displayed - and what the dates that are the start and end date in between which tasks will be fetched from the database when it is quieried). 
-  - Currently, the way in which I'm handling displaying the date is ineffective and making my life harder in terms of code (it involves two buttons to go forwards one month or week, and then two combo boxes - one related to years, and one related to months). It would be simpler to just use a date picker control instead, or perhaps keep the buttons, and get rid of the combo boxes.
-- Improving the Plans:
-  - Right now the model stores a list of view models, thereby breaking MVVM. I need to figure out how to fix this, while also ensuring that the plan view model is storing task view models, instead of task models.
-  - The Drag and Drop is possibly breaking mvvm too, and is somewhat prone to throwing an error I haven't yet had time to fix tied to typing into a task's text box right after moving it around while it is still selected as being moved around).
+# Immediate goals for getting a working prototype going:
+- Implement Database properly - current version of sqlite database will have redundant values if someone has repetetive work or wants to do certain tasks on multiple non-sequential days.
+- Hook calendar system into rest of application
+- Add ability to delete tasks and subtasks from plans
+  
+# Non-urgent but priority goals:
+It bears noting that no issue I mention here is so cumbersome or limiting that I could not use the program (if I could save and load plans now) yet, but they are issues that once I have a functioning prototype, I will need to fix sooner rather than later. 
+- Refactor calendar controls into one user control, and refactor what code I can. Improve design with date pickers
+- Add ability to have multiple plans open at once
+- Rework view models - view models are not entirely sticking to mvvm principles. Need to refactor them a little bit to improve them - won't be too big of changews
+
+
  
 # General Goals: 
 These are goals that aren't essential to a functioning minimum viable prototype, but they'd be nice to have, or will eventually prove problematic, but aren't - as I currently understand - iireconcilable with mvvm principles. These would be more for ensuring code is maintainable
 
 - Completing the code and designs for the rest of the sub-item controls (like that of images, and the linkers).
-- Ensuring it is possible to add or remove tasks from the calendars if they dont' have a plan tied to them/in memory/ if they can't be found.
-- Potentially removing the code for the calendars from the code behind and putting them in a view model of their own. This is not a priority in part due to how much time it would take in comparison to some of the other goals relating to the calendars.
-- The ability to have multiple plans open at once would be nice
 
 - Optimizing the amount of lists
-  - I am aware that this program is going to use a lot of lists and a lot of list views. While I have for sure been overusing the observable collection class, I also have ideas for how I can optimize the code in the tasks such that only the tasks that are direct children of the plans would need to hold lists.
-    - This idea would require a major restructuring of code, and so it is not a priority - and I have had no optimization issues to lead me to believe it is necessary yet. But in theory, it could turn the data structures for the tasks from being more tree like to being more array like, thereby reducing time complexity to do something that requires accessing elements in the list (like saving, loading, finding tasks or sub-tasks, etc...)
-    - Instead of each task having its own expander and list of items (even if the list is empty), the top level tasks would have a list of sub-items (tasks, descriptions, date-durations, images, linkers, etc...), one float that is a constant value by which items will be horizontally offset from the position of the task they are a child of (to make it possible appear like they are a child of a sub-item, rather than a child of the main-task they are really a child of), and one expander.
-      - Each sub-item would contain a boolean value indicating if it was collapsed or uncollapsed, and an integer displaying a horizontal offset from the task they are a child of
-      - When an item is collapsed or uncollapsed, it would call a function or an event to the owner of the list they are in to go down the list - starting at the item that called the event ("calling item")- and to compare the horizontal offset value of the calling item to each horizontal offset value of each item.
-        - If the horizontal offset value of the items below the calling item in the list is greater than or equal to the horizontal offset of the calling item, then the event will end, and all items between the calling item and the item where the event stopped (exclusive) would be made invisible (thereby appearing to collapse them). However, their respective booleans for being collapsed would not be set - only the one that calling item's boolean would.
-      - While this idea would have an opportunity cost of making collapsing and uncollapsing items more asymptotically complex, it would greatly reduce how many list view controls would be needed for this program, which would hopefully make the change justified.
+  - I am aware that this program is going to use a lot of lists and a lot of list views. I might be able to store several arrays (one for item data, what branch of the "tree" the item in question is, one for what place in the array the item is).
+    - This idea would require a major restructuring of code, and so it is not a priority - and I have had no optimization issues to lead me to believe it is necessary yet.
+    - This could in theory reduce time complexity for operations relating to accessing elements in the list (like saving, loading, finding tasks or sub-tasks, etc...)
+    - Each sub-item task would contain a boolean value indicating if it was collapsed or uncollapsed.
+    - When a task subitem is collapsed or uncollapsed, it would invoke an event in its parent, to go down the list starting at the item itself, and hide each item that is of a further "branch" than the item that invoked the event, stopping once it reaches an item at the same branch as the collapsed item.
+    - While this idea would have an opportunity cost of making collapsing and uncollapsing items more asymptotically complex (unsure if this is the "right" word to use, but it will get my point across, and I will clarify with my professors as to what the right word is), it would greatly reduce how many list view controls would be needed for this program, which would make the change justified.
+    - You may be wondering why I'm not using a tree-view control. The reason is because the tree-view didn't give me the customization I wanted, which was to have free-floating, looking almost block like, items in plans, rather than a tree of tasks to do. 
 
 
 # Long term/out of reach for now goals:
