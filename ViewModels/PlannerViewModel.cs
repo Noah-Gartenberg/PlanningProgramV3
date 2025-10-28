@@ -1,23 +1,28 @@
-﻿using PlanningProgramV3.Models;
+﻿using Microsoft.Win32;
+using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
-    
-    public class PlannerViewModel : INotifyPropertyChanged
+    public partial class PlannerViewModel : INotifyPropertyChanged
     {
-        
-        
 
-        //public List<PlannerItemViewModel> selectedTasks; // this is a placeholder list for the selected objects and stuff...
-                                                         // should only have top level objects selected, but unsure how to do that rn, so won't
+        #region Fields and Properties
+        /**
+         * 
+         * Information for storing the viewport and camera data
+         * Need to store the camera location (center of screen), camera pan amount, and camera zoom amount
+         */
+        private Point CameraLoc;
+        private int cameraPanAmount;
+
         private PlannerModelData data;
 
         //Dirty flag - if true, needs to be saved
@@ -65,10 +70,17 @@ namespace PlanningProgramV3.ViewModels
                 if (highestTasks != value)
                 {
                     highestTasks = value;
+                    foreach (var task in highestTasks)
+                    {
+                        data.planTasks.Add(task.State);
+                    }
+
                     OnPropertyChanged(nameof(HighestTasks));
                 }
             }
         }
+        
+        #region Property Changed
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -76,22 +88,98 @@ namespace PlanningProgramV3.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
+        #endregion
 
-        public void AddHighestTask(object task)
+        #region Constructors
+        /// <summary>
+        /// Default Constructor a plan that has been created
+        /// will need to create another constructor to handle creating other data
+        /// </summary>
+        public PlannerViewModel()
         {
-            if(task is TaskViewModel temp)
+            data = new PlannerModelData();
+            //SetPosition = new RelayCommand(SetTopTaskPosition, null);
+            AddTask = new RelayCommand(AddNewTask, null);
+            HighestTasks = [];
+        }
+
+        #endregion
+
+        #region Methods
+        public void TrySaveToFile(string filepath)
+        {
+            PrintViewModels();
+            data.PrintPlannerDataMethod();
+            //save data
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = filepath;
+            saveFileDialog.Filter = "xml file (*.xml)|*.xml";
+            if(FileName == "")
             {
-                HighestTasks.Add(temp);
-                //I know this is technically bad practice, but I needed a way to access state so that I could add it to the model data
-                    //which I needed to do to ensure that the planner view model stored only view models, whereas I needed the models to contain only models so they could be serialized
-                data.topPlanItems.Add(temp.State);
-                OnPropertyChanged(nameof(HighestTasks));
+                FileName = "Untitled";
+                
             }
-            else 
+            saveFileDialog.FileName = FileName;
+            if (saveFileDialog.ShowDialog() == true)
             {
-                throw new ArgumentException("Should have been a TaskViewModel");
+                if (File.Exists(saveFileDialog.FileName))
+                {
+                    File.Delete(saveFileDialog.FileName);
+                }
+                FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.Create);
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData));
+                serializer.Serialize(fsout, data);
+                fsout.Close();
             }
-            
+        }
+
+        public void TryLoadFromFile(string filepath)
+        {
+            OpenFileDialog openFileDialogue = new OpenFileDialog();
+            openFileDialogue.InitialDirectory = filepath;
+            openFileDialogue.Filter = "xml file (*.xml)|*.xml";
+            if(openFileDialogue.ShowDialog() == true)
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData));
+                using(XmlReader reader = XmlReader.Create(openFileDialogue.FileName))
+                {
+                    data = (PlannerModelData)serializer.Deserialize(reader);
+                }
+                
+            }
+            //name has been updated
+            OnPropertyChanged(nameof(FileName));
+
+            //need to loop through highest tasks, and add it to the list, based on what is in the plan 
+            //highest tasks must be manually updated, add to the field, not the property, so that in theory, the property doesn't update the model behind it
+            for (int i = 0; i < data.planTasks.Count; i++)
+            {
+                
+                highestTasks.Add(new TaskViewModel(data.planTasks[i]));
+                
+            }
+            OnPropertyChanged(nameof(HighestTasks));
+
+
+
+        }
+
+        /// <summary>
+        /// This method will add a new task to the plan
+        /// </summary>
+        /// <param name="shouldBeNull">Name is self-explanatory. It should literally be null, as there is no use for the variable, but I am using it anyway for some reason... 
+        ///                                 I should probably create no-parameter, and multi parameter (use a stack) version of the command.</param>
+        public void AddNewTask(object shouldBeNull)
+        {
+            //create the task
+            TaskViewModel temp = new TaskViewModel();
+
+            HighestTasks.Add(temp);
+
+            data.AddTask(temp.State);
+
+            OnPropertyChanged(nameof(HighestTasks));
         }
 
         //pass in the view model, to set its position
@@ -103,21 +191,20 @@ namespace PlanningProgramV3.ViewModels
         }
 
         /**
-         * Adds a task to the top of the list at the user's mouse's position
-         *      Unsure as of yet what the input will be - maybe mouse position
-         *      may be passing in a reference to the canvas?
+         * Adds a task to the top of the list, where the task is an already existing object?
          */
-        public void AddTopTask(object input)
-        {
-            TaskViewModel tempVar = new TaskViewModel();
-            //not setting coordinates to mouse position because can't figure out how to make it work right now
-            HighestTasks.Add(tempVar);
-            OnPropertyChanged(nameof(HighestTasks));
-        }
+        //public void AddTopTask(object input)
+        //{
+        //    TaskViewModel tempVar = new TaskViewModel();
+        //    //not setting coordinates to mouse position because can't figure out how to make it work right now
+        //    HighestTasks.Add(tempVar);
+        //    data.planTasks.Add(tempVar.State);
+        //    OnPropertyChanged(nameof(HighestTasks));
+        //}
 
         public void SetTaskPosition(TaskViewModel task, Point position)
         {
-            
+
         }
 
 
@@ -130,17 +217,30 @@ namespace PlanningProgramV3.ViewModels
 
         }
 
-        public PlannerViewModel()
+
+        /// <summary>
+        /// Method for testing what is inside the view model
+        /// </summary>
+        public void PrintViewModels()
         {
-            data = new PlannerModelData();
-            //SetPosition = new RelayCommand(SetTopTaskPosition, null);
-            AddTask = new RelayCommand(AddTopTask, null);
-            HighestTasks = new ObservableCollection<TaskViewModel>();
+            Trace.WriteLine("File: " + FileName);
+            for (int i = 0; i < highestTasks.Count; i++)
+            {
+                highestTasks[i].PrintData();
+            }
         }
 
-        public void Serialize_Event(object sender, EventArgs e)
+        /// <summary>
+        /// Method for testing what data is inside the model
+        /// </summary>
+        public void PrintModels()
         {
-            
+            Trace.WriteLine("File: " + FileName);
+            for(int i = 0; i < highestTasks.Count; i++)
+            {
+                highestTasks[i].State.PrintData();
+            }
         }
+        #endregion
     }
 }

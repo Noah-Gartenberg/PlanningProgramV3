@@ -2,6 +2,7 @@
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,6 @@ namespace PlanningProgramV3.Views.PlanControls
         {
             InitializeComponent();
         }
-
         //protected override void OnMouseMove(MouseEventArgs e)
         //{
         //    base.OnMouseMove(e);
@@ -51,7 +51,7 @@ namespace PlanningProgramV3.Views.PlanControls
         //        BrushConverter converter = new BrushConverter();
         //        if (converter.IsValid(dataString))
         //        {
-                    
+
         //            //Brush newFill = (Brush)converter.ConvertFromString(dataString);
         //            //circleUI.Fill = newFill;
 

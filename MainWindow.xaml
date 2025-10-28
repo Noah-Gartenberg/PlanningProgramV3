@@ -9,32 +9,49 @@
         xmlns:CalendarControls="clr-namespace:PlanningProgramV3.Views.Calendar"
         xmlns:Plan_Controls="clr-namespace:PlanningProgramV3.Views.PlanControls"
         xmlns:Converters="clr-namespace:PlanningProgramV3.Converters"
-        xmlns:PlanControl="clr-namespace:PlanningProgramV3.Views"
+        xmlns:Helpful="clr-namespace:PlanningProgramV3.MiscellaniousScripts"
         x:Name="mainWindow"
         Title="MainWindow" Height="1080" Width="1920">
     
 
     <Window.Resources>
-        <Converters:PixelToCoordinate x:Key="ConvertToPixel"/>
+        <Converters:PixelToCoordinate x:Key="ConvertToWorld" x:Name="ToWorldCoordinate"/>
     </Window.Resources>
     <Window.DataContext>
         <viewmodel:MainWindowViewModel/>
     </Window.DataContext>
 
     <!--Agenda Portion-->
-    <Grid>
         
 
         <!--<local:CalendarCell Grid.RowSpan="1"/>-->
+        
+    <DockPanel>
         <!--Menu-->
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" Padding="20,1,0,1" Background="#FFE0E5E2">
 
-        <Menu HorizontalAlignment="Stretch" Height="Auto" Grid.Row="0" Padding="20,1,0,1" Background="#FFE0E5E2">
+            <Menu.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Open" Executed="CommandBinding_OpenCommandExecuted" CanExecute="CommandBinding_CanExecute_OpenCommand"/>
+                <CommandBinding Command="ApplicationCommands.Save" Executed="CommandBinding_SaveCommandExecuted" CanExecute="CommandBinding_CanExecute_SaveCommand"/>
+            </Menu.CommandBindings>
+
             <MenuItem Header="File" BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
-                <!--a) new
-            b) open - - > display monthly, weekly, daily calendars
-            c) save
-            d) save as
-            e) exit-->
+                <MenuItem Header="Open" Command="ApplicationCommands.Open">
+
+                </MenuItem>
+                <MenuItem Header="Save" Command="ApplicationCommands.Save">
+                    
+                </MenuItem>
+                
+                <MenuItem Header="Save As">
+                    
+                </MenuItem>
+                <MenuItem Header="Close Plan">
+
+                </MenuItem>
+                <MenuItem Header="Exit Program">
+
+                </MenuItem>
             </MenuItem>
 
             <MenuItem Header="Edit"  BorderThickness="1" BorderBrush="SlateGray" Background="#FFE0E5E2">
@@ -58,116 +75,135 @@
 
 
 
-            </MenuItem> -->
+            </MenuItem>
         </Menu>
-        <DockPanel Grid.Row="1">
-            <!--Prototypical represnttation of spiral binding on stuff-->
-            <!--<Rectangle MaxWidth="50" MinWidth="20" Height="Auto" Fill="Black" StrokeThickness="1" DockPanel.Dock="Left"/>-->
+        <!--Prototypical represnttation of spiral binding on stuff-->
+        <!--<Rectangle MaxWidth="50" MinWidth="20" Height="Auto" Fill="Black" StrokeThickness="1" DockPanel.Dock="Left"/>-->
 
-            <!--Agenda Tabs-->
-                <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
-
-            
-            
-            <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-                <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
-                <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <!---->
-                    <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
-                </TabItem>
-
-                <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
-                <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding Tasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
-                </TabItem>
-                <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <Border BorderBrush="Green" BorderThickness="1"/>
-                </TabItem>
-                <TabItem Header="Plan" Name="PlanTab">
-                    <TabItem.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="90"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </TabItem.LayoutTransform>
-                    <Border BorderBrush="Yellow" BorderThickness="1">
-                        <PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>
-                    </Border>
-                </TabItem>
-            </TabControl>
-        </DockPanel>
-
-        <!--Toolbar-->
-        <!--TODO Replace words with icons/images-->
-        <!--<ToolBarTray DockPanel.Dock="Top" Height="Auto" HorizontalAlignment="Stretch">
-            <ToolBar Background="#FFE0E5E2" Band="0" x:Name="File">
-                <Button Content="Open" Margin="1,0,1,0"/>
-                <Button Content="Save" Margin="1,0,1,0"/>
-                <Button Content="Save As" Margin="1,0,1,0"/>
-            </ToolBar>
-
-            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="1" x:Name="Edit">
-                <Button Content="Cut" Margin="1,0,1,0"/>
-                <Button Content="Copy" Margin="1,0,1,0"/>
-                <Button Content="Paste" Margin="1,0,1,0"/>
-                <Separator/>
-                <Button Content="Undo" Margin="1,0,1,0"/>
-                <Button Content="Redo" Margin="1,0,1,0"/>
-                <Separator/>
-                <Button Content="Show Clipboard History" Margin="1,0,1,0"/>
-            </ToolBar>
-
-            <ToolBar Background="#FFE0E5E2" Band="0" BandIndex ="2" x:Name="Add" >
-                <Button Content="Add Item" Margin="1,0,1,0"/>
-            </ToolBar>
-        </ToolBarTray>
+        <!--Agenda Tabs-->
+        <!--Need to add month/week/day picker for when calendar, and other stuff is active-->
 
 
-        <StackPanel x:Name="TabsAndPages" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            Margin="10" Orientation="Vertical" Background="#FFE0E5E2">
-            <Border x:Name="Tabs" Background="#FFE0E5E2">
-                <TabControl HorizontalAlignment="Stretch" Background="#FFE0E5E2">
-                    <TabItem Header="Monday"/>
-                    <TabItem Header="Tuesday"/>
-                    <TabItem Header="Personal Projects"/>
-                    <TabItem Header="Bounce Up"/>
-                </TabControl>
-            </Border>
 
-            --><!--<Frame x:Name="Display" Background="#FFBDCAC2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <Expander Style="{DynamicResource CustomExpander}" HorizontalAlignment="Left" Height="100" Header="Expander" Margin="389,198,0,0" VerticalAlignment="Top" Width="100" IsExpanded="True">
-                <Grid Background="#FFE5E5E5">
-                </Grid>
-            </Expander>--><!--
+        <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
 
-        </StackPanel>-->
-    </Grid>
+            <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
+            <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <!---->
+                <CalendarControls:MonthCalendar x:Name="MonthlyCalendarControl" Tasks="{Binding CalendarTasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
+            </TabItem>
+
+            <!--Weekly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
+            <TabItem Header="Weekly Calendar" Name="WeeklyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <CalendarControls:WeeklyCalendar x:Name="WeeklyCalendarControl" Tasks="{Binding CalendarTasks}" CurrentDate="{Binding CurrentDate, Mode=TwoWay}"/>
+            </TabItem>
+            <TabItem Header="Daily Calendar" Name="DailyCalendarTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <Border BorderBrush="Green" BorderThickness="1"/>
+            </TabItem>
+            <TabItem Header="Plan" Name="PlanTab">
+                <TabItem.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TabItem.LayoutTransform>
+                <Border BorderBrush="Yellow" BorderThickness="1">
+                    <ScrollViewer x:Name="PlanScrollViewer" CanContentScroll="False"
+                                  Width="Auto" Height="Auto" 
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <!--Plan displayer-->
+                        <ListView Style="{DynamicResource CustomListView}" x:Name="PlannerDisplayer" DockPanel.Dock="Top" 
+                            VerticalAlignment="Stretch" Background="#FFDCDCB2" AllowDrop="True" 
+                            HorizontalAlignment ="Stretch" 
+                            ItemsSource="{Binding CurrentPlan.HighestTasks}"
+                            ItemTemplateSelector="{StaticResource ItemTemplateSelector}"
+                            MouseMove="PlannerDisplayer_MouseMove" 
+                            Drop="PlannerDisplayer_Drop" 
+                            DragOver="PlannerDisplayer_DragOver"
+                            DragLeave="PlannerDisplayer_DragLeave" 
+                            SelectionChanged="PlannerDisplayer_SelectionChanged"
+                            MouseDown="PlannerDisplayer_MouseDown"
+                            MouseUp="PlannerDisplayer_MouseUp"
+                            Helpful:ZoomBehavior.IsEnabled="True"
+                            Helpful:ZoomBehavior.ZoomFactor="0.1"
+                            Helpful:ZoomBehavior.ScrollViewer="{Binding ElementName=PlanScrollViewer}"                              
+                            >
+                            <!--Need to refactor the below control into this control, and also make the main window a singleton-->
+                            <!--<PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>-->
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsItemsHost="True" Height="{Binding ElementName=PlannerDisplayer, Path=Height}"
+                                        Width="{Binding ElementName=PlannerDisplayer, Path=Width}">
+                                        <!--Move center of canvas to middle of it?-->
+                                        <Canvas.LayoutTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" CenterX=".5" CenterY=".5" />
+                                        </Canvas.LayoutTransform>
+                                    </Canvas>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Canvas.Left">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource ConvertToWorld}" Mode="OneWay" UpdateSourceTrigger="PropertyChanged" >
+                                                <!--<Binding Path="DataContext.X" RelativeSource="{RelativeSource Mode=Self}"/>-->
+                                                <Binding Path="X" UpdateSourceTrigger="PropertyChanged"/>
+                                                <Binding Path="DataContext.CameraX" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}"/>
+                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Canvas}"/>
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Canvas.Top">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource ConvertToWorld}" Mode="OneWay" UpdateSourceTrigger="PropertyChanged" >
+                                                <!--<Binding Path="DataContext.Y" RelativeSource="{RelativeSource Mode=Self}"/>-->
+                                                <Binding Path="Y" UpdateSourceTrigger="PropertyChanged"/>
+                                                <Binding Path="DataContext.CameraY" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}"/>
+                                                <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Canvas}"/>
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ContextMenu>
+                                <ContextMenu x:Name="cm_AddSubItem">
+                                    <MenuItem Header="Cut"/>
+                                    <MenuItem Header="Copy"/>
+                                    <MenuItem Header="Paste"/>
+                                    <MenuItem Header="Add Task" Command="{Binding Path=CurrentPlan.AddTask}"/>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                    </ScrollViewer>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 
 </Window>

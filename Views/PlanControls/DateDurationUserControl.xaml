@@ -7,9 +7,6 @@
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <data:DateDurationViewModel/>
-    </UserControl.DataContext>
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Background="White" HorizontalAlignment="Center">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,10 +17,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Start Date" Grid.Column="0" Grid.Row="0"/>
+            <TextBlock Text="Start Date"  Grid.Column="0" Grid.Row="0"/>
             <TextBlock Text="End Date" Grid.Column="1" Grid.Row="0"/>
-            <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding StartDate}" Grid.Column="0" Grid.Row="1" Margin="10,10,10,10"/>
-            <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding EndDate}" Grid.Column="1" Grid.Row="1" Margin="10"/>
+            <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding Path=StartDate, Mode=TwoWay}" Grid.Column="0" Grid.Row="1" Margin="10,10,10,10"/>
+            <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding Path=EndDate, Mode=TwoWay}" Grid.Column="1" Grid.Row="1" Margin="10"/>
         </Grid>
         
     </StackPanel>

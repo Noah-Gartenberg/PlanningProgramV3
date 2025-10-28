@@ -19,5 +19,9 @@ namespace PlanningProgramV3.Models
         public string path;
         public ImageModelData() : base(PlannerItemType.Image) { }
 
+        public override void PrintData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

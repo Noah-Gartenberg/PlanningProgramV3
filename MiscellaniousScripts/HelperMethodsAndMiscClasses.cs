@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlanningProgramV3
+namespace PlanningProgramV3.MiscellaniousScripts
 {
     public class HelperMethods
     {
@@ -46,16 +46,5 @@ namespace PlanningProgramV3
             return date;
         }
 
-        /*
-         * This struct will be stored in the main window view model, to ensure the type of object will be saved/accessible by the software where necessary
-         * Currently not in use
-         */
-        public struct SoftwareVersion
-        {
-            int major;
-            int minor;
-            int revision;
-            int build;
-        }
     }
 }

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--targetNamespace="http://tempuri.org/ProgramConfig"-->
+  <xs:element name="ProgramConfig" type="ProgramConfig" />
+  <xs:complexType name="ProgramConfig">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SoftwareVersion" type="VersionData" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FileStoragePath" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="VersionData">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="major" type="xs:unsignedByte" />
+      <xs:element minOccurs="1" maxOccurs="1" name="minor" type="xs:unsignedByte" />
+      <xs:element minOccurs="1" maxOccurs="1" name="revision" type="xs:unsignedByte" />
+      <xs:element minOccurs="1" maxOccurs="1" name="build" type="xs:unsignedByte" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

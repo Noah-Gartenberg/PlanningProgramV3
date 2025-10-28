@@ -3,6 +3,7 @@ using PlanningProgramV3.Views.PlanControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,19 +14,32 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 {
     /**
      * Noah Gartenberg
-     * Last Updated: 8/6/2025
+     * Last Updated: 10/10/2025
      * This contains the view model for the Task Item
-     * Tasks are also the only ones able to contain subitems
+     * CalendarTasks are also the only ones able to contain subitems
+     * 
+     * Link to go to to see an example of what Dutton meant when he described when/how to redo the code in the models/viewmodels https://stackoverflow.com/questions/62743207/mvvm-solving-nested-models-and-viewmodels
+     * 
+     * Removed default constructor and refactored constructors to try and get saving data to work
      */
-    public class TaskViewModel : PlannerItemViewModel
+    public partial class TaskViewModel : PlannerItemViewModel
     {
 
+
         //create new observable collection for storing the subitem references in the view models
-            //initialize in constructor
+        //initialize in constructor
         private ObservableCollection<PlannerItemViewModel> subItemViewModels;
 
 
         #region Properties
+
+#pragma warning disable CS8603 // Possible null reference return. If it is null, I want it to return as such
+        //Task view model is the only object to actually need to expose the parent as a property
+        public TaskViewModel Parent
+        {
+            get => parent;
+        }
+#pragma warning restore CS8603 // Possible null reference return.
 
         public Point Coordinates
         {
@@ -40,7 +54,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
         }
 
-        public string UUID
+        public Guid UUID
         {
             get => State.uuid;
             set
@@ -100,6 +114,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             {
                 if (!value.Equals(State.taskName))
                 {
+                    Trace.WriteLine("Printing for name");
+                    PrintData();
                     State.taskName = value;
                     OnPropertyChanged(nameof(Name));
                 }
@@ -122,7 +138,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         /**
          * Getter property for state - SHOULD ONLY BE USED BY PLANNER MODEL, and only in this class. SHOULD NOT BE SET
          */
-        public TaskModelData State
+        public new TaskModelData State
         {
             get => (TaskModelData)state;
             
@@ -131,54 +147,77 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #endregion
 
         #region Constructors
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public TaskViewModel() : base(new TaskModelData())
-        {
-            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
 
-            //Create observable collection with view models from state
-            SubItems = new ObservableCollection<PlannerItemViewModel>();
-            if(State.subItems != null)
-            {
-                foreach (BaseItemModelData item in State.subItems)
-                {
-                    switch (item.dataType)
-                    {
-                        case PlannerItemType.Task:
-                            SubItems.Add(new TaskViewModel(item as TaskModelData));
-                            break;
-                        case PlannerItemType.Text:
-                            SubItems.Add(new TextViewModel(item as TextModelData));
-                            break;
-                        case PlannerItemType.Date:
-                            SubItems.Add(new DateDurationViewModel(item as DateDurationModelData));
-                            break;
-                        default:
-                            throw new ArgumentException("item in model data subitems was not of type supported by current task view model code");
-                            break;
-                    }
-                }
-            }
-            AddSubItemCommand = new RelayCommand(AddSubItem,CanMoveTask);
-            System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem,null);
+        /// <summary>
+        /// Constructor for creating a task view model from scratch
+        /// </summary>
+        /// <param name="parent"></param>
+        public TaskViewModel(TaskViewModel parent) : base(parent, PlannerItemType.Task)
+        {
+            SubItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
 
-
-        //Constructor for making a new task with a specific state
-        public TaskViewModel(TaskModelData setState) : base(setState) {    }
-        //constructor for making a new task at specific coordinates
-        public TaskViewModel(Point coords) : base(new TaskModelData())
+        /// <summary>
+        /// Constructor to be called when passing in data that has already been formatted into a model, but doesn't yet have a corresponding view model
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="state"></param>
+        public TaskViewModel(TaskViewModel parent, BaseItemModelData state) : base(parent, state, PlannerItemType.Task)
         {
-            //startDate = DateTime.MinValue; endDate = DateTime.MinValue;
-            //((TaskModelData)state).subItems = [];
-            //AddSubItemCommand = new RelayCommand(AddSubItem, CanMoveTask);
-            //System.Console.WriteLine("Currently, task view model does not check for a selected object to see if can delete an object");
-            //RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            SubItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            SetUpSubitems(state as TaskModelData);    
+        }
+        /// <summary>
+        /// Constructor for creating a new task view model when loading a plan into memory
+        /// </summary>
+        /// <param name="state"></param>
+        public TaskViewModel(BaseItemModelData state) : base(state,PlannerItemType.Task)
+        {
+            SubItems = [];
+            //load subitems into list
+            var temp = state as TaskModelData;
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            SetUpSubitems(temp);
+        }
 
-            State.coordinates = coords;
+        /// <summary>
+        /// This method is for ensuring that all subitems are set up, including subitems in subitems
+        /// </summary>
+        /// <param name="stateData"></param>
+        private void SetUpSubitems(TaskModelData stateData)
+        {
+            for (int i = 0; i < stateData.subItems.Count; i++)
+            {
+                var subItem = stateData.subItems[i];
+                switch (subItem.dataType)
+                {
+                    case PlannerItemType.Task:
+                        subItemViewModels.Add(new TaskViewModel(this, subItem as TaskModelData));
+                        break;
+                    case PlannerItemType.Text:
+                        subItemViewModels.Add(new TextViewModel(this, subItem as TextModelData));
+                        break;
+                    case PlannerItemType.Date:
+                        subItemViewModels.Add(new DateDurationViewModel(this, subItem as DateDurationModelData));
+                        break;
+                }
+            }
+            OnPropertyChanged(nameof(SubItems));
+        }
+
+        /// <summary>
+        /// Default constructor if such a thing is necessary - and I believe it to be for this class and this class only
+        /// </summary>
+        public TaskViewModel() : base(PlannerItemType.Task)
+        {
+            SubItems = [];
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
         }
         #endregion
 
@@ -189,21 +228,50 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         public ICommand RemoveSubItemCommand { get; private set; }
 
         #region Commmand related methods
-        //9/17/2025 TO DO!!! CHANGE THIS TO CREATE THE VIEW MODELS FROM STATE. //also, need to figure out how to make this work for copy paste
+        
+
+        /// <summary>
+        /// When inputting an item model, create a view model to represent the item and add it to the subitems collection
+        /// do not have to add to the list in the model, because the data will come from the model, and be added to this list
+        /// </summary>
+        /// <param name="item"></param>
+        public virtual void AddSubItem(BaseItemModelData item)
+        {
+            if(item is TaskModelData)
+            {
+                subItemViewModels.Add(new TaskViewModel(this,item as TaskModelData));
+            }
+            else if(item is TextModelData)
+            {
+                subItemViewModels.Add(new TextViewModel(this,item as TextModelData));
+            }
+            else if(item is DateDurationModelData)
+            {
+                subItemViewModels.Add(new DateDurationViewModel(this, item as DateDurationModelData));
+            }
+            else
+            {
+                throw new System.NotImplementedException("Tried to add an unimplemented view model/model type to the subitems list");
+            }
+
+            OnPropertyChanged(nameof(SubItems));
+        }
         public virtual void AddSubItem(object obj)
         {
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             PlannerItemViewModel addedItem = obj.ToString() switch
             {
-                "Task" => new TaskViewModel(),
-                "Text" => new TextViewModel(),
-                "Date" => new DateDurationViewModel(),
+                "Task" => new TaskViewModel(this),
+                "Text" => new TextViewModel(this),
+                "Date" => new DateDurationViewModel(this),
                 //"Image" => new ImageItemViewModel(),
                 //"Linker" => new PlanReferenceViewModel(),
                 //_ => new TaskItemViewModel(),
             };
-            System.Console.WriteLine("Adding object");
-            addedItem.SetParent(this.state);
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             SubItems.Add(addedItem);
+            State.AddItem(addedItem.State);
+            PrintData();
             OnPropertyChanged(nameof(SubItems));
         }
 
@@ -211,15 +279,13 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         //9/17/2025 - actually, waht does this method even do? The way Drag&Drop works rn, it will already move the top level parent anyway. 
         public virtual bool CanMoveTask(object? parameter)
         {
-            return Parent == null;
+            return parent == null;
         }
 
         public virtual void RemoveSubItem(object obj)
         {
 
             throw new NotImplementedException("The RemoveSubItem method has not been properly implemented -- parameters should not be an object");
-            SubItems.Remove(obj as PlannerItemViewModel);
-            OnPropertyChanged(nameof(SubItems));
         }
         #endregion
         #endregion
@@ -227,6 +293,36 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         #region Methods
         
         public BaseItemModelData GetState() { return state; }
+
+        public override void PrintData()
+        {
+            Trace.WriteLine("TaskModel: ");
+            Trace.WriteLine("Parent: " + parent);
+            Trace.WriteLine("Task Name: " + Name);
+            Trace.WriteLine("Coordinates: " + Coordinates);
+            Trace.WriteLine("Task Completion: " + IsComplete);
+            Trace.WriteLine("Guid: " + UUID);
+            for (int i = 0; i < SubItems.Count; i++)
+            {
+                SubItems[i].PrintData();
+            }
+        }
+
+        /// <summary>
+        /// This method is for setting the coordinates of the tasks in the view model
+        /// </summary>
+        /// <param name="CanvasCoords">This is the coordinates of the task in the canvas view; Left is X, Top is y</param>
+        /// <param name="CanvasDimensions">These are the dimensions of the canvas itself; x is width, y is height</param>
+        /// <param name="CameraLocation">This is the "location" of the camera in the canvas</param>
+        /// <param name="scaleFactor">This is how zoomed in the "camera" is</param>
+        public void DragDropDone(Point CanvasCoords, Vector CanvasDimensions, Point CameraLocation, double scaleFactor)
+        {
+            Trace.WriteLine((CanvasCoords.X - 0.5f * CanvasDimensions.X) * scaleFactor + CameraLocation.X);
+            X = (CanvasCoords.X - 0.5f * CanvasDimensions.X) * scaleFactor + CameraLocation.X;
+            Y = (CanvasCoords.Y - 0.5f * CanvasDimensions.Y) * scaleFactor + CameraLocation.Y;
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+        }
         #endregion
     }
 }

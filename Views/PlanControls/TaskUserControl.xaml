@@ -7,21 +7,19 @@
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <data:TaskViewModel/>
-    </UserControl.DataContext>
-    <!--<UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/../CustomControls.xaml"/>
-                <ResourceDictionary Source="/../ResourceDictionary.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
 
-
-    </UserControl.Resources>-->
-    <Expander Style="{DynamicResource TaskExpander}" ExpandDirection="Down" HorizontalAlignment="Left" VerticalAlignment="Center" >
-
+    <!--Why not just use a tree view? Because I want this to look a bit more like building blocks than a tree view allows for-->
+    <!--Issue: data binding. The Task View model when a child of another task (or all subsequent view models) are not bound to the right data type - because the type of object in 
+        the parent is the PlannerItemViewModel - not a task view model (or the correct view model type and so nothing is bound)?-->
+    <Expander Style="{DynamicResource TaskExpander}" ExpandDirection="Down" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" >
+        <Expander.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform/>
+                <SkewTransform/>
+                <RotateTransform/>
+                <TranslateTransform X="0.5" Y="0.5"/>
+            </TransformGroup>
+        </Expander.RenderTransform>
         <Expander.Header>
             <Border Width="Auto" Height="Auto">
                 <Border.ContextMenu>
@@ -29,19 +27,19 @@
                         <MenuItem Header="Cut"/>
                         <MenuItem Header="Copy"/>
                         <MenuItem Header="Paste"/>
-                        <MenuItem Header="Add Task" Command="{Binding AddSubItemCommand}" CommandParameter="Task"/>
-                        <MenuItem Header="Add Text" Command="{Binding AddSubItemCommand}" CommandParameter="Text"/>
-                        <MenuItem Header="Add Date" Command="{Binding AddSubItemCommand}" CommandParameter="Date"/>
+                        <MenuItem Header="Add Task" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Task"/>
+                        <MenuItem Header="Add Text" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Text"/>
+                        <MenuItem Header="Add Date" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Date"/>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,5,0">
-                    <CheckBox IsChecked="{Binding IsComplete}" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding Name}" MinWidth="50" MaxLines="1" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{Binding Path=IsComplete, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Path=Name, UpdateSourceTrigger=LostFocus, Mode=TwoWay}" MinWidth="50" MaxLines="1" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Expander.Header>
         <Expander.Content>
-            <ListView ItemsSource="{Binding SubItems}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
+            <ListView Name="SubItems" ItemsSource="{Binding Path=SubItems, Mode=OneWay}" Margin="10,0,0,0" ItemTemplateSelector="{StaticResource ItemTemplateSelector}">
             </ListView>
         </Expander.Content>
     </Expander>
