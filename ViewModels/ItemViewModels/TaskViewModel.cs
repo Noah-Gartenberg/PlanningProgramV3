@@ -169,6 +169,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            SetUpSubitems(state as TaskModelData);    
         }
         /// <summary>
         /// Constructor for creating a new task view model when loading a plan into memory
@@ -179,24 +180,33 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             SubItems = [];
             //load subitems into list
             var temp = state as TaskModelData;
-            for (int i = 0; i <temp.subItems.Count; i++)
+            AddSubItemCommand = new RelayCommand(AddSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            SetUpSubitems(temp);
+        }
+
+        /// <summary>
+        /// This method is for ensuring that all subitems are set up, including subitems in subitems
+        /// </summary>
+        /// <param name="stateData"></param>
+        private void SetUpSubitems(TaskModelData stateData)
+        {
+            for (int i = 0; i < stateData.subItems.Count; i++)
             {
-                var subItem = temp.subItems[i];
-                switch(subItem.dataType)
-                { 
+                var subItem = stateData.subItems[i];
+                switch (subItem.dataType)
+                {
                     case PlannerItemType.Task:
-                        subItemViewModels.Add(new TaskViewModel(this,subItem as TaskModelData));
+                        subItemViewModels.Add(new TaskViewModel(this, subItem as TaskModelData));
                         break;
                     case PlannerItemType.Text:
-                        subItemViewModels.Add(new TextViewModel(this,subItem as TextModelData));
+                        subItemViewModels.Add(new TextViewModel(this, subItem as TextModelData));
                         break;
                     case PlannerItemType.Date:
-                        subItemViewModels.Add(new DateDurationViewModel(this,subItem as DateDurationModelData));
+                        subItemViewModels.Add(new DateDurationViewModel(this, subItem as DateDurationModelData));
                         break;
                 }
             }
-            AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
             OnPropertyChanged(nameof(SubItems));
         }
 
@@ -208,10 +218,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
             RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
-            if(Coordinates == new Point(double.NaN, double.NaN))
-            {
-                Coordinates = new Point(0, 0);
-            }
         }
         #endregion
 
