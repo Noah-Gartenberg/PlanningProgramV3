@@ -452,7 +452,7 @@ namespace PlanningProgramV3.Views.Calendar
             programmaticChangingComboBoxFlag = true;
             CurrentDate = CurrentDate.AddDays(-7);
             programmaticChangingComboBoxFlag = false;
-            //WeeksComboBox.SelectedIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
+            //WeeksComboBox.SelectedTaskIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
         }
 
         private void NextWeekButton_OnClick(object sender, RoutedEventArgs e)
@@ -461,7 +461,7 @@ namespace PlanningProgramV3.Views.Calendar
             programmaticChangingComboBoxFlag = true;
             CurrentDate = CurrentDate.AddDays(7);
             programmaticChangingComboBoxFlag = false;
-            //WeeksComboBox.SelectedIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
+            //WeeksComboBox.SelectedTaskIndex = WeeklyCalendar.GetWeekNumber(CurrentDate) - 1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

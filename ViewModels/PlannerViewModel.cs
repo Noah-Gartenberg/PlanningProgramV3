@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.Win32;
 using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
@@ -42,6 +43,7 @@ namespace PlanningProgramV3.ViewModels
 
         //public RelayCommand SetPosition { get; }
         public RelayCommand AddTask { get; }
+        public RelayCommand RemoveTask { get; }
 
         /**
          * 
@@ -79,6 +81,30 @@ namespace PlanningProgramV3.ViewModels
                 }
             }
         }
+
+        /**
+         * Selected index item meanings:
+         *         selectedTaskIndex < -1: subitem has been selected (parent-item sub-item is within is amount less than -1?)
+         *         selectedIndex = -1: no item has been selected
+         *         selectedIndex >= 0: parent task item selected
+         * 
+         * 
+         * 
+         * 
+         */
+        private int selectedTaskIndex = -1;
+        public int SelectedTaskIndex
+        {
+            get { return selectedTaskIndex; }
+            set
+            {
+                if(selectedTaskIndex != value)
+                {
+                    selectedTaskIndex = value;
+                    OnPropertyChanged(nameof(SelectedTaskIndex));
+                }
+            }
+        }
         
         #region Property Changed
 
@@ -101,6 +127,7 @@ namespace PlanningProgramV3.ViewModels
             data = new PlannerModelData();
             //SetPosition = new RelayCommand(SetTopTaskPosition, null);
             AddTask = new RelayCommand(AddNewTask, null);
+            RemoveTask = new RelayCommand(DeleteHighestTask, null);
             HighestTasks = [];
         }
 
@@ -160,9 +187,6 @@ namespace PlanningProgramV3.ViewModels
                 
             }
             OnPropertyChanged(nameof(HighestTasks));
-
-
-
         }
 
         /// <summary>
@@ -182,37 +206,42 @@ namespace PlanningProgramV3.ViewModels
             OnPropertyChanged(nameof(HighestTasks));
         }
 
-        //pass in the view model, to set its position
-        public void SetTopTaskPosition(object InputViewModel)
+
+        /// <summary>
+        /// Deletes a task known to be in the list of top tasks,
+        ///         should not be used for tasks that may be lower level items
+        /// </summary>
+        /// <param name="item"></param>
+        public void DeleteHighestTask(object item)
         {
-            //if I can ensure this is called on drop by binding to it...
-            //MessageBox.Show("SetTopTaskPosition has not yet been implemented");
-            //in theory should also check to see if can move objects, but this is good for now
+            if(item is TaskViewModel itemToDelete)
+            {
+                for (int i = 0; i < HighestTasks.Count; i++)
+                {
+                    //shoudl do a reference equals - if I am correct
+                    if (HighestTasks[i] == itemToDelete);
+                    HighestTasks.RemoveAt(i);
+                    data.RemoveTask(i);
+                    OnPropertyChanged(nameof(HighestTasks));
+                    return; //don't even need to break out of loop, can just return
+                }
+            }
+            else if(item is int itemIndex)
+            {
+                HighestTasks.RemoveAt(itemIndex);
+                data.RemoveTask(itemIndex);
+                OnPropertyChanged(nameof(HighestTasks));
+                return;
+            }    
+            throw new ArgumentException("item passed in was not of type TaskViewModel or integer");
         }
 
-        /**
-         * Adds a task to the top of the list, where the task is an already existing object?
-         */
-        //public void AddTopTask(object input)
-        //{
-        //    TaskViewModel tempVar = new TaskViewModel();
-        //    //not setting coordinates to mouse position because can't figure out how to make it work right now
-        //    HighestTasks.Add(tempVar);
-        //    data.planTasks.Add(tempVar.State);
-        //    OnPropertyChanged(nameof(HighestTasks));
-        //}
-
-        public void SetTaskPosition(TaskViewModel task, Point position)
-        {
-
-        }
-
-
-        /**
-         * This method will delete an item
-         * 
-         */
-        public void DeleteItem(object item)
+        /// <summary>
+        /// Deletes an item from somewhere in the list of the parent item
+        /// </summary>
+        /// <param name="itemToDelete"></param>
+        /// <param name="itemParent">Technically not necesssary, but screw it</param>
+        public void DeleteItem(PlannerItemViewModel itemToDelete, TaskViewModel itemParent)
         {
 
         }

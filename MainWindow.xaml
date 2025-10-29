@@ -152,7 +152,8 @@
                             MouseUp="PlannerDisplayer_MouseUp"
                             Helpful:ZoomBehavior.IsEnabled="True"
                             Helpful:ZoomBehavior.ZoomFactor="0.1"
-                            Helpful:ZoomBehavior.ScrollViewer="{Binding ElementName=PlanScrollViewer}"                              
+                            Helpful:ZoomBehavior.ScrollViewer="{Binding ElementName=PlanScrollViewer}"   
+                            SelectedIndex="{Binding CurrentPlan.SelectedTaskIndex,Mode=TwoWay}"
                             >
                             <!--Need to refactor the below control into this control, and also make the main window a singleton-->
                             <!--<PlanControl:PlanDisplayerControl CurrentPlanner="{Binding CurrentPlan}"/>-->
@@ -192,11 +193,14 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ContextMenu>
-                                <ContextMenu x:Name="cm_AddSubItem">
+                                <ContextMenu x:Name="cm_AddRemoveSubItem">
                                     <MenuItem Header="Cut"/>
                                     <MenuItem Header="Copy"/>
                                     <MenuItem Header="Paste"/>
                                     <MenuItem Header="Add Task" Command="{Binding Path=CurrentPlan.AddTask}"/>
+                                    <!--This comment appears to hold my solution: https://stackoverflow.com/a/38971643-->
+                                        <!--And I just realized I can't have the delete command in this context menu-->
+                                    <MenuItem Header="Remove Task Stack" Command="{Binding Path=CurrentPlan.RemoveTask}" CommandParameter="{Binding CurrentPlan.SelectedTaskIndex}"/>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
