@@ -61,32 +61,11 @@
           - I frequently found myself having to tweak code from online to fit my own needs, so nothing is fully taken from online and pasted as it was completely.
           - I try to learn from the code I take from online, rather than to just copy paste it - if I'm really not understanding something, I'll even go so far as to write it line by line until I understand it.
 
-# Things that are done when it comes to the goal of making a prototype:
-  - Models and view models and views for the tasks and sub-tasks - done for now
-  - Getting tasks for calendars - the methods for fetching the tasks and querying the database for this purpose is complete
-  - Plan view - done for now but will return to later
-  - Can add sub-items to tasks, and can add items to plans
-
 ## Images Of What Works
 ![This is one example image of the Monthly Calendar at work](ImagesForGithubOfPlanningProgram/MonthlyCalendarWithTasks1.png)
 ![This is a second image of the Monthly Calendar at work- where I went back one month, to show the other test tasks](ImagesForGithubOfPlanningProgram/MonthlyCalendarWithTasks2.png)
 ![This is an image of the Weekly Calendar with tasks displaying](ImagesForGithubOfPlanningProgram/WeeklyCalendarWithTasks.png)
 ![This is an example of what I would like to be able to do with individual plans, using my current workload for today at the time of writing this readme](ImagesForGithubOfPlanningProgram/ExamplePlanToday.png)
-
-# Completed goals:
-- Saving and Loading plans (10/27/2025)
-- Polishing drag and drop  (10/27/2025)
-- Can zoom in plan view (10/25/2025)
-- Improving models and view models (done during October 2025, had not set out to do so, just happened)
-
-# Long term/out of reach for now goals:
-These are goals of mine that are not priorities and won't be any time soon until after most features for the program are in. Still they are goals because I know they are necessary - but not how to go about implementing, what is necessary, or because I would prefer to seek outside assistance for implementing them. 
-- Accessibility
-  - Accessibility features are a must have for me if I ever intend to release this software program for money. I don't know how to implement them, or what features I can or can not expect users to want, so for right now I'm tabling them until I have enough features solidified that I don't have to worry about things changing. I would also prefer to have the aid of another person while working on these.
-- General Debugging and optimization
-  - I have not had the time to do a lot of debugging, and I don't want to be trying to optimize things if they're not causing issues, so once I have prototypes of all the features in, I'll see how it runs and how buggy it is.
-- Art and making it look good
-  - I'm not an art person. I'd like to learn, but I don't have the time, so I think a faster and better solution to this problem - once again, once a prototype is complete - would be to figure out how I want the program to look and then hire someone to make art for this program. 
 
 
 # Timeline (of attempts):
