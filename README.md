@@ -15,39 +15,59 @@
 - I also need to create a software program to use during my honors research which I will be conducting during the school year over the next two years, so I wanted to learn software development so I could complete this task. As I was most comfortable with C#, and had previously used WPF for this project, I felt it would be best for me to stick with what I know/know best, as my next semester will be particularly challenging
 
 
-# How I'm going to accomplish this/How Will It All Work:
+# What features will there be:
+<details>
+  <summary>What features are there/will there be?</summary>
+  <ul>
+    <li>The program is meant to serve as a replacement for a user's paper planner (for my own, if for nobody else)
+      <li>My paper planner tends to fill up, resulting in it looking like this: [show image]
+        <ul>
+          <li>This stresses me out, because regardless of if half of the writing is for things I want to get to, an assignment I needed a second line to describe, or something that I want to make note of for another assignment, it looks like I have more work.</li>
+          <li>Additionally, although the calendar in my planner is useful for writing down tasks with deadlines, I have found I struggle to consistently use it, due to the small spaces in which I would have to jot notes down in, and the amount of work I get meaning it fills up quickly</li>
+        </ul>
+      </li>
+      <li>I specifically wanted to make a planner
+        <ul>
+          <li>I chose not to use Obsidian or another such planning software because I have found they tend not to lend themselves to the way in which I make notes of my work, where I write a short name of the task, and then I break it down into smaller tasks below that</li> 
+          <li>[picture example]</li>
+          <li>I chose not to use a calendar because putting something in for a timeslot or on a day makes me feel like I _have_ to get that thing done on that day and/or at that time, and if that is not so, then that just causes me needless stress</li>
+        </ul>
+      <li>Features I wanted to include:
+        <ul>
+          <li>**Plans**, that can store tasks within them
+            <ul>
+              <li>**Tasks** (the base item that will be in a plan) should be able to move around in the plans, to be able to be marked as completed, and to be able to collapse and reveal below them a list of descriptions, sub-tasks, or dates between which tasks should be completed.</li>
+              <li>[Show picture of tasks, and how they'll work]</li>
+            </ul>
+          </li>
+          <li>There should be two calendars - one that displays a month at a time, and one that displays a week at a time - that show tasks that must be completed between dates within the month or week that are being displayed. When users click on those tasks, they should be brought to the corresponding plans the tasks are in. 
+        </ul>
+      </li>
+    </li>
+  </ul>
+</details>
+
+# How will it work?
 - I am using the MVVM programming pattern, along with C#, and the WPF framework, to create this program, and most of the functionality.
 - To store data, I will be using XML to store the individual plans, and an SQLite database to store the data for a calendar to display timesensetive tasks
   - There will be more information on the SQLite database's design soon.
   - SQLite was used because I needed something that could store lots of data, and that I could query to find, update, add, or delete data from, while also allowing users to store their data on their computers
 
 <details>
-  <summary>More In Depth Explanation (that is admittedly not the best written)</summary>
+  <summary>In depth explanation</summary>
   <ul>
-   <li> There are two major parts that I haven't yet (fully) implemented and won't fully be explained in the code. These are how I will be saving the plans and tasks, and how tasks will get displayed to the screen on the calendar(s). </li>
-    <li> My plan for handling saving data is to store the plans and the tasks in XML, where everything is kind of nested together in a hierarchy of \[PLAN\]-->\[TASK\]-->\[SUBITEMS\]-->\[SUBITEMS' SUBITEMS\], where each of those items listed will have lists of the items next in the hierarchy (in a way, similar to a linked-list or a tree). When displayed in a plan - not on the calendars - it will be roughly similar in structure, just using code. </li>
-    <ul>
-      <li> it should be made clear that each of the above have their own lists, so the plan "knows" only of the tasks that are its immediate children, the first task on that list only knows of the items that are its immediate children, and so on </li>
-      <li> I am aware of how many lists - especially observable collections - there are between the tasks (and subitems - they use the same code) and plans. I plan to refactor this when I find the time, but first I want to get a prototype going </li>
-    </ul>
-    <ul>
-      <li> I am using XML because I have worked with it more than I have JSON, though I've worked with both relatively few times, I have used the former when making mods for Baldur's Gate 3. </li>
-    </ul>
-    <li> Each task/sub-task is intended to have a GUID tied to it, for identification by the calendar. </li>
-    <ul>
-      <li> This is so I can search through files for data tied to tasks (such as to open a where the camera centers on a specific task) and/or open plans by clicking on the the tasks displayed in the calendar or by clicking on a linked task within another plan. </li>
-    </ul>
-    <li> My plan for displaying any tasks that are "time sensetive" has 3 parts. </li>
-    <ul>
-      <li> The first part is the calendars themselves and the CalendarTask related classes - these will ideally (when clicked) enable users to open corresponding plans, add the task to a plan if it doesn't have a file, delete the task from the calendar if it doesn't have a corresponding file, or delete the task in question from the calendar. </li>
-      <li> The second part is the sqlite database. There will only be one total for each download of the program, and it will hold all the data for tasks that need to be displayed on the calendar(s). </li>
-      <li> The third part is the date-duration sub-item. This control can be a sub-item for any task, and it will access the data for the task that it is a child of. When a plan is saved, the control will call an event to add its information to the sqlite database. </li>
+    <li>All of the controls and the design of the app has been made using the WPF framework.</li>
+    <li>I programmed much of the functionality of the plans and the app as a whole using the MVVM programming pattern.</li>
+    <li>Though I didn't know this at the time, each task that can be in the plan is implemented in a way that can be described as a non binary tree (as in: more than two branches per tree).</li>
+    <li>Plans are saved to XML files, as I have worked with XML before while making mods for Baldurs Gate 3, and because I needed a way to save files that would allow me to physically read them, manually edit them, and to collapse sections if they are not relevant to what I am looking for</li>
+    <li>I will be storing the tasks that are to be displayed to the calendars in an SQLite database.
       <ul>
-        <li> Currently, the data these store are the filepath of the file the task they are a child of is in, the name for the task that is their parent, a guid, the date the task starts, the date the task ends, and whether or not the task is completed. </li>
+        <li>SQLite is being used because I needed a way for the program to store potentially a lot of data in a way that can handle relationships between objects in that data, and in a way that can be queried to ensure fast lookup, add, edit, and removal times. I did not feel a full SQL database would be necessary for this program, and I would like to keep files on peoples' computers if I can.</li>
       </ul>
+    </li>
     </ul>
-    <li>Everything is a work in progress, so everything is subject to change.</li>
-  </ul>
+      <li>Everything is a work in progress, so everything is subject to change.</li>
+    </ul>
 </details>
 
 # What Resources I have used:
