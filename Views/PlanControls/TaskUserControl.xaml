@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PlanningProgramV3.Views.PlanControls"
+             xmlns:local="clr-namespace:PlanningProgramV3"
              xmlns:data="clr-namespace:PlanningProgramV3.ViewModels.ItemViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -21,15 +21,20 @@
             </TransformGroup>
         </Expander.RenderTransform>
         <Expander.Header>
-            <Border Width="Auto" Height="Auto">
+            <!--Solving problem where can't find main window, by binding the tag element in the border to the main window itself - may instead bind to command, haven't decided yet but yeah
+                apparently this is what other people have done if needed to bind to data context of an element: https://stackoverflow.com/a/3668699 -->
+            <Border Width="Auto" Height="Auto" Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}">
                 <Border.ContextMenu>
-                    <ContextMenu x:Name="cm_AddSubItem">
+                    <ContextMenu x:Name="cm_AlterSubItem">
                         <MenuItem Header="Cut"/>
                         <MenuItem Header="Copy"/>
                         <MenuItem Header="Paste"/>
                         <MenuItem Header="Add Task" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Task"/>
                         <MenuItem Header="Add Text" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Text"/>
                         <MenuItem Header="Add Date" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Date"/>
+                        <!--I keep forgetting context menus are not in the hierarchy of the item they're parented to... or maybe they are? I don't even know....-->
+                        <!--<MenuItem Header="Delete Item" Command="{Binding Path=RemoveSubItemCommand}" CommandParameter="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"/>-->
+                        <MenuItem Header="Delete Item" Command="{Binding Path=RemoveSubItemCommand}" CommandParameter="{Binding PlacementTarget.Tag.DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ContextMenu}}"/>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,5,0">

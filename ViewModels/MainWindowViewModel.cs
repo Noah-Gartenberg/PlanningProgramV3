@@ -1,21 +1,11 @@
-﻿using Microsoft.Win32;
-using PlanningProgramV3.MiscellaniousScripts;
+﻿using PlanningProgramV3.MiscellaniousScripts;
 using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
@@ -25,11 +15,11 @@ namespace PlanningProgramV3.ViewModels
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-
         public RelayCommand GetTasksFromTimePeriodCommand { get; private set; }
         public RelayCommand AddTaskToCurrentPlan {  get; private set; }
         public RelayCommand SaveCurrentPlan { get; private set; }
         public RelayCommand LoadPlan { get; private set; }
+        public RelayCommand DeleteItemCommand { get; private set; }
 
         #region State Data
         public ProgramConfig Config { get; private set; }
@@ -171,7 +161,7 @@ namespace PlanningProgramV3.ViewModels
 
         //default constructor
         public MainWindowViewModel()
-        {
+        {       
             cameraLocation = new Point();
             //Make sure that there is a program config in existence, and that we have a reference to wherever files ought to be stored
             //I just realized this will cause issues with the way I've handled versions, but we'll deal with that later I guess
@@ -230,7 +220,7 @@ namespace PlanningProgramV3.ViewModels
                 },
                 null
             );
-
+            DeleteItemCommand = new RelayCommand(DeleteItem, null);
             plans.Add(new PlannerViewModel());
 
             //initializecurrentDate
@@ -278,6 +268,8 @@ namespace PlanningProgramV3.ViewModels
 
         }
 
+
+
         #endregion
 
 
@@ -321,8 +313,17 @@ namespace PlanningProgramV3.ViewModels
 
         public double GetZoomAmount() { return zoomAmount; }
         public static void ZoomTick(double zoomIncrement) { zoomAmount = Math.Clamp(zoomAmount + zoomIncrement,zoomIncrement,2); }
-        public void SetZoomAmount(double zoomAmount) { zoomAmount = zoomAmount; }
+        public void SetZoomAmount(double newZoomAmount) { zoomAmount = newZoomAmount; }
 
+        /// <summary>
+        /// Because the main window is the only one that should exist, and you should only need to call to delete an item, if the item's parent is null
+        /// </summary>
+        /// <param name="item"></param>
+        public void DeleteItem(object item)
+        {
+            
+            Plans[currPlan].DeleteHighestTask(item as PlannerItemViewModel);
+        }
         #endregion
 
     }

@@ -131,6 +131,15 @@ namespace PlanningProgramV3.Models
             subItems.Add(item);
             PrintData();
         }
+
+        /// <summary>
+        /// "Deletes" the item from the list in the model.
+        /// </summary>
+        /// <param name="indexToDeleteAt"></param>
+        public void DeleteSubItem(int indexToDeleteAt)
+        {
+            subItems.RemoveAt(indexToDeleteAt);
+        }
         #endregion
     }
 }

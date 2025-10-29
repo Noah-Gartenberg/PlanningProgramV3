@@ -156,7 +156,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
             SetUpSubitems(state as TaskModelData);    
         }
         /// <summary>
@@ -181,7 +181,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             //load subitems into list
             var temp = state as TaskModelData;
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
             SetUpSubitems(temp);
         }
 
@@ -217,7 +217,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(RemoveSubItem, null);
+            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
         }
         #endregion
 
@@ -282,10 +282,31 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             return parent == null;
         }
 
-        public virtual void RemoveSubItem(object obj)
+        /// <summary>
+        /// This method will be called when a subitem of this task is to be deleted
+        /// the task view model must remove the item from itself and from the model that is behind it
+        /// </summary>
+        /// <param name="itemToDelete"></param>
+        public virtual void DeleteSubItem(PlannerItemViewModel itemToDelete)
         {
+            //Find the index which the item is at
+            int indexToDelete = -1;
+            for (int i = 0; i < SubItems.Count; i++)
+            {
+                if (SubItems[i] == itemToDelete)
+                {
+                    indexToDelete = i;
+                    break;
+                }
+            }
+            if (indexToDelete == -1)
+                throw new ArgumentException("The item that was requested to be deleted did not exist");
 
-            throw new NotImplementedException("The RemoveSubItem method has not been properly implemented -- parameters should not be an object");
+            //actually delete item
+                //not using the Remove() method, so I can delete the item from both the model and the view model at the same time - to make sure it gets done
+            State.DeleteSubItem(indexToDelete);
+            SubItems.RemoveAt(indexToDelete);
+            OnPropertyChanged(nameof (SubItems));
         }
         #endregion
         #endregion

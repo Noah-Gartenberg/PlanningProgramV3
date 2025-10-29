@@ -88,5 +88,14 @@ namespace PlanningProgramV3.Models
         {
             planTasks.Add(task);
         }
+
+        /// <summary>
+        /// Method for deleting top level tasks from model
+        /// </summary>
+        /// <param name="selectedIndex"></param>
+        internal void RemoveTask(int selectedIndex)
+        {
+            planTasks.RemoveAt(selectedIndex);
+        }
     }
 }

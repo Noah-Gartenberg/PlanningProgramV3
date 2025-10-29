@@ -326,6 +326,7 @@ namespace PlanningProgramV3
                 // adding to, because if the camera pans, then a constant value will be added
                 DisplacementVector += Mouse.GetPosition(PlannerDisplayer) - mouseClickPos;
 
+                //welcome back to drag and drop issues city... population: me
                 SelectedObject.IsHitTestVisible = true;
 
                 (PlannerDisplayer.SelectedItem as TaskViewModel).DragDropDone(
@@ -391,7 +392,7 @@ namespace PlanningProgramV3
         //            task.Y = Convert.ToDouble(PixelToCoordinate.ConvertToCoordinate(dropPosition.Y, typeof(int), 1500, null));
         //        }
         //        SelectedObject.IsHitTestVisible = true;
-        //        PlannerDisplayer.SelectedIndex = -1;
+        //        PlannerDisplayer.SelectedTaskIndex = -1;
         //    }
         //    catch (Exception ex)
         //    {

@@ -164,6 +164,27 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             this.state.parent = parent.State;
 
         }
+
+        /// <summary>
+        /// I will bind the command parameter to a command in the main window, like it's a callback, 
+        ///     if there is no parent object
+        ///     then the command will be called on the item to remove it.
+        ///
+        /// </summary>
+        /// <param name="obj">Callback (command, in this case) that will be called on the item if its parent is null</param>
+        public virtual void DeleteSelf(object obj)
+        {
+            //if the item is parentless, then call the main window's command to delete it
+            if (parent == null)
+            {
+                (obj as RelayCommand).Execute(this);
+                return;
+            }
+
+            //otherwise, call to the parent task view model to delete itself
+            parent.DeleteSubItem(this);
+            
+        }
         #endregion
     }
 }
