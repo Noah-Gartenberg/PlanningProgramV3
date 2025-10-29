@@ -231,10 +231,9 @@ namespace PlanningProgramV3.ViewModels
                 HighestTasks.RemoveAt(itemIndex);
                 data.RemoveTask(itemIndex);
                 OnPropertyChanged(nameof(HighestTasks));
-            }
-                
-                
-                throw new ArgumentException("item passed in was not of type TaskViewModel or integer");
+                return;
+            }    
+            throw new ArgumentException("item passed in was not of type TaskViewModel or integer");
         }
 
         /// <summary>

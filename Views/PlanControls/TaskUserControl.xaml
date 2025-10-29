@@ -34,7 +34,7 @@
                         <MenuItem Header="Add Date" Command="{Binding Path=AddSubItemCommand}" CommandParameter="Date"/>
                         <!--I keep forgetting context menus are not in the hierarchy of the item they're parented to... or maybe they are? I don't even know....-->
                         <!--<MenuItem Header="Delete Item" Command="{Binding Path=RemoveSubItemCommand}" CommandParameter="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}"/>-->
-                        <MenuItem Header="Delete Item" Command="{Binding Path=RemoveSubItemCommand}" CommandParameter="{Binding PlacementTarget.Tag.DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ContextMenu}}"/>
+                        <MenuItem Header="Delete Item" Command="{Binding Path=RemoveSelfCommand}" CommandParameter="{Binding PlacementTarget.Tag.DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ContextMenu}}"/>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,5,0">

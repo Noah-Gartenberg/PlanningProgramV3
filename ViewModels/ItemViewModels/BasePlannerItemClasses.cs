@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlanningProgramV3.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using PlanningProgramV3.Models;
+using System.Windows.Input;
 
 namespace PlanningProgramV3.ViewModels.ItemViewModels
 {
@@ -59,6 +60,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         }
         #endregion
 
+        public ICommand RemoveSelfCommand { get; private set; }
+
         #region Constructors
 
         //10/10/2025 - removed other two constructors, and reworked to take two arguments, and then reworked them. Added a data type parameter to store the data type. 
@@ -74,6 +77,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             this.parent = parent;
             this.state = state;
             Type = type;
+            RemoveSelfCommand = new RelayCommand(DeleteSelf, null);
         }
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             this.state = state;
             Type = type;
+            RemoveSelfCommand = new RelayCommand(DeleteSelf, null);
         }
 
         public PlannerItemViewModel(TaskViewModel parent, PlannerItemType type)
@@ -113,6 +118,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
                     break;
             }
             this.state = newState;
+            RemoveSelfCommand = new RelayCommand(DeleteSelf, null);
         }
 
         /// <summary>
@@ -143,8 +149,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             }
             state = newState;
 
-
-            
+            RemoveSelfCommand = new RelayCommand(DeleteSelf, null);
         }
         #endregion
 

@@ -156,7 +156,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
         }
 
         /// <summary>
@@ -168,7 +167,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
+            
             SetUpSubitems(state as TaskModelData);    
         }
         /// <summary>
@@ -181,7 +180,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             //load subitems into list
             var temp = state as TaskModelData;
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
             SetUpSubitems(temp);
         }
 
@@ -217,7 +215,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             SubItems = [];
             AddSubItemCommand = new RelayCommand(AddSubItem, null);
-            RemoveSubItemCommand = new RelayCommand(DeleteSelf, null);
         }
         #endregion
 
@@ -225,7 +222,6 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
 
         #region Commands
         public ICommand AddSubItemCommand { get; private set; }
-        public ICommand RemoveSubItemCommand { get; private set; }
 
         #region Commmand related methods
         

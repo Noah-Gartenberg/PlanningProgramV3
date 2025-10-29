@@ -318,7 +318,7 @@ namespace PlanningProgramV3.ViewModels
         /// <summary>
         /// Because the main window is the only one that should exist, and you should only need to call to delete an item, if the item's parent is null
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Can be either an int or a PlannerItemViewModel</param>
         public void DeleteItem(object item)
         {
             
