@@ -1,4 +1,4 @@
-# Goals:
+# Goals and Planning:
   - When I began my first attempt, I had big ideas that I had no clue how to create. The core of the program has stayed largely the same in each attempt:
     - I wanted to create a program where I could create files in which I could list and break down my tasks into smaller "sub-items" that could then too be further broken down - as needed - into sub-items of their own.
       - I wanted to be able to expand or collapse these tasks so their sub-tasks would not be visible if I didn't want them to be, thereby decreasing visual clutter and help me figure out my most immediate goals.
@@ -12,6 +12,7 @@
   - At the start of August, I realized that I wanted this tool to replace my paper planner to help me stay better organized without stressing myself out needlessly because the box for today got filled up with lots of description for the one thing I had to do (exagerating for the sake of the example).
     - After this realization, I made another visualization of what I was hoping to create, as shown below (apologies for the poor drawing and lack of alt-text right now, I plan to add them later):
   ![UpdatedPlanningProgramDrawing](ImagesForGithubOfPlanningProgram/UpdatedPlanningProgramDrawing.jpg)
+- I also need to create a software program to use during my honors research which I will be conducting during the school year over the next two years, so I wanted to learn software development so I could complete this task. As I was most comfortable with C#, and had previously used WPF for this project, I felt it would be best for me to stick with what I know/know best, as my next semester will be particularly challenging
 
 
 # How I'm going to accomplish this/How Will It All Work:
