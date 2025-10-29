@@ -19,6 +19,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
 
         public static void InitializeDatabase()
         {
+            //how partitition data by year???
 
             #region For testing purposes only - delete in final -- how to make work in final only????
 
