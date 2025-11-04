@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
-    public partial class PlannerViewModel : INotifyPropertyChanged
+    public partial class PlannerViewModel : INotifyPropertyChanged, IAddToDatabase
     {
 
         #region Fields and Properties
@@ -150,7 +150,12 @@ namespace PlanningProgramV3.ViewModels
         #endregion
 
         #region Methods
-        public void TrySaveAs(string filepath)
+        /// <summary>
+        /// Saves a plan to the files
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns>returns true if the save was successful, and false otherwise</returns>
+        public bool TrySaveAs(string filepath)
         {
             PrintViewModels();
             data.PrintPlannerDataMethod();
@@ -176,7 +181,9 @@ namespace PlanningProgramV3.ViewModels
                 //set the file name before closing the file
                 FilePath = saveFileDialog.FileName;
                 fsout.Close();
+                return true;
             }
+            return false;
         }
 
         public void TryLoad(string filepath)
@@ -194,6 +201,7 @@ namespace PlanningProgramV3.ViewModels
                 }
                 //set the file name before closing the file
                 FilePath = openFileDialogue.FileName;
+                FileName = openFileDialogue.SafeFileName;
             }
             //name has been updated
             OnPropertyChanged(nameof(FileName));
@@ -290,6 +298,18 @@ namespace PlanningProgramV3.ViewModels
             for(int i = 0; i < highestTasks.Count; i++)
             {
                 highestTasks[i].State.PrintData();
+            }
+        }
+
+        /// <summary>
+        /// Tries to add any date durations to database
+        /// </summary>
+        /// <param name="AddToDatabaseCallback"></param>
+        public void TryAddToDatabase(Action<TaskViewModel, DateDurationViewModel> AddToDatabaseCallback)
+        {
+            foreach (var task in highestTasks)
+            {
+                task.TryAddToDatabase(AddToDatabaseCallback);
             }
         }
         #endregion
