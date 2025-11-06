@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PlanningProgramV3.Models;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
@@ -12,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace PlanningProgramV3.ViewModels
 {
-    public partial class PlannerViewModel : INotifyPropertyChanged
+    public partial class PlannerViewModel : INotifyPropertyChanged, IAddToDatabase
     {
 
         #region Fields and Properties
@@ -25,6 +24,19 @@ namespace PlanningProgramV3.ViewModels
         private int cameraPanAmount;
 
         private PlannerModelData data;
+
+        public VersionData version
+        {
+            get => data.planVersion;
+            set
+            {
+                if(!data.planVersion.Equals(value))
+                {
+                    data.planVersion = value;
+                    OnPropertyChanged(nameof(data.planVersion));
+                }
+            }
+        }
 
         //Dirty flag - if true, needs to be saved
         private bool dirtyFlag;
@@ -62,6 +74,10 @@ namespace PlanningProgramV3.ViewModels
                 }
             }
         }
+        
+        //storing the file path of the file thatt this plan corresponds to, so it doesn't need to sit open or be stored in save data. 
+        public string FilePath { get; set; }
+
         //add custom observable collection, and when add to it, add to the inheriting model too
         private ObservableCollection<TaskViewModel> highestTasks;
         public ObservableCollection<TaskViewModel> HighestTasks
@@ -134,7 +150,12 @@ namespace PlanningProgramV3.ViewModels
         #endregion
 
         #region Methods
-        public void TrySaveToFile(string filepath)
+        /// <summary>
+        /// Saves a plan to the files
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns>returns true if the save was successful, and false otherwise</returns>
+        public bool TrySaveAs(string filepath)
         {
             PrintViewModels();
             data.PrintPlannerDataMethod();
@@ -145,7 +166,6 @@ namespace PlanningProgramV3.ViewModels
             if(FileName == "")
             {
                 FileName = "Untitled";
-                
             }
             saveFileDialog.FileName = FileName;
             if (saveFileDialog.ShowDialog() == true)
@@ -157,11 +177,16 @@ namespace PlanningProgramV3.ViewModels
                 FileStream fsout = new FileStream(saveFileDialog.FileName, FileMode.Create);
                 XmlSerializer serializer = new XmlSerializer(typeof(PlannerModelData));
                 serializer.Serialize(fsout, data);
+
+                //set the file name before closing the file
+                FilePath = saveFileDialog.FileName;
                 fsout.Close();
+                return true;
             }
+            return false;
         }
 
-        public void TryLoadFromFile(string filepath)
+        public void TryLoad(string filepath)
         {
             OpenFileDialog openFileDialogue = new OpenFileDialog();
             openFileDialogue.InitialDirectory = filepath;
@@ -172,8 +197,11 @@ namespace PlanningProgramV3.ViewModels
                 using(XmlReader reader = XmlReader.Create(openFileDialogue.FileName))
                 {
                     data = (PlannerModelData)serializer.Deserialize(reader);
+                    reader.Close();
                 }
-                
+                //set the file name before closing the file
+                FilePath = openFileDialogue.FileName;
+                FileName = openFileDialogue.SafeFileName;
             }
             //name has been updated
             OnPropertyChanged(nameof(FileName));
@@ -187,6 +215,8 @@ namespace PlanningProgramV3.ViewModels
                 
             }
             OnPropertyChanged(nameof(HighestTasks));
+
+            
         }
 
         /// <summary>
@@ -268,6 +298,18 @@ namespace PlanningProgramV3.ViewModels
             for(int i = 0; i < highestTasks.Count; i++)
             {
                 highestTasks[i].State.PrintData();
+            }
+        }
+
+        /// <summary>
+        /// Tries to add any date durations to database
+        /// </summary>
+        /// <param name="AddToDatabaseCallback"></param>
+        public void TryAddToDatabase(Action<TaskViewModel, DateDurationViewModel> AddToDatabaseCallback)
+        {
+            foreach (var task in highestTasks)
+            {
+                task.TryAddToDatabase(AddToDatabaseCallback);
             }
         }
         #endregion

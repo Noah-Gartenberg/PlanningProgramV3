@@ -116,6 +116,23 @@ namespace PlanningProgramV3
             e.CanExecute = (DataContext as MainWindowViewModel).SaveCurrentPlan.CanExecute(null);
         }
         #endregion
+
+        /// <summary>
+        /// This method will ensure that when change tabs, the 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void CalendarTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(sender is WeeklyCalendar)
+            {
+                
+            }
+            
+
+
+        }
     }
 
     /// <summary>
@@ -348,7 +365,7 @@ namespace PlanningProgramV3
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(
             "SelectedObject", typeof(FrameworkElement), typeof(ListView));
 
-        public FrameworkElement SelectedObject
+        public FrameworkElement? SelectedObject
         {
             get => (FrameworkElement)GetValue(SelectedObjectProperty);
             set => SetValue(SelectedObjectProperty, value);

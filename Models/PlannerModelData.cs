@@ -30,14 +30,10 @@ namespace PlanningProgramV3.Models
 
         [XmlElementAttribute(ElementName = "PlanName", Type = typeof(string))]
         public string fileName;
+
         //Right now only needs to contain the top of the list of plan items, as the rest will contain their children
-        //need to use taskviewmodel instead of taskmodeldata because don't have time/energy to refactor TO DO, REFACTOR
-        //THIS HAS BEEN DONE, BUT MAYBE SHOULD BE REPLACED WITH A LIST?
-
-
-
         //the highest level calendarTasks in plan
-        //in this way, this will be more of a linked list than anything else
+        //in this way, this will be more of a tree than anything else
         [XmlArrayItem(ElementName = "Task", 
             Type = typeof(TaskModelData)),
             XmlArray(ElementName = "PlanTasks", IsNullable = true)]
@@ -46,7 +42,7 @@ namespace PlanningProgramV3.Models
         //Current Version
         
         [XmlElement(ElementName = "SoftwareVersion",Type = typeof(VersionData))]
-        VersionData planVersion;
+        public VersionData planVersion;
 
         #region Constructors
         //default constructor
