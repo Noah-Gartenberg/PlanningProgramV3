@@ -16,8 +16,12 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * 
      * Refactored constructors, added State property, and thought about removing parent file path
      */
-    public partial class DateDurationViewModel : PlannerItemViewModel
+    public partial class DateDurationViewModel : PlannerItemViewModel, IAddToDatabase
     {
+
+        //field to handle saving data and ensure that will accurately call events and stuff
+        bool inDatabase;
+
         #region Properties
         public new DateDurationModelData State
         {
@@ -89,6 +93,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
             ParentUUID = parent.UUID;
+            inDatabase = false;
         }
         /// <summary>
         /// Constructor to call when creating a new date duration sub-item from pre-existing data or state
@@ -100,6 +105,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
             ParentUUID = parent.UUID;
+            inDatabase = true;
         }
 
         /// <summary>
@@ -109,6 +115,8 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
+            //shouldn't get called, but just in case
+            inDatabase = false;
         }
         #endregion
 
@@ -118,6 +126,19 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             Trace.WriteLine("Parent: " + parent);
             Trace.WriteLine("StartDate: " + StartDate);
             Trace.WriteLine("EndDate: " + EndDate);
+        }
+
+        /// <summary>
+        /// Checks if can add to database
+        /// </summary>
+        /// <param name="AddToDatabaseCallback"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void TryAddToDatabase(Action<TaskViewModel, DateDurationViewModel> AddToDatabaseCallback)
+        {
+            if (AddToDatabaseCallback != null && !inDatabase)
+            {
+                AddToDatabaseCallback(parent,this);
+            }
         }
         #endregion
     }

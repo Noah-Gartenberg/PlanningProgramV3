@@ -51,24 +51,29 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         break;
                     case 2:
 #pragma warning disable CS8604 // If is null, is much bigger problem
-                        Completion = (bool)values[i];
+                        //unable to cast int 64 to bool, so just check if value is > 0
+                        if ((long)values[i] > 0)
+                            Completion = true;
+                        else
+                            Completion = false;
 #pragma warning restore CS8604 //  If is null, is much bigger problem
                         break;
                     case 3:
 #pragma warning disable CS8604 // If is null, is much bigger problem
                         //unsure if conversion is allowed
-                        DateStart = (DateTime)values[i];
+                        DateStart = DateTime.Parse(values[i].ToString());
+                        //DateStart = (DateTime)values[i];
 #pragma warning restore CS8604 //  If is null, is much bigger problem
                         break;
                     case 4:
 #pragma warning disable CS8604 // If is null, is much bigger problem
-                        DateEnd = (DateTime)values[i];
+                        DateEnd = DateTime.Parse(values[i].ToString());
 #pragma warning restore CS8604 //  If is null, is much bigger problem
                         break;
                     default:
                         break;
                 }
-                throw new NotImplementedException("Have not implemented array input constructor for CalendarTaskData");   
+                //throw new NotImplementedException("Have not implemented array input constructor for CalendarTaskData");   
             }
         }
 

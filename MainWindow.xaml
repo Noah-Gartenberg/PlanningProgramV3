@@ -85,7 +85,9 @@
 
 
 
-        <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+        <TabControl x:Name="CalendarTabs" TabStripPlacement="Right" Height="Auto" 
+                    DockPanel.Dock="Right" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                    SelectedIndex="3" SelectionChanged="CalendarTabs_SelectionChanged">
 
             <!--Monthly calendar has bars for each task going from start till end, and an overflow of some amount, shows color of priority-->
             <TabItem Header="Monthly Calendar" Name="MonthlyCalendarTab">

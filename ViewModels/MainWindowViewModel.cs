@@ -4,6 +4,7 @@ using PlanningProgramV3.ViewModels.Calendar;
 using PlanningProgramV3.ViewModels.ItemViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Xml.Serialization;
@@ -36,7 +37,7 @@ namespace PlanningProgramV3.ViewModels
                     OnPropertyChanged(nameof(CurrentDate));
                     //MessageBox.Show("Current Date is " + value); FOR TESTING PURPOSES
                     //technically shouldn't be changing this data in here, but tbh right now I don't care, just want to get a functioning prototype and then I'll refactor later
-                    CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(currentDate));
+                    CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromTimePeriod(HelperMethods.GetFirstDayOfWeekDate(currentDate.AddMonths(-1)), HelperMethods.GetFirstDayOfWeekDate(currentDate.AddMonths(1))));
                 }
             }
         }
@@ -161,7 +162,10 @@ namespace PlanningProgramV3.ViewModels
 
         //default constructor
         public MainWindowViewModel()
-        {       
+        {
+
+            AddTaskDate += AddTaskDateToDatabase;
+
             cameraLocation = new Point();
             //Make sure that there is a program config in existence, and that we have a reference to wherever files ought to be stored
             //I just realized this will cause issues with the way I've handled versions, but we'll deal with that later I guess
@@ -192,7 +196,8 @@ namespace PlanningProgramV3.ViewModels
                 fsout.Close();
             }
 
-            #region TESTING PURPOSES
+            Trace.WriteLine("Need to add tutorial and set plan directory prompts");
+
             //override path to be in documents folder for stuff
             path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PlannerProgramDocs");
 
@@ -200,11 +205,6 @@ namespace PlanningProgramV3.ViewModels
             Directory.CreateDirectory(path);
 
             Config.SetFileStoragePath(path);
-
-
-
-
-            #endregion
 
 
             calendarTasks = new ObservableCollection<CalendarTaskData>();
@@ -226,8 +226,9 @@ namespace PlanningProgramV3.ViewModels
             //initializecurrentDate
             currentDate = DateTime.Today;
 
-            DataAccess.InitializeDatabase();
-            CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
+            DataAccess.AccessOrCreateDatabase();
+            //DataAccess.InitializeDatabase();
+            //CalendarTasks = new ObservableCollection<CalendarTaskData>(DataAccess.GetTasksFromSandwichMonths(CurrentDate));
 
         }
         #region Methods
@@ -247,17 +248,23 @@ namespace PlanningProgramV3.ViewModels
                         DateTime startDate = new DateTime(CurrentDate.Year, CurrentDate.Month, HelperMethods.GetFirstDayOfWeekDate(CurrentDate).Day);
                         DateTime endDate = startDate.AddDays(7);
 
+#warning Should do a null check before setting CalendarTasks
+#pragma warning disable CS8604 // Possible null reference argument.
                         CalendarTasks = new ObservableCollection<CalendarTaskData>(
-                            DataAccess.GetTasksFromWeek(startDate, endDate)
+                            DataAccess.GetTasksFromTimePeriod(startDate,endDate)
                             );
+#pragma warning restore CS8604 // Possible null reference argument.
                         break;
                     case "Month":
+#warning Should do a null check before setting CalendarTasks
+#pragma warning disable CS8604 // Possible null reference argument.
                         CalendarTasks = new ObservableCollection<CalendarTaskData>(
-                            DataAccess.GetTasksFromMonth(
+                            DataAccess.GetTasksFromTimePeriod(
                                 new DateTime(CurrentDate.Year, CurrentDate.Month, 1),
                                 new DateTime(CurrentDate.Year, CurrentDate.Month, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month))
                                 )
                             );
+#pragma warning restore CS8604 // Possible null reference argument.
                         break;
                 }
             }
@@ -285,7 +292,7 @@ namespace PlanningProgramV3.ViewModels
         /// <param name="source">Unsure if this will be a string of the filename (if I'm doing the file dialogue in this class or in the code-behind)</param>
         protected virtual void LoadPlan_Command(object source)
         {
-            Plans[currPlan].TryLoadFromFile(Config.fileStoragePath);
+            Plans[currPlan].TryLoad(Config.fileStoragePath);
         }
 
         /// <summary>
@@ -296,7 +303,12 @@ namespace PlanningProgramV3.ViewModels
 
         protected virtual void SavePlan_Command(object source)
         {
-            Plans[currPlan].TrySaveToFile(Config.fileStoragePath);
+            //if save was successful
+            if(Plans[currPlan].TrySaveAs(Config.fileStoragePath))
+            {
+                //add to database code
+                Plans[currPlan].TryAddToDatabase(AddTaskDate);
+            }
         }
 
         /// <summary>
@@ -324,6 +336,43 @@ namespace PlanningProgramV3.ViewModels
             
             Plans[currPlan].DeleteHighestTask(item as PlannerItemViewModel);
         }
+        #endregion
+
+
+        #region Database and Dirty Flag plan related
+        //this list will contain all items that need to/ought to be saved and added to the database. 
+            //only issue will be that the way I'm doing this will not account for date duration models being added and then deleted, and because the value is stored, it will still be in scope.
+            //perhaps I can fire an event? 
+        internal HashSet<UpdateDatabaseActionData> updatedTaskDates = new HashSet<UpdateDatabaseActionData>();
+
+        //static callback, so that any 
+        public static event Action<DateDurationViewModel, DateDurationViewModel?> UpdateTaskDate;
+
+        public void AddToUpdateList(DateDurationViewModel changed, DateDurationViewModel? original)
+        {
+            //check if changed value is already in the list
+            
+            //
+        }
+
+        /// <summary>
+        ///passs in to date duration view models/task view models by method on save
+        /// </summary>
+        //callback to pass to objects
+        public event Action<TaskViewModel, DateDurationViewModel> AddTaskDate;
+
+        /// <summary>
+        /// If the dirty flag is not set to true, then don't fire, but if it is, then add the task date to the database
+        ///     should be passed as a callback to all items in the tree
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="addTaskDate"></param>
+        public void AddTaskDateToDatabase(TaskViewModel task, DateDurationViewModel addTaskDate)
+        {
+            //can save check will have been done already
+            DataAccess.AsyncAddTaskDateToDatabase(plans[currPlan], task, addTaskDate);
+        }
+
         #endregion
 
     }

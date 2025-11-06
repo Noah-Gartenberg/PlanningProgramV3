@@ -22,6 +22,11 @@ namespace PlanningProgramV3.Models
         public byte minor;
         public byte revision;
         public byte build;
+        //this boolean will inform the program that this is the same as being null. It will not be recorded by any saving or any databases.
+            //for all intents and purposes, it only exists so that I can register this struct as being null
+            //this is making me wonder if it might be better if I just convert this to a class, but for right now, it's fine. 
+        [XmlIgnore]
+        public bool IsNull = false;
 
         public VersionData(byte major, byte minor, byte revision, byte build)
         {
@@ -29,6 +34,21 @@ namespace PlanningProgramV3.Models
             this.minor = minor;
             this.revision = revision;
             this.build = build;
+        }
+
+        public VersionData(byte major, byte minor, byte revision, byte build, bool isNull) : this(major,minor,revision,build)
+        {
+            this.IsNull = isNull;
+        }
+
+        //assumes that generally, the values should be in the CurrentVersion, save the boolean
+        public VersionData(bool isNull)
+        {
+            major = CurrentVersion.major;
+            minor = CurrentVersion.minor;
+            revision = CurrentVersion.revision;
+            build = CurrentVersion.build;
+            this.IsNull = isNull;
         }
     }
 
