@@ -51,11 +51,11 @@ namespace PlanningProgramV3.Views.Calendar
         {
             if(e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
             {
-                _mainWindow.EventCalendarTaskDoubleClicked(this);
+                //_mainWindow.EventCalendarTaskDoubleClicked(this);
             }
             else if(e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
             {
-                _mainWindow.EventCalendarTaskClicked(this);
+                //_mainWindow.EventCalendarTaskClicked(this);
             }
         }
     }

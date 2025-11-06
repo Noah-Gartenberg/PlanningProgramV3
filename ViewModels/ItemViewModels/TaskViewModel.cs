@@ -22,7 +22,7 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
      * 
      * Removed default constructor and refactored constructors to try and get saving data to work
      */
-    public partial class TaskViewModel : PlannerItemViewModel
+    public partial class TaskViewModel : PlannerItemViewModel, IAddToDatabase
     {
 
 
@@ -339,6 +339,28 @@ namespace PlanningProgramV3.ViewModels.ItemViewModels
             Y = (CanvasCoords.Y - 0.5f * CanvasDimensions.Y) * scaleFactor + CameraLocation.Y;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
+        }
+
+        /// <summary>
+        /// Checks if can add any subitems to the object
+        /// </summary>
+        /// <param name="AddToDatabaseCallback"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void TryAddToDatabase(Action<TaskViewModel, DateDurationViewModel> AddToDatabaseCallback)
+        {
+            //loop through subitems, and check if can add to database
+            foreach (var item in SubItems)
+            {
+                if(item is TaskViewModel tvm)
+                {
+                    tvm.TryAddToDatabase(AddToDatabaseCallback);
+                }
+                else if(item is DateDurationViewModel ddvm)
+                {
+                    
+                    ddvm.TryAddToDatabase(AddToDatabaseCallback);
+                }
+            }
         }
         #endregion
     }

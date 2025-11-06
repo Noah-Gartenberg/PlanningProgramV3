@@ -9,7 +9,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel Background="#1B1E27" Height="Auto" Width="Auto">
         <TextBlock Name="CellDateTextBlock" Background="#FFDEDAB5" Margin="5" DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Center"
-                   Text="{Binding CellDate, StringFormat='{}{0:MM/dd/yyyy}'}" MouseDown="CellDateTextBlock_MouseDown"/>
+                   Text="{Binding CellDate, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+        <!--MouseDown="CellDateTextBlock_MouseDown"-->
         <Grid x:Name="CellTasks" Background="#FFDEDAB5" Margin="0"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Top">
             <Grid.RowDefinitions>
