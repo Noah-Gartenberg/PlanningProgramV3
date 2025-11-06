@@ -55,12 +55,12 @@ namespace PlanningProgramV3.ViewModels.Calendar
                     );
 
                     CREATE TABLE IF NOT EXISTS Task(
-                        TaskGUID VARCHAR(36) PRIMARY KEY,
+                        TaskGUID CHAR(36) PRIMARY KEY,
                         TaskName VARCHAR(50) NOT NULL,
-                        Completion bool, 
-                        XWorldCoord INTEGER NOT NULL,
-                        YWorldCoord INTEGER NOT NULL,
-                        PlanID INT UNSIGNED NOT NULL,
+                        Completion bool Default 0, 
+                        XWorldCoord INTEGER Default 0,
+                        YWorldCoord INTEGER Default 0,
+                        PlanID INTEGER NOT NULL,
                         FOREIGN KEY (PlanID) REFERENCES Plan(PlanID)
                     );
 
@@ -68,7 +68,7 @@ namespace PlanningProgramV3.ViewModels.Calendar
                         TaskDateID INTEGER PRIMARY KEY AUTOINCREMENT,
                         StartDate datetime NOT NULL,
                         EndDate datetime NOT NULL,
-                        TaskGUID VARCHAR(36) NOT NULL,
+                        TaskGUID CHAR(36) NOT NULL,
                         FOREIGN KEY (TaskGUID) REFERENCES Task(TaskGUID),
                         CONSTRAINT UC_UniqueStartEndTask UNIQUE (TaskGUID,StartDate,EndDate)
                     );
